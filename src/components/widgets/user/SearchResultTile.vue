@@ -73,6 +73,6 @@ const borderColor = computed(() =>
 )
 
 function navigateToDetails() {
-  router.push({ path: '/details', query: { companyId: props.company.id } })
+  router.push({ name: 'details', params: { id: props.company.id } })
 }
 </script>

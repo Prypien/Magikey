@@ -18,13 +18,13 @@
 
       <OpeningHoursEditor :openingHours="openingHours" @update="updateOpeningHours" />
 
-      <FormKit type="checkbox" name="is_247" label="24/7 Notdienst" />
-      <FormKit
-        v-if="formData.is_247"
-        type="number"
-        name="emergency_price"
-        label="Notdienstpreis"
-      />
+       <FormKit type="checkbox" name="is_247" label="24/7 Notdienst" v-model="is_247" />
+            <FormKit
+              v-if="is_247"
+              type="number"
+              name="emergency_price"
+              label="Notdienstpreis"
+            />
 
       <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
       <FormKit type="password" name="repeatPassword" label="Passwort wiederholen" validation="required|min:6" />
@@ -53,6 +53,7 @@ import OpeningHoursEditor from '@/components/widgets/company/OpeningHoursEditor.
 
 const error = ref('')
 const loading = ref(false)
+const is_247 = ref(false)
 
 const openingHours = ref({
   monday: { open: '', close: '' },
