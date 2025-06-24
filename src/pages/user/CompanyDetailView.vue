@@ -58,7 +58,6 @@
         <i class="fa fa-map-marker"></i> Route
       </a>
     </div>
-  </div>
 </template>
 
 <script setup>
