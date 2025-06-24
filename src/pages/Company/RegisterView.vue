@@ -12,56 +12,56 @@
       <FormKit type="email" name="email" label="E-Mail" validation="required|email" />
       <FormKit type="text" name="phone" label="Telefonnummer" />
       <FormKit type="text" name="address" label="Straße und Hausnummer" />
-      <FormKit type="text" name="postal_code" label="Postleitzahl" />
-      <FormKit type="text" name="city" label="Ort" />
-      <FormKit type="number" name="price" label="Preis (ab)" />
+            <FormKit type="text" name="postal_code" label="Postleitzahl" />
+            <FormKit type="text" name="city" label="Ort" />
+            <FormKit type="number" name="price" label="Preis (ab)" />
 
-      <OpeningHoursEditor :openingHours="openingHours" @update="updateOpeningHours" />
+            <OpeningHoursEditor :openingHours="openingHours" @update="updateOpeningHours" />
 
-       <FormKit type="checkbox" name="is_247" label="24/7 Notdienst" v-model="is_247" />
+             <FormKit type="checkbox" name="is_247" label="24/7 Notdienst" v-model="is_247" />
+                  <FormKit
+                    v-if="is_247"
+                    type="number"
+                    name="emergency_price"
+                    label="Notdienstpreis"
+                  />
+
+            <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
+            <FormKit type="password" name="repeatPassword" label="Passwort wiederholen" validation="required|min:6" />
+
+            <p v-if="error" class="text-red-600 mt-2">{{ error }}</p>
+
             <FormKit
-              v-if="is_247"
-              type="number"
-              name="emergency_price"
-              label="Notdienstpreis"
+              type="submit"
+              label="Registrieren"
+              :disabled="loading"
+              :classes="{
+                input: 'w-full bg-gold text-black py-2 rounded font-semibold mt-4 hover:bg-gold/80'
+              }"
             />
+          </FormKit>
+        </div>
+      </template>
 
-      <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
-      <FormKit type="password" name="repeatPassword" label="Passwort wiederholen" validation="required|min:6" />
+      <script setup>
+      import { ref } from 'vue'
+      import { auth, db } from '@/firebase/firebase'
+      import { createUserWithEmailAndPassword } from 'firebase/auth'
+      import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
-      <p v-if="error" class="text-red-600 mt-2">{{ error }}</p>
+      import OpeningHoursEditor from '@/components/widgets/company/OpeningHoursEditor.vue'
 
-      <FormKit
-        type="submit"
-        label="Registrieren"
-        :disabled="loading"
-        :classes="{
-          input: 'w-full bg-[#d9a908] text-black py-2 rounded font-semibold mt-4'
-        }"
-      />
-    </FormKit>
-  </div>
-</template>
+      const error = ref('')
+      const loading = ref(false)
+      const is_247 = ref(false)
 
-<script setup>
-import { ref } from 'vue'
-import { auth, db } from '@/firebase/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
-
-import OpeningHoursEditor from '@/components/widgets/company/OpeningHoursEditor.vue'
-
-const error = ref('')
-const loading = ref(false)
-const is_247 = ref(false)
-
-const openingHours = ref({
-  monday: { open: '', close: '' },
-  tuesday: { open: '', close: '' },
-  wednesday: { open: '', close: '' },
-  thursday: { open: '', close: '' },
-  friday: { open: '', close: '' },
-  saturday: { open: '', close: '' },
+      const openingHours = ref({
+        monday: { open: '', close: '' },
+        tuesday: { open: '', close: '' },
+        wednesday: { open: '', close: '' },
+        thursday: { open: '', close: '' },
+        friday: { open: '', close: '' },
+        saturday: { open: '', close: '' },
   sunday: { open: '', close: '' }
 })
 

@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-3xl mx-auto p-6">
     <!-- Zurück -->
-    <button @click="$router.push('/')" class="text-blue-600 font-semibold mb-4">
+    <button @click="$router.push('/')" class="text-gold font-semibold mb-4">
       ← Zurück
     </button>
 
@@ -27,8 +27,7 @@
     </div>
 
     <!-- Öffnungszeiten -->
-    <div class="mt-6">
-      <h2 class="font-bold mb-2">Öffnungszeiten</h2>
+@@ -32,51 +32,51 @@
       <div class="bg-gray-100 border border-gray-300 rounded-lg p-4">
         <div v-for="day in days" :key="day" class="text-sm">
           <strong>{{ dayLabel(day) }}:</strong> {{ formatTimeRange(company.opening_hours?.[day]) }}
@@ -54,7 +53,7 @@
       <a
         :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`"
         target="_blank"
-        class="bg-blue-600 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+        class="bg-black text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
       >
         <i class="fa fa-map-marker"></i> Route
       </a>

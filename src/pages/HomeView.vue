@@ -11,7 +11,7 @@
 
     <!-- 🎛️ Filter öffnen -->
     <div class="flex justify-end mb-3">
-      <button @click="toggleFilter" class="text-sm font-semibold text-blue-600">
+      <button @click="toggleFilter" class="text-sm font-semibold text-gold">
         <i class="fa fa-filter mr-1"></i> Filter
       </button>
     </div>
