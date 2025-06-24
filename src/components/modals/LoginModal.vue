@@ -22,6 +22,7 @@
           label="E-Mail"
           validation="required|email"
           v-model="email"
+          :classes="{ label: 'label' }"
         />
 
         <FormKit
@@ -30,6 +31,7 @@
           label="Passwort"
           validation="required|min:6"
           v-model="password"
+          :classes="{ label: 'label' }"
         />
 
         <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
@@ -55,37 +57,3 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebase/firebase'
-import Button from '@/components/UI/Button.vue'
-
-const email = ref('')
-const password = ref('')
-const error = ref(null)
-const loading = ref(false)
-const router = useRouter()
-const emit = defineEmits(['close'])
-
-const login = async () => {
-  error.value = null
-  loading.value = true
-  try {
-    await signInWithEmailAndPassword(auth, email.value.trim(), password.value.trim())
-    router.push('/dashboard')
-    emit('close')
-  } catch (e) {
-    error.value = e.message || 'Fehler beim Login'
-  } finally {
-    loading.value = false
-  }
-}
-
-const goToRegister = () => {
-  router.push('/register')
-  emit('close')
-}
-</script>
-
-<style scoped>
-</style>
