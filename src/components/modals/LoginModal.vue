@@ -10,11 +10,47 @@
 
       <h2 class="text-xl font-bold mb-4 text-center">Login für Unternehmen</h2>
 
-      <Login showCancel @cancel="$emit('close')" @success="$emit('close')" />
+      <FormKit
+        type="form"
+        :actions="false"
+        @submit="login"
+        :config="{ validationVisibility: 'live' }"
+      >
+        <FormKit
+          type="email"
+          name="email"
+          label="E-Mail"
+          validation="required|email"
+          v-model="email"
+          :classes="{ label: 'label' }"
+        />
+
+        <FormKit
+          type="password"
+          name="password"
+          label="Passwort"
+          validation="required|min:6"
+          v-model="password"
+          :classes="{ label: 'label' }"
+        />
+
+        <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
+
+        <Button
+          :disabled="loading"
+          class="w-full mt-4"
+        >
+          <span v-if="loading">Lade...</span>
+          <span v-else>Einloggen</span>
+        </Button>
+
+        <button
+          @click="goToRegister"
+          class="w-full text-sm text-blue-600 hover:underline mt-4"
+        >
+          Noch kein Konto? Jetzt registrieren
+        </button>
+      </FormKit>
     </div>
   </div>
 </template>
-
-<script setup>
-import Login from '@/components/Login.vue'
-</script>
