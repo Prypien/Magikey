@@ -5,14 +5,14 @@ import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
-// 🔐 Deine Firebase-Konfiguration (aus Flutter übernommen)
+// 🔐 Firebase-Konfiguration über Umgebungsvariablen
 const firebaseConfig = {
-  apiKey: 'AIzaSyDUm-6snOaDyzOEcBLwuUnDnyf2aeP0_PE',
-  authDomain: 'magikey-5f3ef.firebaseapp.com',
-  projectId: 'magikey-5f3ef',
-  storageBucket: 'magikey-5f3ef.appspot.com',
-  messagingSenderId: '653075940654',
-  appId: '1:653075940654:web:470bb470ffd8ef6940e6bf',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
 // 🔧 Initialisiere Firebase App
