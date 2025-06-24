@@ -21,8 +21,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { storage, auth } from '@/firebase/firebase'
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { uploadCompanyLogo } from '@/services/storage'
 
 const props = defineProps({
   initialImageUrl: String
@@ -42,18 +41,15 @@ const uploadImage = async (e) => {
   }
 
   uploading.value = true
-  const uid = auth.currentUser?.uid
-  if (!uid) return
-
-  const filePath = `company_logos/${uid}/${file.name}`
-  const imgRef = storageRef(storage, filePath)
-
-  await uploadBytes(imgRef, file)
-  const url = await getDownloadURL(imgRef)
-
-  previewUrl.value = url
-  emit('uploaded', url)
-  uploading.value = false
+  try {
+    const url = await uploadCompanyLogo(file)
+    previewUrl.value = url
+    emit('uploaded', url)
+  } catch (err) {
+    alert(err.message)
+  } finally {
+    uploading.value = false
+  }
 }
 </script>
 
