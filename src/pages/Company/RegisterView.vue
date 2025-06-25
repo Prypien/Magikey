@@ -49,7 +49,7 @@
       import { createUserWithEmailAndPassword } from 'firebase/auth'
       import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
-      import OpeningHoursEditor from '@/components/widgets/company/OpeningHoursEditor.vue'
+      import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
 
       const error = ref('')
       const loading = ref(false)

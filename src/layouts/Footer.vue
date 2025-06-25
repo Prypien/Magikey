@@ -1,4 +1,4 @@
-<!-- src/components/layout/Footer.vue -->
+<!-- src/layouts/Footer.vue -->
 <template>
   <footer class="bg-black text-white py-4 px-6 text-sm text-center mt-auto">
     <div class="flex justify-center items-center gap-4 text-white/70">

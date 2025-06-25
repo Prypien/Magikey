@@ -14,7 +14,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import Login from '@/components/Login.vue'
+import Login from '@/components/company/Login.vue'
 
 const show = ref(true)
 </script>

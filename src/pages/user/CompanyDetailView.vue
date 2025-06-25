@@ -80,7 +80,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { db } from '@/firebase/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import DataRow from '@/components/UI/DataRow.vue'
+import DataRow from '@/components/common/DataRow.vue'
 
 const route = useRoute()
 const companyId = route.params.id

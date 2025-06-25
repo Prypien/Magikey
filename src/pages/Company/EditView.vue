@@ -52,8 +52,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
-import CompanyImageUpload from '@/components/widgets/company/CompanyImageUpload.vue'
-import OpeningHoursEditor from '@/components/widgets/company/OpeningHoursEditor.vue'
+import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
+import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
 
 const router = useRouter()
 const user = auth.currentUser

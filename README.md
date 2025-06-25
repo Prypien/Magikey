@@ -12,6 +12,21 @@ Magikey ist ein webbasiertes Projekt, das auf einem Entwickler‑MacBook entsteh
 
 Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten (z.&nbsp;B. 24/7). Nutzer können Betriebe direkt per Telefon oder ‎Google Maps kontaktieren. Ein verbessertes Design ist geplant.
 
+## Projektstruktur
+
+Der Code ist in `src` organisiert. Wichtige Unterordner:
+
+- `layouts` – gemeinsame Layout-Komponenten wie Header und Footer
+- `components/common` – kleine UI-Bausteine (Button, DataRow)
+- `components/company` – Firmen-spezifische Widgets und Login
+- `components/user` – Komponenten für die Nutzersuche
+- `pages` – sämtliche Seiten der Anwendung
+- `services` – Logik für Auth und Storage
+- `firebase` – Initialisierung von Firebase
+- `theme` – globale Tailwind-Stile
+
+Der Alias `@` verweist auf den `src`-Ordner und erleichtert Importpfade.
+
 ## Firebase Konfiguration
 
 Erstelle eine Datei `.env` und fülle deine Firebase‑Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
