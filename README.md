@@ -51,6 +51,14 @@ ESLint überprüft den Code auf mögliche Fehler und sorgt für einen einheitlic
 Code-Stil. Du kannst die Prüfung mit `npm run lint` ausführen. Die Regeln
 befinden sich in `eslint.config.js`.
 
+## Tests
+
+Zum Ausführen der Vitest-Tests verwende
+
+```bash
+npm test
+```
+
 ## Lizenz
 
 Die MIT-Lizenz erlaubt dir, den Code frei zu nutzen und zu ändern.

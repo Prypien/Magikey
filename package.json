@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint --config eslint.config.js .",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "dependencies": {
     "@formkit/core": "^1.6.9",
