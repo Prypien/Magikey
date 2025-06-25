@@ -17,7 +17,7 @@
 <script setup>
 import SearchResultTile from './SearchResultTile.vue'
 
-const props = defineProps({
+defineProps({
   companies: {
     type: Array,
     required: true

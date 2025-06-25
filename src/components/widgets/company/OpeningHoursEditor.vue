@@ -74,7 +74,7 @@ export default {
   components: {
     DayRow: {
       props: ['label', 'days'],
-      setup(props) {
+      setup() {
         const openingHours = inject('openingHours')
         const updateTime = inject('updateTime')
 

@@ -97,16 +97,16 @@ onMounted(async () => {
 const saveChanges = async () => {
   if (!user) return
   await updateDoc(doc(db, 'companies', user.uid), company.value)
-  alert('Änderungen gespeichert.')
+  window.alert('Änderungen gespeichert.')
   router.push('/dashboard')
 }
 
 const confirmDelete = async () => {
-  const confirmed = confirm('Bist du sicher, dass du dein Konto löschen willst?')
+  const confirmed = window.confirm('Bist du sicher, dass du dein Konto löschen willst?')
   if (!confirmed || !user) return
   await deleteDoc(doc(db, 'companies', user.uid))
   await user.delete()
-  alert('Konto gelöscht')
+  window.alert('Konto gelöscht')
   router.push('/')
 }
 </script>

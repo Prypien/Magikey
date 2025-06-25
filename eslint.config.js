@@ -10,11 +10,19 @@ export default [
       parser, // Vue-Parser aktivieren
       ecmaVersion: 2021,
       sourceType: 'module',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        console: 'readonly',
+        alert: 'readonly',
+        confirm: 'readonly',
+      },
     },
     plugins: { vue },
     rules: {
       ...eslint.configs.recommended.rules,
       ...vue.configs['vue3-essential'].rules,
+      'vue/multi-word-component-names': 'off',
     },
   },
   {
@@ -22,6 +30,11 @@ export default [
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        window: 'readonly',
+        __dirname: 'readonly',
+      },
     },
     plugins: { vue },
     rules: {
