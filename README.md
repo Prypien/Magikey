@@ -33,7 +33,8 @@ npm run build
 ## Linting mit ESLint
 
 ESLint überprüft den Code auf mögliche Fehler und sorgt für einen einheitlichen
-Code-Stil. Du kannst die Prüfung mit `npm run lint` ausführen.
+Code-Stil. Du kannst die Prüfung mit `npm run lint` ausführen. Die Regeln
+befinden sich in `eslint.config.js`.
 
 ## Lizenz
 
