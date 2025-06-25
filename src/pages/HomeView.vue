@@ -34,8 +34,8 @@ import { ref, computed, onMounted } from 'vue'
 import { db } from '@/firebase/firebase'
 import { collection, getDocs } from 'firebase/firestore'
 
-import Filter from '@/components/widgets/user/Filter.vue'
-import SearchResults from '@/components/widgets/user/SearchResults.vue'
+import Filter from '@/components/user/Filter.vue'
+import SearchResults from '@/components/user/SearchResults.vue'
 
 const postalCode = ref('')
 const companies = ref([])

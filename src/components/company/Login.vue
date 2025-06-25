@@ -61,7 +61,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login as loginService, resetPassword as resetPasswordService } from '@/services/auth'
-import Button from '@/components/UI/Button.vue'
+import Button from '@/components/common/Button.vue'
 
 defineProps({
   showCancel: {

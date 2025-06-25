@@ -37,8 +37,8 @@ import { useRouter } from 'vue-router'
 import { auth } from '@/firebase/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
-import LoginModal from '@/components/modals/LoginModal.vue'
-import Button from '@/components/UI/Button.vue'
+import LoginModal from '@/components/company/LoginModal.vue'
+import Button from '@/components/common/Button.vue'
 
 const db = getFirestore()
 const router = useRouter()

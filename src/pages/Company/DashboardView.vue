@@ -41,7 +41,7 @@
 import { ref, onMounted } from 'vue'
 import { auth, db } from '@/firebase/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import DataRow from '@/components/UI/DataRow.vue'
+import DataRow from '@/components/common/DataRow.vue'
 
 const company = ref(null)
 const loading = ref(true)

@@ -4,7 +4,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Layout
-import DefaultLayout from '@/components/layout/DefaultLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 // Seiten
 import HomeView from '@/pages/HomeView.vue'

@@ -18,7 +18,7 @@
 import { ref } from 'vue'
 import { resetPassword } from '@/services/auth'
 // Wiederverwendbare Button-Komponente
-import Button from '@/components/UI/Button.vue'
+import Button from '@/components/common/Button.vue'
 
 // Zustand für das Formular
 const email = ref('')
