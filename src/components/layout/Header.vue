@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-black text-white px-6 py-4 shadow flex justify-between items-center">
+  <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center">
     <!-- Logo -->
     <router-link to="/" class="flex items-center gap-2">
       <img src="@/assets/logo.png" alt="Logo" class="h-8 w-auto" />
@@ -22,7 +22,7 @@
                   </div>
 
                   <div v-else>
-                    <Button size="sm" @click="showLogin = true">Dein Unternehmen</Button>
+                    <Button size="sm" class="bg-white/90 text-black shadow-md backdrop-blur" @click="showLogin = true">Dein Unternehmen</Button>
                   </div>
 
                  <LoginModal v-if="showLogin" @close="showLogin = false" />
