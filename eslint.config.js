@@ -5,6 +5,9 @@ import parser from 'vue-eslint-parser'
 
 export default [
   {
+    ignores: ['dist']
+  },
+  {
     files: ['**/*.vue'],
     languageOptions: {
       parser, // Vue-Parser aktivieren
