@@ -2,14 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes water-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 /* 🔤 Fonts & Basics */
 @layer base {
   html {
     font-family: 'Montserrat', sans-serif;
   }
   body {
-      @apply bg-white text-black;
-    }
+    @apply bg-white text-black;
+    background: linear-gradient(135deg, #e0f7fa, #f0f9ff, #e0f7fa);
+    background-size: 400% 400%;
+    animation: water-bg 15s ease infinite;
+  }
 }
 
 /* 🎨 Utilities für Komponenten */
@@ -23,7 +32,7 @@
   }
 
   .btn {
-    @apply bg-gold text-black font-medium py-3 px-6 rounded-full shadow transition-colors duration-200 hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50;
+    @apply bg-gold text-black font-medium py-3 px-6 rounded-full shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50 transform hover:scale-105 hover:bg-gold/90;
   }
 
   .btn-danger {
@@ -40,5 +49,26 @@
 
   .form-title {
     @apply text-xl font-semibold mb-2 text-black;
+  }
+
+  /* 🎬 Modal animation */
+  .modal-enter-from,
+  .modal-leave-to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  .modal-enter-active,
+  .modal-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  /* Fade animation for overlays */
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
   }
 }
