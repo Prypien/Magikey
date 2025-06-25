@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-semibold text-center mb-6">Finde deinen Schlüsseldienst</h1>
+    <h1 class="text-2xl font-semibold text-center mb-6">Magikey, der Schlüsseldienst in deiner Nähe</h1>
 
     <input
       v-model="postalCode"
