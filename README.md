@@ -14,7 +14,7 @@ Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten 
 
 ## Firebase Konfiguration
 
-Kopiere die Datei `.env.example` nach `.env` und fülle deine Firebase‑Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
+Erstelle eine Datei `.env` und fülle deine Firebase‑Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
 
 ```bash
 VITE_FIREBASE_API_KEY=<dein-key>
@@ -22,8 +22,19 @@ VITE_FIREBASE_AUTH_DOMAIN=<deine-domain>
 ...
 ```
 
+Weitere Details zur Datenstruktur findest du in [docs/firestore.md](docs/firestore.md).
+
 ## Build
 
 ```bash
 npm run build
 ```
+
+## Linting mit ESLint
+
+ESLint überprüft den Code auf mögliche Fehler und sorgt für einen einheitlichen
+Code-Stil. Du kannst die Prüfung mit `npm run lint` ausführen.
+
+## Lizenz
+
+Die MIT-Lizenz erlaubt dir, den Code frei zu nutzen und zu ändern.
