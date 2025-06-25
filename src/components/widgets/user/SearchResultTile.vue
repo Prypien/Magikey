@@ -1,6 +1,6 @@
 <template>
   <li
-    class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-md transition"
+    class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-lg transform transition duration-300 hover:-translate-y-1"
     :class="borderColor"
     @click="navigateToDetails"
   >
