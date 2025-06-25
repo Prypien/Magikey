@@ -11,7 +11,7 @@
       label="E-Mail"
       validation="required|email"
       v-model="email"
-      :classes="{ label: 'label' }"
+      :classes="{ label: 'label', input: 'input' }"
     />
 
     <FormKit
@@ -20,7 +20,7 @@
       label="Passwort"
       validation="required|min:6"
       v-model="password"
-      :classes="{ label: 'label' }"
+      :classes="{ label: 'label', input: 'input' }"
     />
 
     <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>

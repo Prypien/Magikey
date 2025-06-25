@@ -15,19 +15,19 @@
 /* 🎨 Utilities für Komponenten */
 @layer components {
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-gold;
+    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-black focus:ring-2 focus:ring-black;
   }
 
   .textarea {
-    @apply w-full px-3 py-2 border border-gray-300 rounded text-sm resize-none focus:outline-none focus:ring-2 focus:ring-gold;
+    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm resize-none placeholder-gray-500 focus:outline-none focus:border-black focus:ring-2 focus:ring-black;
   }
 
   .btn {
-    @apply bg-gold text-black font-semibold py-2 px-4 rounded transition hover:opacity-90;
+    @apply bg-gold text-black font-medium py-3 px-6 rounded-full shadow transition-colors duration-200 hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50;
   }
 
   .btn-danger {
-    @apply bg-red-600 text-white font-semibold py-2 px-4 rounded hover:bg-red-700;
+    @apply bg-red-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700;
   }
 
   .label {
