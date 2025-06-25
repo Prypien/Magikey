@@ -23,7 +23,7 @@
 import { ref } from 'vue'
 import { uploadCompanyLogo } from '@/services/storage'
 
-const props = defineProps({
+defineProps({
   initialImageUrl: String
 })
 const emit = defineEmits(['uploaded'])
@@ -36,7 +36,7 @@ const uploadImage = async (e) => {
   if (!file) return
 
   if (file.size > 3 * 1024 * 1024) {
-    alert('Bitte ein Bild unter 3 MB auswählen.')
+    window.alert('Bitte ein Bild unter 3 MB auswählen.')
     return
   }
 
@@ -46,7 +46,7 @@ const uploadImage = async (e) => {
     previewUrl.value = url
     emit('uploaded', url)
   } catch (err) {
-    alert(err.message)
+    window.alert(err.message)
   } finally {
     uploading.value = false
   }
