@@ -2,21 +2,28 @@
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
     <h1 class="text-2xl font-semibold text-center mb-6">Magikey, der Schlüsseldienst in deiner Nähe</h1>
 
-    <input
-      v-model="postalCode"
-      type="text"
-      inputmode="numeric"
-      placeholder="PLZ eingeben"
-      class="input mb-4"
-    />
-
-    <div class="flex justify-end mb-3">
-      <button @click="toggleFilter" class="text-sm font-semibold text-gold flex items-center gap-1">
-        <i class="fa fa-filter" /> <span>Filter</span>
-      </button>
+    <div class="relative mb-4">
+      <input
+        v-model="postalCode"
+        type="text"
+        inputmode="numeric"
+        placeholder="PLZ eingeben"
+        class="water-input"
+        @blur="onBlur"
+        @input="onPostalInput"
+      />
+      <ul v-if="showSuggestions" class="dropdown">
+        <li
+          v-for="code in filteredSuggestions"
+          :key="code"
+          class="dropdown-item"
+          @mousedown.prevent="selectSuggestion(code)"
+        >
+          {{ code }}
+        </li>
+      </ul>
+      <Filter v-if="showFilter" dropdown class="mt-1" @apply="applyFilters" />
     </div>
-
-    <Filter v-if="showFilter" @apply="applyFilters" />
 
     <div class="mt-6">
       <p v-if="loading">⏳ Firmen werden geladen...</p>
@@ -40,8 +47,8 @@ import SearchResults from '@/components/user/SearchResults.vue'
 const postalCode = ref('')
 const companies = ref([])
 const loading = ref(true)
-
 const showFilter = ref(false)
+const showSuggestions = ref(false)
 const filters = ref({
   distance: 25,
   sortBy: 'price_asc',
@@ -49,11 +56,39 @@ const filters = ref({
   onlyEmergency: false
 })
 
-const toggleFilter = () => (showFilter.value = !showFilter.value)
-
 const applyFilters = (f) => {
   filters.value = f
   showFilter.value = false
+}
+
+// Liste aller verfügbaren Postleitzahlen
+const allPostalCodes = computed(() => {
+  const codes = companies.value.map((c) => c.postal_code).filter(Boolean)
+  return [...new Set(codes)].sort()
+})
+
+const filteredSuggestions = computed(() =>
+  postalCode.value
+    ? allPostalCodes.value.filter((c) => c.startsWith(postalCode.value)).slice(0, 5)
+    : []
+)
+
+function onPostalInput() {
+  showSuggestions.value = filteredSuggestions.value.length > 0
+  showFilter.value = postalCode.value.length > 0
+}
+
+function onBlur() {
+  window.setTimeout(() => {
+    showSuggestions.value = false
+    if (!postalCode.value) showFilter.value = false
+  }, 100)
+}
+
+function selectSuggestion(code) {
+  postalCode.value = code
+  showSuggestions.value = false
+  showFilter.value = true
 }
 
 // 🔄 Firmen laden

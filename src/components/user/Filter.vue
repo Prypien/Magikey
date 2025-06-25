@@ -1,5 +1,11 @@
 <template>
-  <div class="bg-white shadow-md rounded-xl p-4 border border-gray-200 space-y-4">
+  <div
+    :class="[
+      dropdown
+        ? 'dropdown p-4 space-y-4'
+        : 'bg-white shadow-md rounded-xl p-4 border border-gray-200 space-y-4'
+    ]"
+  >
     <h2 class="text-lg font-semibold">🔍 Filter</h2>
 
     <div class="grid sm:grid-cols-2 gap-4">
@@ -41,6 +47,13 @@
 
 <script setup>
 import { ref } from 'vue'
+
+const { dropdown } = defineProps({
+  dropdown: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const emit = defineEmits(['apply'])
 
