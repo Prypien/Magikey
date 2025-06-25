@@ -5,7 +5,7 @@
         <div v-if="show" class="bg-white rounded-xl p-8 w-full max-w-sm shadow relative">
           <button @click="$emit('close')" class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
           <h2 class="text-xl font-semibold mb-4 text-center text-black">Login für Unternehmen</h2>
-          <Login @success="$emit('close')" />
+          <Login @success="$emit('close')" @cancel="$emit('close')" />
         </div>
       </transition>
     </div>
