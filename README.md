@@ -1,14 +1,22 @@
-# Vue 3 + Vite
+# Magikey – Vergleichsplattform für Schlüsseldienste
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Magikey ist ein webbasiertes Projekt, das auf einem Entwickler‑MacBook entsteht. Ziel ist eine SEO‑optimierte Plattform, auf der Nutzer schnell und transparent den passenden Schlüsseldienst finden können.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## MVP
+
+- **Frontend**: Vue&nbsp;3 und Tailwind CSS
+- **Backend / Datenhaltung**: Firebase (Auth, Firestore, Storage)
+- **Empfohlene IDE**: Android Studio mit Vue‑Plugin, alternativ VS Code oder WebStorm
+
+### Projektziel
+
+Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten (z.&nbsp;B. 24/7). Nutzer können Betriebe direkt per Telefon oder ‎Google Maps kontaktieren. Ein verbessertes Design ist geplant.
 
 ## Firebase Konfiguration
 
-Kopiere die Datei `.env.example` nach `.env` und fülle deine Firebase-Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
+Kopiere die Datei `.env.example` nach `.env` und fülle deine Firebase‑Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
 
-```
+```bash
 VITE_FIREBASE_API_KEY=<dein-key>
 VITE_FIREBASE_AUTH_DOMAIN=<deine-domain>
 ...
@@ -16,6 +24,6 @@ VITE_FIREBASE_AUTH_DOMAIN=<deine-domain>
 
 ## Build
 
-```
+```bash
 npm run build
 ```
