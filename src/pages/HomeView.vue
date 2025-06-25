@@ -1,26 +1,24 @@
 <template>
-  <div class="min-h-screen bg-white px-6 py-8 max-w-4xl mx-auto">
-    <!-- 🔍 PLZ-Suche -->
+  <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-semibold text-center mb-6">Finde deinen Schlüsseldienst</h1>
+
     <input
       v-model="postalCode"
       type="text"
       inputmode="numeric"
       placeholder="PLZ eingeben"
-      class="w-full mb-4 p-3 border border-gray-300 rounded-lg"
+      class="input mb-4"
     />
 
-    <!-- 🎛️ Filter öffnen -->
     <div class="flex justify-end mb-3">
-      <button @click="toggleFilter" class="text-sm font-semibold text-gold">
-        <i class="fa fa-filter mr-1"></i> Filter
+      <button @click="toggleFilter" class="text-sm font-semibold text-gold flex items-center gap-1">
+        <i class="fa fa-filter" /> <span>Filter</span>
       </button>
     </div>
 
-    <!-- 🔧 Filter-Komponente -->
     <Filter v-if="showFilter" @apply="applyFilters" />
 
-    <!-- 📦 Ergebnisliste -->
-    <div class="mt-4">
+    <div class="mt-6">
       <p v-if="loading">⏳ Firmen werden geladen...</p>
       <template v-else>
         <p v-if="filteredCompanies.length === 0" class="text-gray-500">Keine passenden Firmen gefunden.</p>
@@ -38,7 +36,6 @@ import { collection, getDocs } from 'firebase/firestore'
 
 import Filter from '@/components/widgets/user/Filter.vue'
 import SearchResults from '@/components/widgets/user/SearchResults.vue'
-import SearchResultTile from '@/components/widgets/user/SearchResultTile.vue'
 
 const postalCode = ref('')
 const companies = ref([])

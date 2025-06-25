@@ -1,26 +1,36 @@
 <template>
   <li
-    class="p-4 bg-white rounded-xl shadow-md border-2 flex items-start gap-4 cursor-pointer hover:shadow-lg"
+    class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-md transition"
     :class="borderColor"
     @click="navigateToDetails"
   >
     <img
-      class="w-14 h-14 rounded-full object-cover"
+      class="w-16 h-16 rounded-md object-cover"
       :src="company.logo_url || '/logo.png'"
       alt="Logo"
     />
 
-    <div class="flex-1">
-      <h3 class="font-bold text-lg">{{ company.company_name }}</h3>
-      <p>PLZ: {{ company.postal_code }}</p>
-      <p>Preis: ab {{ company.price }} €</p>
-      <div class="flex items-center gap-2 text-sm">
-        <span class="text-yellow-500">⭐ {{ company.rating?.toFixed(1) || '4.5' }}</span>
+    <div class="flex-1 space-y-1">
+      <div class="flex justify-between items-start">
+        <h3 class="font-semibold text-lg">{{ company.company_name }}</h3>
+        <span class="text-yellow-500 text-sm">
+          <i class="fa fa-star mr-1" />{{ company.rating?.toFixed(1) || '4.5' }}
+        </span>
       </div>
-
-      <p class="font-semibold" :class="statusColor">{{ openStatus }}</p>
-
-      <p v-if="!isOpen && company.is_247 && company.emergency_price" class="text-red-600">
+      <p class="text-sm text-gray-600">PLZ: {{ company.postal_code }}</p>
+      <p class="text-sm">Preis: ab {{ company.price }} €</p>
+      <p>
+        <span
+          class="px-2 py-1 rounded-full text-xs font-semibold"
+          :class="statusClass"
+        >
+          {{ openStatus }}
+        </span>
+      </p>
+      <p
+        v-if="!isOpen && company.is_247 && company.emergency_price"
+        class="text-sm text-red-600"
+      >
         Notdienstpreis: {{ company.emergency_price }} €
       </p>
     </div>
@@ -64,8 +74,12 @@ const openStatus = computed(() => {
   return 'Derzeit geschlossen'
 })
 
-const statusColor = computed(() =>
-  isOpen.value ? 'text-green-600' : props.company.is_247 ? 'text-red-600' : 'text-gray-500'
+const statusClass = computed(() =>
+  isOpen.value
+    ? 'bg-green-100 text-green-800'
+    : props.company.is_247
+      ? 'bg-red-100 text-red-800'
+      : 'bg-gray-100 text-gray-600'
 )
 
 const borderColor = computed(() =>

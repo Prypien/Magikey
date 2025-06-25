@@ -4,10 +4,12 @@
       Keine Ergebnisse gefunden
     </p>
 
-    <ul v-else class="space-y-4">
-      <li v-for="(company, index) in companies" :key="index">
-        <SearchResultTile :company="company" />
-      </li>
+    <ul v-else class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <SearchResultTile
+        v-for="(company, index) in companies"
+        :key="index"
+        :company="company"
+      />
     </ul>
   </div>
 </template>
