@@ -8,14 +8,20 @@
         <li>
           <router-link to="/hilfe" class="menu-link">Hilfe-Center</router-link>
         </li>
-        <li>
+        <li v-if="!companyData">
           <router-link to="/register" class="menu-link">Problemsolver:in werden</router-link>
         </li>
         <li>
           <router-link to="/" class="menu-link">Schlosser finden</router-link>
         </li>
-        <li>
+        <li v-if="!companyData">
           <router-link to="/login" class="menu-link">Einloggen</router-link>
+        </li>
+        <li v-if="companyData">
+          <router-link to="/edit" class="menu-link">Profil bearbeiten</router-link>
+        </li>
+        <li v-if="companyData">
+          <button @click="$emit('logout')" class="menu-link w-full text-left">Abmelden</button>
         </li>
       </ul>
     </div>
@@ -26,9 +32,10 @@
 import { watch } from 'vue'
 
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: Boolean,
+  companyData: Object
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'logout'])
 
 function close() {
   emit('update:modelValue', false)

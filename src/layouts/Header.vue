@@ -11,6 +11,11 @@
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex items-center gap-3">
+      <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-2 hover:underline">
+        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
+        <span class="font-medium">{{ companyData.company_name }}</span>
+      </router-link>
+
       <template v-if="!companyData">
         <router-link to="/register" class="btn-outline hidden md:inline-flex items-center">
           <i class="fa fa-key mr-2 animate-bounce"></i>
@@ -21,20 +26,6 @@
       <button class="text-xl hover:text-gold focus:outline-none" aria-label="Sprache">
         <i class="fa fa-globe"></i>
       </button>
-
-      <template v-if="companyData">
-        <router-link to="/dashboard" class="flex items-center gap-2 hover:underline">
-          <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
-          <span class="font-medium">{{ companyData.company_name }}</span>
-        </router-link>
-        <div class="relative">
-          <button @click="toggleMenu" class="text-xl focus:outline-none">⋮</button>
-          <div v-if="showMenu" class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow z-50">
-            <button @click="goToEdit" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Profil bearbeiten</button>
-            <button @click="logout" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Abmelden</button>
-          </div>
-        </div>
-      </template>
 
       <button
         @click="toggleOverlay"
@@ -48,7 +39,7 @@
     </div>
 
     <teleport to="body">
-      <OverlayMenu v-model="showOverlay" />
+      <OverlayMenu v-model="showOverlay" :companyData="companyData" @logout="logout" />
     </teleport>
   </header>
 </template>
