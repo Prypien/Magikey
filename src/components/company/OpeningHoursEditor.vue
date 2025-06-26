@@ -19,7 +19,7 @@
 
     <button
       @click="showAllDays = !showAllDays"
-      class="text-sm text-blue-600 mt-2 flex items-center gap-1"
+      class="text-sm text-gold mt-2 flex items-center gap-1"
     >
       <i :class="showAllDays ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
       {{ showAllDays ? 'Weniger anzeigen' : 'Individuell anpassen' }}
