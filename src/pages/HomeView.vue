@@ -53,7 +53,8 @@ const filters = ref({
   distance: 25,
   sortBy: 'price_asc',
   onlyOpen: false,
-  onlyEmergency: false
+  onlyEmergency: false,
+  minRating: 0
 })
 
 const applyFilters = (f) => {
@@ -113,6 +114,7 @@ const filteredCompanies = computed(() => {
       const matchesPLZ = company.postal_code?.includes(postalCode.value)
       const onlyOpen = filters.value.onlyOpen
       const onlyEmergency = filters.value.onlyEmergency
+      const minRating = filters.value.minRating
 
       let isOpen = true
       if (onlyOpen) {
@@ -134,8 +136,9 @@ const filteredCompanies = computed(() => {
 
       const matchesOpen = !onlyOpen || isOpen
       const matchesEmergency = !onlyEmergency || company.is_247
+      const matchesRating = (company.rating || 0) >= minRating
 
-      return matchesPLZ && matchesOpen && matchesEmergency
+      return matchesPLZ && matchesOpen && matchesEmergency && matchesRating
     })
     .sort((a, b) => {
       const priceA = parseInt(a.price || '0')

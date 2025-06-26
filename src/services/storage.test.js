@@ -1,3 +1,4 @@
+/* global File */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const firebaseMock = vi.hoisted(() => ({ auth: { currentUser: { uid: 'uid123' } }, storage: 'storage-instance' }))
@@ -18,6 +19,7 @@ describe('storage service', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     firebaseMock.auth.currentUser = { uid: 'uid123' }
+    globalThis.File = class { constructor(parts, name) { this.parts = parts; this.name = name } }
   })
 
   it('uploads file and returns download url', async () => {
