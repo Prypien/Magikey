@@ -36,6 +36,12 @@
                 <FormKit type="text" name="postal_code" label="PLZ" v-model="address.plz" class="flex-1" />
                 <FormKit type="text" name="city" label="Ort" v-model="address.city" class="flex-1" />
               </div>
+              <GoogleMap
+                v-if="address.lat && address.lng"
+                :lat="address.lat"
+                :lng="address.lng"
+                class="mt-2"
+              />
             </div>
 
             <FormKit type="number" name="price" label="Preis (ab)" />
@@ -78,6 +84,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 import GoogleAddressAutocomplete from '@/components/company/GoogleAddressAutocomplete.vue'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
+import GoogleMap from '@/components/company/GoogleMap.vue'
 import { uploadBusinessLicense } from '@/services/storage'
 
 import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
