@@ -1,12 +1,10 @@
 <template>
   <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center">
-    <!-- Logo -->
     <router-link to="/" class="flex items-center gap-2">
       <img src="/logo.png" alt="Logo" class="h-8 w-auto" />
       <span class="font-bold text-lg text-gold">Magikey</span>
     </router-link>
 
-    <!-- Login/Firma rechts -->
     <div v-if="companyData" class="flex items-center gap-4">
       <router-link to="/dashboard" class="flex items-center gap-2 hover:underline">
         <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />

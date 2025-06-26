@@ -75,7 +75,6 @@ const applyFilters = (f) => {
   showFilter.value = false
 }
 
-// Liste aller verfügbaren Postleitzahlen
 const allPostalCodes = computed(() => {
   const codes = companies.value.map((c) => c.postal_code).filter(Boolean)
   return [...new Set(codes)].sort()
@@ -113,7 +112,6 @@ function selectSuggestion(code) {
   showFilter.value = true
 }
 
-// 🔄 Firmen laden
 onMounted(async () => {
   try {
     const snapshot = await getDocs(collection(db, 'companies'))
@@ -125,7 +123,6 @@ onMounted(async () => {
   }
 })
 
-// 🧠 Filterlogik
 const filteredCompanies = computed(() => {
   const now = new Date()
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
