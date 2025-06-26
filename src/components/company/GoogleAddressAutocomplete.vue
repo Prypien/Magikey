@@ -14,7 +14,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const props = defineProps({
+defineProps({
   modelValue: String
 })
 const emit = defineEmits(['update:modelValue', 'placeChanged'])
