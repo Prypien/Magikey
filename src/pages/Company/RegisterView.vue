@@ -85,13 +85,22 @@ const submitRegistration = async (formData) => {
   loading.value = true
 
   try {
-    const cred = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      formData.email,
+      formData.password
+    )
     const uid = cred.user.uid
+
+    const companyData = { ...formData }
+    delete companyData.password
+    delete companyData.repeatPassword
+
     await setDoc(doc(db, 'companies', uid), {
-      ...formData,
+      ...companyData,
       opening_hours: openingHours.value,
       created_at: serverTimestamp(),
-      rating: 0.0
+      rating: 0.0,
     })
     window.location.href = '/dashboard'
   } catch (e) {
