@@ -1,131 +1,106 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-yellow-50 p-6">
-    <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg max-w-xl w-full p-8 space-y-6">
-      <h1 class="text-2xl font-bold text-center text-gold">
-      <i class="fa fa-key mr-2 animate-bounce"></i>
-        Jetzt registrieren
-      </h1>
+  <div class="max-w-xl mx-auto p-6">
+    <h1 class="text-3xl font-semibold mb-8 text-center text-gray-900">
+      <p class="text-center text-gold font-medium mb-4">
+        <i class="fa fa-key mr-2 animate-bounce"></i> Werde Problemsolver:in
+      </p>
+      Registrieren
+    </h1>
 
+    <Transition name="fade">
       <FormKit
         type="form"
         :actions="false"
-        @submit="submitRegistration"
-        :config="{ validationVisibility: 'live' }"
-        class="space-y-6"
+        @submit="register"
+        :config="{ validationVisibility: 'blur' }"
+        class="bg-white rounded-3xl shadow-xl p-8 space-y-6 border border-gray-100"
       >
-        <!-- Account Info -->
-        <div class="space-y-4">
-          <FormKit type="email" name="email" label="E-Mail" validation="required|email" />
-          <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
-          <FormKit type="password" name="passwordConfirm" label="Passwort wiederholen" validation="required|confirm:password" validation-label="Passwort" />
-        </div>
+        <FormKit
+          type="text"
+          name="company_name"
+          label="Firmenname"
+          validation="required"
+          placeholder="z. B. Schlüsseldienst Müller"
+          outer-class="space-y-1"
+          input-class="formkit-input"
+        />
 
-        <!-- Contact Info -->
-        <div class="space-y-4">
-          <FormKit type="text" name="phone" label="Telefonnummer" />
-          <FormKit type="number" name="price" label="Preis (ab)" min="0" />
-        </div>
+        <FormKit
+          type="email"
+          name="email"
+          label="E-Mail"
+          validation="required|email"
+          placeholder="beispiel@firma.de"
+          outer-class="space-y-1"
+          input-class="formkit-input"
+        />
 
-        <!-- Address Info -->
-        <div class="space-y-4 pt-4">
-          <h3 class="font-semibold text-lg">Adresse</h3>
-          <GoogleAddressAutocomplete v-model="address.fulltext" @placeChanged="fillAddress" />
-          <FormKit type="text" name="street" label="Straße" v-model="address.street" />
-          <div class="flex gap-2">
-            <FormKit type="text" name="postal_code" label="PLZ" v-model="address.plz" class="flex-1" />
-            <FormKit type="text" name="city" label="Ort" v-model="address.city" class="flex-1" />
-          </div>
-          <GoogleMap v-if="address.lat && address.lng" :lat="address.lat" :lng="address.lng" class="mt-2" />
-        </div>
+        <FormKit
+          type="password"
+          name="password"
+          label="Passwort"
+          validation="required|min:6"
+          placeholder="Mind. 6 Zeichen"
+          outer-class="space-y-1"
+          input-class="formkit-input"
+        />
 
-        <!-- Submit Button & Error -->
-        <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
-        <button
+        <FormKit
+          type="password"
+          name="confirm_password"
+          label="Passwort wiederholen"
+          validation="required|confirm:password"
+          placeholder="Nochmals eingeben"
+          outer-class="space-y-1"
+          input-class="formkit-input"
+        />
+
+        <FormKit
+          type="tel"
+          name="phone"
+          label="Telefonnummer"
+          validation="required"
+          placeholder="z. B. 0151 12345678"
+          outer-class="space-y-1"
+          input-class="formkit-input"
+        />
+
+        <FormKit
           type="submit"
-          :disabled="loading"
-          class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-4 rounded-xl w-full"
-        >
-          Registrieren & Teil von Magikey werden
-        </button>
+          label="Registrieren"
+          input-class="bg-gold hover:bg-gold/90 text-white font-semibold py-3 rounded-xl w-full transition duration-200"
+        />
       </FormKit>
-    </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { db } from '@/firebase/firebase'
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { useRouter } from 'vue-router'
+import { auth, db } from '@/firebase/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
 
-import GoogleAddressAutocomplete from '@/components/company/GoogleAddressAutocomplete.vue'
-import GoogleMap from '@/components/company/GoogleMap.vue'
-import { register as registerUser } from '@/services/auth'
+const router = useRouter()
 
-const error = ref('')
-const loading = ref(false)
-
-const address = ref({
-  fulltext: '',
-  street: '',
-  plz: '',
-  city: '',
-  lat: null,
-  lng: null,
-  placeId: ''
-})
-
-function fillAddress(data) {
-  address.value.fulltext = data.formatted
-  address.value.lat = data.lat
-  address.value.lng = data.lng
-  address.value.placeId = data.placeId
-  const comp = data.components || []
-  const street = comp.find(c => c.types.includes('route'))?.long_name || ''
-  const number = comp.find(c => c.types.includes('street_number'))?.long_name || ''
-  address.value.street = [street, number].filter(Boolean).join(' ')
-  address.value.plz = comp.find(c => c.types.includes('postal_code'))?.long_name || ''
-  address.value.city = comp.find(c => c.types.includes('locality'))?.long_name || ''
-}
-
-const submitRegistration = async (formData) => {
-  error.value = ''
-  loading.value = true
-
+const register = async ({ email, password, company_name, phone }) => {
   try {
-    const cred = await registerUser(formData.email, formData.password)
-    const uid = cred.user.uid
-
-    const companyData = {
-      email: formData.email,
-      phone: formData.phone,
-      price: formData.price,
-      address: address.value.street,
-      postal_code: address.value.plz,
-      city: address.value.city,
-      location: {
-        lat: address.value.lat,
-        lng: address.value.lng,
-        placeId: address.value.placeId
-      }
-    }
-
-    await setDoc(doc(db, 'companies', uid), {
-      ...companyData,
-      opening_hours: {},
-      created_at: serverTimestamp(),
+    const { user } = await createUserWithEmailAndPassword(auth, email, password)
+    await setDoc(doc(db, 'companies', user.uid), {
+      company_name,
+      email,
+      phone,
+      created_at: new Date().toISOString(),
     })
-    window.alert('Danke! Wir prüfen deinen Eintrag und melden uns bei dir.')
-    window.location.href = '/dashboard'
+    router.push('/dashboard')
   } catch (e) {
-    error.value = e.message
-  } finally {
-    loading.value = false
+    alert('Fehler bei der Registrierung: ' + e.message)
   }
 }
 </script>
 
 <style scoped>
-.text-gold {
-  color: #d4af37;
+.formkit-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:border-gold transition bg-white text-gray-900;
 }
 </style>
