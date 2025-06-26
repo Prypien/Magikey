@@ -5,7 +5,7 @@ import parser from 'vue-eslint-parser'
 
 export default [
   {
-    ignores: ['dist']
+    ignores: ['dist', 'functions']
   },
   {
     files: ['**/*.vue'],
@@ -19,6 +19,7 @@ export default [
         console: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
+        navigator: 'readonly',
       },
     },
     plugins: { vue },
