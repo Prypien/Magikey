@@ -17,18 +17,6 @@ companies (Collection)
     is_247: boolean
     opening_hours: map
     created_at: timestamp
-    rating: number
-```
-
-Weitere Sammlungen:
-
-```text
-reviews (Collection)
-  <id> (Document)
-    companyId: string
-    comment: string
-    rating: number
-    created_at: timestamp
 ```
 
 Die Authentifizierung erfolgt über Firebase Auth.

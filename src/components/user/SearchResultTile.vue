@@ -13,9 +13,6 @@
     <div class="flex-1 space-y-1">
       <div class="flex justify-between items-start">
         <h3 class="font-semibold text-lg">{{ company.company_name }}</h3>
-        <span class="text-yellow-500 text-sm">
-          <i class="fa fa-star mr-1" />{{ company.rating?.toFixed(1) || '4.5' }}
-        </span>
       </div>
       <p class="text-sm text-gray-600">PLZ: {{ company.postal_code }}</p>
       <p v-if="isOpen" class="text-sm">Preis: ab {{ company.price }} €</p>
