@@ -29,7 +29,6 @@
       <span v-if="loading">Lade...</span>
       <span v-else>Einloggen</span>
     </Button>
-    <Button type="button" class="w-full mt-2" @click="googleLogin">Google Login</Button>
 
     <div class="flex flex-col gap-2 mt-4">
       <button
@@ -61,7 +60,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { login as loginService, resetPassword as resetPasswordService, loginWithGoogle } from '@/services/auth'
+import { login as loginService, resetPassword as resetPasswordService } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
 
 defineProps({
@@ -79,15 +78,6 @@ const password = ref('')
 const error = ref('')
 const loading = ref(false)
 
-async function googleLogin() {
-  try {
-    await loginWithGoogle()
-    emit('success')
-    router.push('/dashboard')
-  } catch (e) {
-    error.value = e.message
-  }
-}
 
 const login = async () => {
   error.value = ''

@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex items-stretch bg-gradient-to-br from-white to-yellow-50">
-    <div class="hidden md:flex w-1/2 bg-cover bg-center items-center justify-center" style="background-image: url('/logo.png')">
-      <div class="text-white text-center p-8 bg-black/70 rounded-2xl shadow-lg">
+    <div class="hidden md:flex w-1/2 items-center justify-center bg-yellow-50">
+      <div class="bg-white/80 rounded-2xl shadow-lg p-8 text-center">
         <h2 class="text-3xl font-bold mb-4">Werde Problemsolver:in</h2>
         <p>Hilf Menschen in Not und präsentiere deinen Service auf Magikey.</p>
       </div>
@@ -15,13 +15,19 @@
 
           <FormKit
             type="form"
-            ref="registerForm"
             :actions="false"
             @submit="submitRegistration"
             :config="{ validationVisibility: 'live' }"
             class="space-y-6 divide-y divide-gray-200"
           >
           <div class="space-y-4">
+            <h3 class="font-semibold text-lg">Account</h3>
+            <FormKit type="email" name="email" label="E-Mail" validation="required|email" />
+            <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
+            <FormKit type="password" name="passwordConfirm" label="Passwort wiederholen" validation="required|confirm:password" validation-label="Passwort" />
+          </div>
+
+          <div class="space-y-4 pt-4">
             <h3 class="font-semibold text-lg">Kontakt</h3>
             <CompanyImageUpload @selected="file => (logoFile.value = file)" />
             <FormKit type="text" name="company_name" label="Firmenname" validation="required" />
@@ -50,7 +56,13 @@
 
               <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
 
-              <button type="button" class="btn w-full" @click="googleRegister" :disabled="loading">Mit Google registrieren</button>
+              <button
+                type="submit"
+                :disabled="loading"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-4 rounded-xl w-full"
+              >
+                Registrieren & Teil von Magikey werden
+              </button>
             </FormKit>
         </div>
       </Transition>
@@ -67,12 +79,11 @@ import GoogleAddressAutocomplete from '@/components/company/GoogleAddressAutocom
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import GoogleMap from '@/components/company/GoogleMap.vue'
 import { uploadCompanyLogo } from '@/services/storage'
-import { loginWithGoogle } from '@/services/auth'
+import { register as registerUser } from '@/services/auth'
 
 
 const error = ref('')
 const loading = ref(false)
-const registerForm = ref(null)
 
 const show = ref(false)
 
@@ -93,10 +104,6 @@ onMounted(() => {
   show.value = true
 })
 
-function googleRegister() {
-  registerForm.value.submit()
-}
-
 function fillAddress(data) {
   address.value.fulltext = data.formatted
   address.value.lat = data.lat
@@ -115,9 +122,8 @@ const submitRegistration = async (formData) => {
   loading.value = true
 
   try {
-    const cred = await loginWithGoogle()
+    const cred = await registerUser(formData.email, formData.password)
     const uid = cred.user.uid
-    formData.email = cred.user.email
 
     if (logoFile.value) {
       logoUrl.value = await uploadCompanyLogo(logoFile.value)
@@ -136,6 +142,8 @@ const submitRegistration = async (formData) => {
   delete companyData.street
   delete companyData.postal_code
   delete companyData.city
+  delete companyData.password
+  delete companyData.passwordConfirm
 
     await setDoc(doc(db, 'companies', uid), {
       ...companyData,
