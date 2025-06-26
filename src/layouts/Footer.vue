@@ -10,5 +10,4 @@
   </footer>
 </template>
 
-<script setup>
-</script>
+
