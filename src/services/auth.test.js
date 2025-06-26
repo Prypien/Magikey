@@ -6,14 +6,15 @@ vi.mock('@/firebase/firebase', () => ({
 
 vi.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: vi.fn(() => Promise.resolve('signed-in')),
+  createUserWithEmailAndPassword: vi.fn(() => Promise.resolve('created')),
   sendPasswordResetEmail: vi.fn(() => Promise.resolve()),
   signOut: vi.fn(() => Promise.resolve()),
   GoogleAuthProvider: vi.fn(),
   signInWithPopup: vi.fn(() => Promise.resolve('google')),
 }))
 
-import { login, resetPassword, logout, loginWithGoogle } from './auth'
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithPopup } from 'firebase/auth'
+import { login, resetPassword, logout, loginWithGoogle, register } from './auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithPopup } from 'firebase/auth'
 
 describe('auth service', () => {
   beforeEach(() => {
@@ -38,5 +39,10 @@ describe('auth service', () => {
   it('loginWithGoogle uses signInWithPopup', async () => {
     await loginWithGoogle()
     expect(signInWithPopup).toHaveBeenCalled()
+  })
+
+  it('register uses createUserWithEmailAndPassword', async () => {
+    await register('new@mail.com', 'secret')
+    expect(createUserWithEmailAndPassword).toHaveBeenCalledWith('auth-instance', 'new@mail.com', 'secret')
   })
 })
