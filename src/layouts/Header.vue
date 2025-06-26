@@ -39,8 +39,13 @@
 
 
 
-      <button @click="showOverlay = true" class="text-xl hover:text-gold" aria-label="Menü">
+      <button
+        @click="showOverlay = true"
+        class="flex items-center gap-2 border border-gray-300 rounded-full p-2 shadow-sm hover:shadow-md hover:border-gray-400 transition-colors"
+        aria-label="Menü"
+      >
         <i class="fa fa-bars"></i>
+        <i class="fa fa-user-circle-o text-xl"></i>
       </button>
     </div>
 
