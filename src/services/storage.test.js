@@ -1,3 +1,4 @@
+/* global File */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const firebaseMock = vi.hoisted(() => ({ auth: { currentUser: { uid: 'uid123' } }, storage: 'storage-instance' }))
