@@ -15,7 +15,11 @@
         @input="onPostalInput"
       />
       <span
+<<<<<<< x5lwqf-codex/suchleiste-anpassen-mit-filter-und-designänderungen
+        class="absolute right-1 top-1/2 -translate-y-1/2 bg-gold/10 border border-gold/50 rounded-full w-10 h-10 flex items-center justify-center pointer-events-none transition-all duration-200"
+=======
         class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-md border border-gold/50 rounded-full p-2 pointer-events-none transition-all duration-200"
+>>>>>>> main
         :class="{ 'opacity-0 scale-75': searchFocused }"
       >
         <i class="fa fa-search text-gold"></i>
