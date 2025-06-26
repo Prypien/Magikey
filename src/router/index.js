@@ -10,6 +10,10 @@ import EditView from '@/pages/Company/EditView.vue'
 import CompanyDetailView from '@/pages/user/CompanyDetailView.vue'
 import ImpressumView from '@/pages/ImpressumView.vue'
 import DatenschutzView from '@/pages/DatenschutzView.vue'
+import HowItWorksView from '@/pages/Info/HowItWorksView.vue'
+import PricesView from '@/pages/Info/PricesView.vue'
+import BusinessView from '@/pages/Info/BusinessView.vue'
+import HelpView from '@/pages/Info/HelpView.vue'
 import ResetPasswordView from '@/pages/ResetPasswordView.vue'
 import NotFoundView from '@/pages/NotFoundView.vue'
 
@@ -44,6 +48,10 @@ const routes = [
       },
       { path: 'impressum', name: 'impressum', component: ImpressumView },
       { path: 'datenschutz', name: 'datenschutz', component: DatenschutzView },
+      { path: 'so-funktionierts', name: 'how', component: HowItWorksView },
+      { path: 'preise', name: 'prices', component: PricesView },
+      { path: 'unternehmen', name: 'business', component: BusinessView },
+      { path: 'kontakt', name: 'help', component: HelpView },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },

@@ -8,7 +8,7 @@
         type="text"
         inputmode="numeric"
         maxlength="5"
-        placeholder="PLZ eingeben"
+        placeholder="Wo brauchst du Hilfe?"
         class="water-input pr-12 rounded-full"
         @focus="onFocus"
         @blur="onBlur"
@@ -31,12 +31,21 @@
         </li>
       </ul>
       <Filter v-if="showFilter" dropdown class="mt-1" @apply="applyFilters" />
+      <button
+        class="mt-2 text-sm text-gold underline"
+        @click="useLocation"
+      >
+        Schlüsseldienste in deiner Nähe anzeigen
+      </button>
     </div>
 
     <div class="mt-6">
       <p v-if="loading">⏳ Firmen werden geladen...</p>
       <template v-else>
-        <p v-if="filteredCompanies.length === 0" class="text-gray-500">Keine passenden Firmen gefunden.</p>
+        <div v-if="filteredCompanies.length === 0" class="text-gray-500">
+          <p>Leider kein Anbieter gefunden. Trag dich ein, wir benachrichtigen dich!</p>
+          <NotifyForm />
+        </div>
         <SearchResults v-else :companies="filteredCompanies" />
       </template>
     </div>
@@ -51,6 +60,8 @@ import { collection, getDocs } from 'firebase/firestore'
 
 import Filter from '@/components/user/Filter.vue'
 import SearchResults from '@/components/user/SearchResults.vue'
+import NotifyForm from '@/components/user/NotifyForm.vue'
+import { getPostalFromCoords } from '@/firebase/functions'
 
 const postalCode = ref('')
 const companies = ref([])
@@ -106,6 +117,21 @@ function selectSuggestion(code) {
   postalCode.value = code
   showSuggestions.value = false
   showFilter.value = true
+}
+
+async function useLocation() {
+  if (!navigator.geolocation) return
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    try {
+      const { postalCode: code } = await getPostalFromCoords(pos.coords.latitude, pos.coords.longitude)
+      if (code) {
+        postalCode.value = code
+        showFilter.value = true
+      }
+    } catch (err) {
+      console.error('Geolocation fehlgeschlagen', err)
+    }
+  })
 }
 
 onMounted(async () => {
