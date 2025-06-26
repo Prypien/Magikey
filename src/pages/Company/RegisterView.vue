@@ -26,7 +26,6 @@
             <CompanyImageUpload @selected="file => (logoFile.value = file)" />
             <FormKit type="text" name="company_name" label="Firmenname" validation="required" />
             <FormKit type="text" name="phone" label="Telefonnummer" />
-            <FormKit type="email" name="email" label="E-Mail" validation="required|email" />
           </div>
 
             <div class="space-y-4 pt-4">
@@ -49,22 +48,10 @@
 
             <p class="text-sm text-gray-600">Öffnungszeiten werden automatisch von Google übernommen.</p>
 
-            <div class="space-y-4 pt-4">
-              <h3 class="font-semibold text-lg">Account</h3>
-              <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
-              <FormKit type="password" name="repeatPassword" label="Passwort wiederholen" validation="required|min:6" />
-            </div>
+              <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
 
-            <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
-
-            <FormKit
-              type="submit"
-              label="Registrieren & Teil von Magikey werden"
-              :disabled="loading"
-              :classes="{ input: 'btn w-full' }"
-            />
-            <button type="button" class="btn-outline w-full" @click="googleRegister">Mit Google registrieren</button>
-          </FormKit>
+              <button type="button" class="btn w-full" @click="googleRegister" :disabled="loading">Mit Google registrieren</button>
+            </FormKit>
         </div>
       </Transition>
     </div>
@@ -73,8 +60,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { auth, db } from '@/firebase/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { db } from '@/firebase/firebase'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 import GoogleAddressAutocomplete from '@/components/company/GoogleAddressAutocomplete.vue'
@@ -87,7 +73,6 @@ import { loginWithGoogle } from '@/services/auth'
 const error = ref('')
 const loading = ref(false)
 const registerForm = ref(null)
-const useGoogle = ref(false)
 
 const show = ref(false)
 
@@ -109,7 +94,6 @@ onMounted(() => {
 })
 
 function googleRegister() {
-  useGoogle.value = true
   registerForm.value.submit()
 }
 
@@ -127,30 +111,19 @@ function fillAddress(data) {
 }
 
 const submitRegistration = async (formData) => {
-  if (formData.password !== formData.repeatPassword) {
-    error.value = 'Passwörter stimmen nicht überein'
-    return
-  }
-
   error.value = ''
   loading.value = true
 
   try {
-    const cred = useGoogle.value
-      ? await loginWithGoogle()
-      : await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+    const cred = await loginWithGoogle()
     const uid = cred.user.uid
-    if (useGoogle.value) {
-      formData.email = cred.user.email
-    }
+    formData.email = cred.user.email
 
     if (logoFile.value) {
       logoUrl.value = await uploadCompanyLogo(logoFile.value)
     }
 
   const companyData = { ...formData }
-  delete companyData.password
-  delete companyData.repeatPassword
   companyData.address = {
     volltext: address.value.fulltext,
     straße: address.value.street,
@@ -175,7 +148,6 @@ const submitRegistration = async (formData) => {
     error.value = e.message
   } finally {
     loading.value = false
-    useGoogle.value = false
   }
 }
 </script>
