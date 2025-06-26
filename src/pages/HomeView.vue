@@ -8,7 +8,7 @@
         type="text"
         inputmode="numeric"
         maxlength="5"
-        placeholder="Wo brauchst du Hilfe?"
+        placeholder="Wo brauchst du Hilfe gebe hier eine Postleitzahl ein !"
         class="water-input pr-12 rounded-full"
         @focus="onFocus"
         @blur="onBlur"
