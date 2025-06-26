@@ -4,7 +4,7 @@
       Keine Ergebnisse gefunden
     </p>
 
-    <ul v-else class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <ul v-else class="grid grid-cols-1 gap-4 auto-rows-fr">
       <SearchResultTile
         v-for="(company, index) in companies"
         :key="index"
