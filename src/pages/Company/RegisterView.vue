@@ -1,14 +1,7 @@
 <template>
   <div class="min-h-screen flex items-stretch bg-gradient-to-br from-white to-yellow-50">
-    <div class="hidden md:flex w-1/2 items-center justify-center bg-yellow-50">
-      <div class="bg-white/80 rounded-2xl shadow-lg p-8 text-center">
-        <h2 class="text-3xl font-bold mb-4">Werde Problemsolver:in</h2>
-        <p>Hilf Menschen in Not und präsentiere deinen Service auf Magikey.</p>
-      </div>
-    </div>
     <div class="flex-1 flex items-center justify-center p-6">
-      <Transition name="fade" mode="out-in">
-        <div v-if="show" class="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg max-w-xl w-full p-8 space-y-4">
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg max-w-xl w-full p-8 space-y-4">
           <h1 class="text-2xl font-bold mb-4 text-center text-gold">
             🔐 Jetzt registrieren
           </h1>
@@ -65,13 +58,12 @@
               </button>
             </FormKit>
         </div>
-      </Transition>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { db } from '@/firebase/firebase'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
@@ -84,8 +76,6 @@ import { register as registerUser } from '@/services/auth'
 
 const error = ref('')
 const loading = ref(false)
-
-const show = ref(false)
 
 const logoFile = ref(null)
 const logoUrl = ref('')
@@ -100,9 +90,6 @@ const address = ref({
   placeId: ''
 })
 
-onMounted(() => {
-  show.value = true
-})
 
 function fillAddress(data) {
   address.value.fulltext = data.formatted
