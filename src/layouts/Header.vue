@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center">
+  <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center relative">
     <router-link
       to="/"
       class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
@@ -8,7 +8,6 @@
       <span class="font-bold text-lg text-gold">Magikey</span>
     </router-link>
 
-    <!-- Navigationsleiste aktuell leer, Hilfelink befindet sich im Overlay-Menü -->
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex items-center gap-3">
@@ -19,7 +18,7 @@
         </router-link>
       </template>
 
-      <button class="text-xl hover:text-gold" aria-label="Sprache">
+      <button class="text-xl hover:text-gold focus:outline-none" aria-label="Sprache">
         <i class="fa fa-globe"></i>
       </button>
 
@@ -29,7 +28,7 @@
           <span class="font-medium">{{ companyData.company_name }}</span>
         </router-link>
         <div class="relative">
-          <button @click="toggleMenu" class="text-xl">⋮</button>
+          <button @click="toggleMenu" class="text-xl focus:outline-none">⋮</button>
           <div v-if="showMenu" class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow z-50">
             <button @click="goToEdit" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Profil bearbeiten</button>
             <button @click="logout" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Abmelden</button>
@@ -37,15 +36,14 @@
         </div>
       </template>
 
-
-
       <button
-        @click="showOverlay = true"
-        class="flex items-center gap-2 border border-gray-300 rounded-full p-2 shadow-sm hover:shadow-md hover:border-gray-400 transition-colors"
+        @click="toggleOverlay"
+        class="text-xl hover:text-gold transition-colors focus:outline-none"
+        :class="{ 'rotate-90': showOverlay }"
         aria-label="Menü"
+        ref="menuButton"
       >
         <i class="fa fa-bars"></i>
-        <i class="fa fa-user-circle-o text-xl"></i>
       </button>
     </div>
 
@@ -56,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth } from '@/firebase/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
@@ -68,10 +66,31 @@ const router = useRouter()
 const showMenu = ref(false)
 const showOverlay = ref(false)
 const companyData = ref(null)
+const menuButton = ref(null)
 
 function toggleMenu() {
   showMenu.value = !showMenu.value
 }
+
+function toggleOverlay() {
+  showOverlay.value = !showOverlay.value
+}
+
+function handleClickOutside(event) {
+  if (showOverlay.value && !menuButton.value.contains(event.target)) {
+    showOverlay.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+  fetchCompanyData(auth.currentUser)
+  onAuthStateChanged(auth, fetchCompanyData)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 async function fetchCompanyData(user) {
   if (!user) {
@@ -95,9 +114,11 @@ async function logout() {
   await auth.signOut()
   router.push('/')
 }
-
-onMounted(() => {
-  fetchCompanyData(auth.currentUser)
-  onAuthStateChanged(auth, fetchCompanyData)
-})
 </script>
+
+<style scoped>
+.rotate-90 {
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
+</style>

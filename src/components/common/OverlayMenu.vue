@@ -1,17 +1,23 @@
 <template>
-  <transition name="fade">
-    <div v-if="modelValue" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-end z-50" @click.self="close">
-      <transition name="slide-fade">
-        <nav v-if="modelValue" class="bg-white text-black w-72 max-w-full h-full p-6 rounded-l-3xl shadow-lg overflow-y-auto relative">
-          <button class="absolute top-4 right-4 text-2xl" @click="close">&times;</button>
-          <ul class="mt-8 space-y-4">
-            <li><router-link to="/hilfe" class="hover:text-gold">❓ Hilfe-Center</router-link></li>
-            <li><router-link to="/register" class="hover:text-gold">🛠️ Werde Problemsolver:in</router-link></li>
-            <li><router-link to="/" class="hover:text-gold">👥 Partner:in finden</router-link></li>
-            <li><router-link to="/login" class="hover:text-gold">🔐 Einloggen oder registrieren</router-link></li>
-          </ul>
-        </nav>
-      </transition>
+  <transition name="grow-down">
+    <div
+      v-if="modelValue"
+      class="absolute right-4 top-16 bg-white text-black w-72 max-w-full p-4 rounded-2xl shadow-xl z-50"
+    >
+      <ul class="space-y-3">
+        <li>
+          <router-link to="/hilfe" class="menu-link">Hilfe-Center</router-link>
+        </li>
+        <li>
+          <router-link to="/register" class="menu-link">Problemsolver:in werden</router-link>
+        </li>
+        <li>
+          <router-link to="/" class="menu-link">Schlosser finden</router-link>
+        </li>
+        <li>
+          <router-link to="/login" class="menu-link">Einloggen</router-link>
+        </li>
+      </ul>
     </div>
   </transition>
 </template>
@@ -32,20 +38,39 @@ function handleKey(e) {
   if (e.key === 'Escape') close()
 }
 
-watch(() => props.modelValue, (val) => {
-  if (val) {
-    document.addEventListener('keydown', handleKey)
-  } else {
-    document.removeEventListener('keydown', handleKey)
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val) {
+      document.addEventListener('keydown', handleKey)
+    } else {
+      document.removeEventListener('keydown', handleKey)
+    }
   }
-})
+)
 </script>
 
 <style scoped>
-nav a {
-  @apply block font-medium rounded-md px-3 py-2 transition-colors;
+/* Dropdown Grow-Down Animation */
+.grow-down-enter-active,
+.grow-down-leave-active {
+  transition: all 0.3s ease;
+  transform-origin: top;
 }
-nav a:hover {
-  @apply bg-gold/10;
+.grow-down-enter-from,
+.grow-down-leave-to {
+  opacity: 0;
+  transform: scaleY(0.95);
+}
+
+/* Menülink-Styling */
+.menu-link {
+  @apply block font-medium rounded-lg px-4 py-2 transition-all;
+}
+.menu-link:hover {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25);
+  transform: scale(1.01);
 }
 </style>
