@@ -116,19 +116,14 @@ const submitRegistration = async (formData) => {
       logoUrl.value = await uploadCompanyLogo(logoFile.value)
     }
 
-  const companyData = { ...formData }
-  companyData.address = {
-    volltext: address.value.fulltext,
-    straße: address.value.street,
-    plz: address.value.plz,
-    ort: address.value.city,
-    geo: { lat: address.value.lat, lng: address.value.lng },
-    placeId: address.value.placeId,
+  const companyData = {
+    ...formData,
+    address: address.value.street,
+    postal_code: address.value.plz,
+    city: address.value.city,
+    logo_url: logoUrl.value,
   }
-  companyData.logo_url = logoUrl.value
   delete companyData.street
-  delete companyData.postal_code
-  delete companyData.city
   delete companyData.password
   delete companyData.passwordConfirm
 
