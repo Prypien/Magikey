@@ -92,7 +92,7 @@
         />
 
         <div class="flex gap-4 pt-4">
-          <button type="submit" class="btn">Änderungen speichern</button>
+          <Button type="submit" class="flex-1">Änderungen speichern</Button>
           <button type="button" @click="confirmDelete" class="btn-danger">Konto löschen</button>
         </div>
       </FormKit>
@@ -107,6 +107,7 @@ import { auth, db } from '@/firebase/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
+import Button from '@/components/common/Button.vue'
 
 const router = useRouter()
 const user = auth.currentUser
