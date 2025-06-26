@@ -34,14 +34,14 @@
     <div class="flex flex-col gap-2 mt-4">
       <button
         type="button"
-        class="w-full text-sm text-blue-600 hover:underline"
+        class="w-full text-sm text-gold hover:underline"
         @click="goToRegister"
       >
         Noch kein Konto? Jetzt registrieren
       </button>
       <button
         type="button"
-        class="w-full text-sm text-blue-600 hover:underline"
+        class="w-full text-sm text-gold hover:underline"
         @click="resetPassword"
       >
         Passwort vergessen?

@@ -15,7 +15,7 @@
   }
   body {
     @apply bg-white text-black;
-    background: linear-gradient(135deg, #e0f7fa, #f0f9ff, #e0f7fa);
+    background: linear-gradient(135deg, #f9f8f8, #fff8d9, #f9f8f8);
     background-size: 400% 400%;
     animation: water-bg 15s ease infinite;
   }
@@ -29,16 +29,16 @@
 
   /* 🌊 Wassereffekt für Eingabefelder */
   .water-input {
-    @apply w-full px-4 py-3 bg-white/70 backdrop-blur-md border border-blue-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors duration-200;
+    @apply w-full px-4 py-3 bg-white/70 backdrop-blur-md border border-gold/50 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold transition-colors duration-200;
   }
 
   /* Dropdown-Stile für Vorschlagslisten */
   .dropdown {
-    @apply absolute left-0 right-0 mt-1 bg-white/80 backdrop-blur-md border border-blue-200 rounded-md shadow-lg z-20;
+    @apply absolute left-0 right-0 mt-1 bg-white/80 backdrop-blur-md border border-gold/50 rounded-md shadow-lg z-20;
   }
 
   .dropdown-item {
-    @apply px-4 py-2 cursor-pointer hover:bg-blue-50;
+    @apply px-4 py-2 cursor-pointer hover:bg-gold/20;
   }
 
   .textarea {
