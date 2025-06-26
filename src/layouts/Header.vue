@@ -1,6 +1,9 @@
 <template>
   <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center">
-    <router-link to="/" class="flex items-center gap-2">
+    <router-link
+      to="/"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
+    >
       <img src="/logo.png" alt="Logo" class="h-8 w-auto" />
       <span class="font-bold text-lg text-gold">Magikey</span>
     </router-link>
@@ -9,12 +12,15 @@
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex items-center gap-3">
+      <template v-if="!companyData">
+        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center">
+          <i class="fa fa-key mr-2 animate-bounce"></i>
+          Werde Problemsolver:in
+        </router-link>
+      </template>
+
       <button class="text-xl hover:text-gold" aria-label="Sprache">
         <i class="fa fa-globe"></i>
-      </button>
-
-      <button @click="showOverlay = true" class="text-xl hover:text-gold" aria-label="Menü">
-        <i class="fa fa-bars"></i>
       </button>
 
       <template v-if="companyData">
@@ -32,9 +38,12 @@
       </template>
 
       <template v-else>
-        <router-link to="/register" class="btn-outline hidden md:inline-block">Werde Problemsolver:in</router-link>
         <button @click="showLogin = true" class="btn-outline">Einloggen</button>
       </template>
+
+      <button @click="showOverlay = true" class="text-xl hover:text-gold" aria-label="Menü">
+        <i class="fa fa-bars"></i>
+      </button>
     </div>
 
     <teleport to="body">
