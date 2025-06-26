@@ -45,6 +45,10 @@
     @apply bg-gold text-black font-medium py-3 px-6 rounded-full shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50 transform hover:scale-105 hover:bg-gold/90;
   }
 
+  .btn-outline {
+    @apply bg-white text-gold border border-black font-medium py-3 px-6 rounded-full shadow transition duration-200 hover:bg-gold/10;
+  }
+
   .btn-danger {
     @apply bg-red-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700;
   }
@@ -78,5 +82,15 @@
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity 0.3s ease-in-out;
+  }
+
+  .slide-fade-enter-from,
+  .slide-fade-leave-to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  .slide-fade-enter-active,
+  .slide-fade-leave-active {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   }
 }

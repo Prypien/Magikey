@@ -9,28 +9,38 @@
       <router-link to="/hilfe" class="hover:underline">Hilfe</router-link>
     </nav>
 
-    <div v-if="companyData" class="flex items-center gap-4">
-      <router-link to="/dashboard" class="flex items-center gap-2 hover:underline">
-        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
-        <span class="font-medium">{{ companyData.company_name }}</span>
-      </router-link>
-      <div class="relative">
-        <button @click="toggleMenu" class="text-xl">⋮</button>
-        <div v-if="showMenu" class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow z-50">
-          <button @click="goToEdit" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Profil bearbeiten</button>
-          <button @click="logout" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Abmelden</button>
-        </div>
-      </div>
-    </div>
-
-    <div v-else>
-      <button @click="showLogin = true" class="text-xl hover:text-gold" aria-label="Unternehmen">
-        <i class="fa fa-building"></i>
+    <div class="flex items-center gap-3">
+      <button class="text-xl hover:text-gold" aria-label="Sprache">
+        <i class="fa fa-globe"></i>
       </button>
+
+      <button @click="showOverlay = true" class="text-xl hover:text-gold md:hidden" aria-label="Menü">
+        <i class="fa fa-bars"></i>
+      </button>
+
+      <template v-if="companyData">
+        <router-link to="/dashboard" class="flex items-center gap-2 hover:underline">
+          <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
+          <span class="font-medium">{{ companyData.company_name }}</span>
+        </router-link>
+        <div class="relative">
+          <button @click="toggleMenu" class="text-xl">⋮</button>
+          <div v-if="showMenu" class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow z-50">
+            <button @click="goToEdit" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Profil bearbeiten</button>
+            <button @click="logout" class="block px-4 py-2 w-full text-left hover:bg-gray-100">Abmelden</button>
+          </div>
+        </div>
+      </template>
+
+      <template v-else>
+        <router-link to="/register" class="btn-outline hidden md:inline-block">Werde Problemsolver:in</router-link>
+        <button @click="showLogin = true" class="btn-outline">Einloggen</button>
+      </template>
     </div>
 
     <teleport to="body">
       <LoginModal v-if="showLogin" @close="showLogin = false" />
+      <OverlayMenu v-model="showOverlay" />
     </teleport>
   </header>
 </template>
@@ -42,11 +52,13 @@ import { auth } from '@/firebase/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import LoginModal from '@/components/company/LoginModal.vue'
+import OverlayMenu from '@/components/common/OverlayMenu.vue'
 
 const db = getFirestore()
 const router = useRouter()
 const showLogin = ref(false)
 const showMenu = ref(false)
+const showOverlay = ref(false)
 const companyData = ref(null)
 
 function toggleMenu() {
