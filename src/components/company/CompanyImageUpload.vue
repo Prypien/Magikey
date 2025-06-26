@@ -6,9 +6,6 @@
         class="w-24 h-24 rounded-full object-cover border"
         alt="Logo"
       />
-      <div v-if="uploading" class="absolute inset-0 flex items-center justify-center">
-        <div class="w-6 h-6 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
     </div>
     <input
       type="file"
@@ -21,17 +18,15 @@
 
 <script setup>
 import { ref } from 'vue'
-import { uploadCompanyLogo } from '@/services/storage'
 
 defineProps({
   initialImageUrl: String
 })
-const emit = defineEmits(['uploaded'])
+const emit = defineEmits(['selected'])
 
-const uploading = ref(false)
 const previewUrl = ref('')
 
-const uploadImage = async (e) => {
+function uploadImage(e) {
   const file = e.target.files[0]
   if (!file) return
 
@@ -40,16 +35,8 @@ const uploadImage = async (e) => {
     return
   }
 
-  uploading.value = true
-  try {
-    const url = await uploadCompanyLogo(file)
-    previewUrl.value = url
-    emit('uploaded', url)
-  } catch (err) {
-    window.alert(err.message)
-  } finally {
-    uploading.value = false
-  }
+  previewUrl.value = window.URL.createObjectURL(file)
+  emit('selected', file)
 }
 </script>
 
