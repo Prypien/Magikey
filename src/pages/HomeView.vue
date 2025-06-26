@@ -15,7 +15,7 @@
         @input="onPostalInput"
       />
       <span
-        class="absolute right-1 top-1/2 -translate-y-1/2 bg-gold/10 border border-gold/50 rounded-full w-10 h-10 flex items-center justify-center pointer-events-none transition-all duration-200"
+        class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-200"
         :class="{ 'opacity-0 scale-75': searchFocused }"
       >
         <i class="fa fa-search text-gold"></i>
@@ -31,12 +31,6 @@
         </li>
       </ul>
       <Filter v-if="showFilter" dropdown class="mt-1" @apply="applyFilters" />
-      <button
-        class="mt-2 text-sm text-gold underline"
-        @click="useLocation"
-      >
-        Schlüsseldienste in deiner Nähe anzeigen
-      </button>
     </div>
 
     <div class="mt-6">
@@ -135,6 +129,7 @@ async function useLocation() {
 }
 
 onMounted(async () => {
+  useLocation()
   try {
     const snapshot = await getDocs(collection(db, 'companies'))
     companies.value = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))

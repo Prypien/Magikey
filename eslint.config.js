@@ -38,6 +38,8 @@ export default [
         console: 'readonly',
         window: 'readonly',
         __dirname: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
       },
     },
     plugins: { vue },
