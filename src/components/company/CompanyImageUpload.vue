@@ -39,6 +39,3 @@ function uploadImage(e) {
   emit('selected', file)
 }
 </script>
-
-<style scoped>
-</style>

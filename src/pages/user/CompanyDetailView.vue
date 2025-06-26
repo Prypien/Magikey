@@ -140,6 +140,3 @@ function formatTimeRange(range) {
   return `${range.open} – ${range.close}`
 }
 </script>
-
-<style scoped>
-</style>
