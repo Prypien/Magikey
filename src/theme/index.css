@@ -8,7 +8,6 @@
   100% { background-position: 0% 50%; }
 }
 
-/* 🔤 Fonts & Basics */
 @layer base {
   html {
     font-family: 'Montserrat', sans-serif;
@@ -21,18 +20,15 @@
   }
 }
 
-/* 🎨 Utilities für Komponenten */
 @layer components {
   .input {
     @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-black focus:ring-2 focus:ring-black;
   }
 
-  /* 🌊 Wassereffekt für Eingabefelder */
   .water-input {
     @apply w-full px-4 py-3 bg-white/70 backdrop-blur-md border border-gold/50 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold transition-colors duration-200;
   }
 
-  /* Dropdown-Stile für Vorschlagslisten */
   .dropdown {
     @apply absolute left-0 right-0 mt-1 bg-white/80 backdrop-blur-md border border-gold/50 rounded-md shadow-lg z-20;
   }
@@ -65,7 +61,6 @@
     @apply text-xl font-semibold mb-2 text-black;
   }
 
-  /* 🎬 Modal animation */
   .modal-enter-from,
   .modal-leave-to {
     opacity: 0;
@@ -76,7 +71,6 @@
     transition: all 0.3s ease;
   }
 
-  /* Fade animation for overlays */
   .fade-enter-from,
   .fade-leave-to {
     opacity: 0;

@@ -52,7 +52,7 @@ const router = useRouter()
 
 const isOpen = computed(() => {
   const now = new Date()
-  const dayIndex = now.getDay() - 1 // JS: So 0, Mo 1 → deine Öffnungslogik: Mo 0
+  const dayIndex = now.getDay() - 1
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
   const today = days[dayIndex < 0 ? 6 : dayIndex]
   const hours = props.company?.opening_hours?.[today]

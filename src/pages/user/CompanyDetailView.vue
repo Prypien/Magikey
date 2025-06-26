@@ -1,69 +1,66 @@
 <template>
-  <div class="max-w-2xl mx-auto p-6">
-    <!-- Zurück -->
+  <div class="max-w-5xl mx-auto p-6">
     <button @click="$router.back()" class="text-gold font-semibold mb-4 flex items-center gap-1">
       <span class="text-lg">←</span>
       <span>Zurück</span>
     </button>
 
-    <div class="bg-white shadow rounded-xl p-6">
-      <!-- Firmenkopf -->
-      <div class="flex flex-col items-center text-center">
-        <img
-          :src="company.logo_url || '/logo.png'"
-          alt="Firmenlogo"
-          class="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
-        />
-        <h1 class="text-3xl font-bold mt-4 text-black">
-          {{ company.company_name || 'Unbekannt' }}
-        </h1>
-        <p class="text-sm text-gray-500 mt-1">{{ fullAddress }}</p>
-      </div>
+    <div class="bg-white shadow rounded-xl p-6 flex flex-col md:flex-row gap-8">
+      <div class="flex-1">
+        <div class="flex flex-col items-center text-center">
+          <img
+            :src="company.logo_url || '/logo.png'"
+            alt="Firmenlogo"
+            class="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
+          />
+          <h1 class="text-3xl font-bold mt-4 text-black">
+            {{ company.company_name || 'Unbekannt' }}
+          </h1>
+          <p class="text-sm text-gray-500 mt-1">{{ fullAddress }}</p>
+        </div>
 
-      <!-- Basisinfos -->
-      <div class="space-y-1 mt-6">
-        <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
-        <DataRow label="Preis" :value="`ab ${company.price || '-'} €`" />
-        <DataRow label="Bewertung" :value="`${(company.rating || 0).toFixed(1)} ⭐`" />
-      </div>
+        <div class="space-y-1 mt-6">
+          <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
+          <DataRow label="Preis" :value="`ab ${company.price || '-'} €`" />
+          <DataRow label="Bewertung" :value="`${(company.rating || 0).toFixed(1)}⭐`" />
+        </div>
 
-      <!-- Status -->
-      <div class="flex items-center gap-2 mt-4 font-semibold" :class="statusColor">
-        <span>{{ openStatus }}</span>
-        <span v-if="isOpen" class="text-gray-500">bis {{ closingTime }}</span>
-      </div>
+        <div class="flex items-center gap-2 mt-4 font-semibold" :class="statusColor">
+          <span>{{ openStatus }}</span>
+          <span v-if="isOpen" class="text-gray-500">bis {{ closingTime }}</span>
+        </div>
 
-      <!-- Öffnungszeiten -->
-      <div class="mt-6">
-        <h2 class="font-semibold mb-2 text-black">Öffnungszeiten</h2>
-        <div class="bg-gray-50 border rounded-lg p-4">
-          <div v-for="day in days" :key="day" class="text-sm">
-            <strong>{{ dayLabel(day) }}:</strong>
-            {{ formatTimeRange(company.opening_hours?.[day]) }}
+        <div class="mt-6">
+          <h2 class="font-semibold mb-2 text-black">Öffnungszeiten</h2>
+          <div class="bg-gray-50 border rounded-lg p-4">
+            <div v-for="day in days" :key="day" class="text-sm">
+              <strong>{{ dayLabel(day) }}:</strong>
+              {{ formatTimeRange(company.opening_hours?.[day]) }}
+            </div>
           </div>
         </div>
+
+        <div class="mt-6">
+          <h2 class="font-semibold mb-2 text-black">Beschreibung</h2>
+          <p class="text-gray-700">{{ company.description || 'Keine Beschreibung' }}</p>
+        </div>
+
+        <div class="mt-8 flex gap-4 justify-center">
+          <a
+            v-if="company.phone"
+            :href="`tel:${company.phone}`"
+            class="bg-gold text-black font-semibold px-4 py-2 rounded-full flex items-center gap-2"
+          >
+            <i class="fa fa-phone"></i> Anrufen
+          </a>
+        </div>
+
+        <CommentsSection :companyId="companyId" class="mt-6" />
       </div>
 
-      <!-- Beschreibung -->
-      <div class="mt-6">
-        <h2 class="font-semibold mb-2 text-black">Beschreibung</h2>
-        <p class="text-gray-700">{{ company.description || 'Keine Beschreibung' }}</p>
-      </div>
-
-      <!-- Aktionen -->
-      <div class="mt-8 flex gap-4 justify-center">
-        <a
-          v-if="company.phone"
-          :href="`tel:${company.phone}`"
-          class="bg-gold text-black font-semibold px-4 py-2 rounded-full flex items-center gap-2"
-        >
-          <i class="fa fa-phone"></i> Anrufen
-        </a>
-      </div>
-
-      <div class="mt-6">
+      <div class="md:w-1/2">
         <iframe
-          class="w-full h-64 rounded"
+          class="w-full h-64 md:h-full rounded"
           :src="mapUrl"
           style="border:0;"
           allowfullscreen=""
@@ -71,8 +68,6 @@
           referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
-
-      <CommentsSection :companyId="companyId" />
     </div>
   </div>
 </template>
