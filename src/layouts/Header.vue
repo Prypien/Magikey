@@ -54,14 +54,9 @@ import OverlayMenu from '@/components/common/OverlayMenu.vue'
 
 const db = getFirestore()
 const router = useRouter()
-const showMenu = ref(false)
 const showOverlay = ref(false)
 const companyData = ref(null)
 const menuButton = ref(null)
-
-function toggleMenu() {
-  showMenu.value = !showMenu.value
-}
 
 function toggleOverlay() {
   showOverlay.value = !showOverlay.value
@@ -95,10 +90,6 @@ async function fetchCompanyData(user) {
   } else {
     companyData.value = null
   }
-}
-
-function goToEdit() {
-  router.push('/edit')
 }
 
 async function logout() {

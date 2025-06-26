@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-xl mx-auto p-6">
-    <h1 class="text-3xl font-semibold mb-8 text-center text-gray-900">
+  <div class="max-w-xl mx-auto mt-10 p-8 bg-white rounded-xl shadow">
+    <h1 class="text-3xl font-semibold mb-8 text-center text-black">
       <p class="text-center text-gold font-medium mb-4">
         <i class="fa fa-key mr-2 animate-bounce"></i> Werde Problemsolver:in
       </p>
@@ -13,16 +13,15 @@
         :actions="false"
         @submit="register"
         :config="{ validationVisibility: 'blur' }"
-        class="bg-white rounded-3xl shadow-xl p-8 space-y-6 border border-gray-100"
+        class="space-y-6"
       >
         <FormKit
           type="text"
           name="company_name"
           label="Firmenname"
           validation="required"
-          placeholder="z. B. Schlüsseldienst Müller"
-          outer-class="space-y-1"
-          input-class="formkit-input"
+          placeholder="z. B. Schlüsseldienst Müller"
+          :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
@@ -31,8 +30,7 @@
           label="E-Mail"
           validation="required|email"
           placeholder="beispiel@firma.de"
-          outer-class="space-y-1"
-          input-class="formkit-input"
+          :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
@@ -41,8 +39,7 @@
           label="Passwort"
           validation="required|min:6"
           placeholder="Mind. 6 Zeichen"
-          outer-class="space-y-1"
-          input-class="formkit-input"
+          :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
@@ -51,8 +48,7 @@
           label="Passwort wiederholen"
           validation="required|confirm:password"
           placeholder="Nochmals eingeben"
-          outer-class="space-y-1"
-          input-class="formkit-input"
+          :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
@@ -60,15 +56,14 @@
           name="phone"
           label="Telefonnummer"
           validation="required"
-          placeholder="z. B. 0151 12345678"
-          outer-class="space-y-1"
-          input-class="formkit-input"
+          placeholder="z. B. 0151 12345678"
+          :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
           type="submit"
           label="Registrieren"
-          input-class="bg-gold hover:bg-gold/90 text-white font-semibold py-3 rounded-xl w-full transition duration-200"
+          :classes="{ input: 'btn w-full' }"
         />
       </FormKit>
     </Transition>
@@ -99,8 +94,3 @@ const register = async ({ email, password, company_name, phone }) => {
 }
 </script>
 
-<style scoped>
-.formkit-input {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:border-gold transition bg-white text-gray-900;
-}
-</style>
