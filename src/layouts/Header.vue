@@ -5,16 +5,15 @@
       <span class="font-bold text-lg text-gold">Magikey</span>
     </router-link>
 
-    <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-      <router-link to="/hilfe" class="hover:underline">Hilfe</router-link>
-    </nav>
+    <!-- Navigationsleiste aktuell leer, Hilfelink befindet sich im Overlay-Menü -->
+    <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex items-center gap-3">
       <button class="text-xl hover:text-gold" aria-label="Sprache">
         <i class="fa fa-globe"></i>
       </button>
 
-      <button @click="showOverlay = true" class="text-xl hover:text-gold md:hidden" aria-label="Menü">
+      <button @click="showOverlay = true" class="text-xl hover:text-gold" aria-label="Menü">
         <i class="fa fa-bars"></i>
       </button>
 
