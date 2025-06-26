@@ -12,6 +12,29 @@ Magikey ist ein webbasiertes Projekt, das auf einem Entwickler‑MacBook entsteh
 
 Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten (z.&nbsp;B. 24/7). Nutzer können Betriebe direkt per Telefon oder ‎Google Maps kontaktieren. Ein verbessertes Design ist geplant.
 
+## Schnellstart
+
+1. Repository klonen und Abhängigkeiten installieren:
+
+   ```bash
+   npm install
+   ```
+
+2. `.env.example` kopieren und mit deinen Firebase-Daten füllen:
+
+   ```bash
+   cp .env.example .env
+   # anschließend die Platzhalter ausfüllen
+   ```
+
+3. Entwicklungsserver starten:
+
+   ```bash
+   npm run dev
+   ```
+
+   Die Anwendung ist danach unter <http://localhost:5173> erreichbar.
+
 ## Projektstruktur
 
 Der Code ist in `src` organisiert. Wichtige Unterordner:
@@ -29,7 +52,7 @@ Der Alias `@` verweist auf den `src`-Ordner und erleichtert Importpfade.
 
 ## Firebase Konfiguration
 
-Erstelle eine Datei `.env` und fülle deine Firebase‑Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
+Kopiere die Datei `.env.example` zu `.env` und fülle deine Firebase‑Credentials ein. Die App liest die Werte zur Laufzeit aus den Umgebungsvariablen.
 
 ```bash
 VITE_FIREBASE_API_KEY=<dein-key>
