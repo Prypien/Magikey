@@ -5,6 +5,13 @@
       <span class="font-bold text-lg text-gold">Magikey</span>
     </router-link>
 
+    <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+      <router-link to="/so-funktionierts" class="hover:underline">So funktioniert’s</router-link>
+      <router-link to="/preise" class="hover:underline">Preise & Leistungen</router-link>
+      <router-link to="/unternehmen" class="hover:underline">Für Unternehmen</router-link>
+      <router-link to="/kontakt" class="hover:underline">Hilfe / Kontakt</router-link>
+    </nav>
+
     <div v-if="companyData" class="flex items-center gap-4">
       <router-link to="/dashboard" class="flex items-center gap-2 hover:underline">
         <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
