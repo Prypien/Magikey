@@ -63,14 +63,20 @@ src/pages/user/CompanyDetailView.vue
         >
           <i class="fa fa-phone"></i> Anrufen
         </a>
-        <a
-          :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`"
-          target="_blank"
-          class="bg-black text-white font-semibold px-4 py-2 rounded-full flex items-center gap-2"
-        >
-          <i class="fa fa-map-marker"></i> Route
-        </a>
       </div>
+
+      <div class="mt-6">
+        <iframe
+          class="w-full h-64 rounded"
+          :src="mapUrl"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+
+      <CommentsSection :companyId="companyId" />
     </div>
   </div>
 </template>
@@ -81,6 +87,7 @@ import { useRoute } from 'vue-router'
 import { db } from '@/firebase/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
+import CommentsSection from '@/components/user/CommentsSection.vue'
 
 const route = useRoute()
 const companyId = route.params.id
@@ -97,6 +104,7 @@ onMounted(async () => {
 })
 
 const fullAddress = computed(() => `${company.value.postal_code || ''} ${company.value.address || ''}`)
+const mapUrl = computed(() => `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress.value)}&output=embed`)
 
 const now = new Date()
 const currentMinutes = now.getHours() * 60 + now.getMinutes()

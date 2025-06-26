@@ -25,6 +25,13 @@
           <option value="price_desc">Preis absteigend</option>
         </select>
       </div>
+
+      <div>
+        <label class="label">Mindestbewertung</label>
+        <select v-model.number="minRating" class="input">
+          <option v-for="r in [0,1,2,3,4,5]" :key="r" :value="r">{{ r }}+</option>
+        </select>
+      </div>
     </div>
 
     <div class="grid gap-2 sm:grid-cols-2">
@@ -61,13 +68,15 @@ const selectedDistance = ref(25)
 const sortBy = ref('price_asc')
 const onlyOpen = ref(false)
 const onlyEmergency = ref(false)
+const minRating = ref(0)
 
 const apply = () => {
   emit('apply', {
     distance: selectedDistance.value,
     sortBy: sortBy.value,
     onlyOpen: onlyOpen.value,
-    onlyEmergency: onlyEmergency.value
+    onlyEmergency: onlyEmergency.value,
+    minRating: minRating.value,
   })
 }
 </script>

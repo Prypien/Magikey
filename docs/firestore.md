@@ -20,4 +20,15 @@ companies (Collection)
     rating: number
 ```
 
-Weitere Sammlungen sind derzeit nicht definiert. Die Authentifizierung erfolgt über Firebase Auth.
+Weitere Sammlungen:
+
+```text
+reviews (Collection)
+  <id> (Document)
+    companyId: string
+    comment: string
+    rating: number
+    created_at: timestamp
+```
+
+Die Authentifizierung erfolgt über Firebase Auth.
