@@ -9,9 +9,15 @@ companies (Collection)
     company_name: string
     email: string
     phone: string
-    address: string
-    postal_code: string
-    city: string
+    address: map
+      volltext: string
+      straße: string
+      plz: string
+      ort: string
+      geo: map
+        lat: number
+        lng: number
+      placeId: string
     price: number
     emergency_price: number
     is_247: boolean

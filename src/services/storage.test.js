@@ -13,7 +13,7 @@ vi.mock('firebase/storage', () => ({
   getDownloadURL: getDownloadURLMock
 }))
 
-import { uploadCompanyLogo } from './storage'
+import { uploadCompanyLogo, uploadBusinessLicense } from './storage'
 
 describe('storage service', () => {
   beforeEach(() => {
@@ -30,9 +30,23 @@ describe('storage service', () => {
     expect(url).toBe('https://download/url')
   })
 
+  it('uploads license and returns url', async () => {
+    const file = new File(['c'], 'lic.pdf')
+    const url = await uploadBusinessLicense(file)
+    expect(storageRefMock).toHaveBeenCalledWith('storage-instance', 'licenses/uid123/lic.pdf')
+    expect(uploadBytesMock).toHaveBeenCalledWith('ref', file)
+    expect(url).toBe('https://download/url')
+  })
+
   it('throws when not authenticated', async () => {
     firebaseMock.auth.currentUser = null
     const file = new File(['b'], 'logo.png')
     await expect(uploadCompanyLogo(file)).rejects.toThrow('Nicht angemeldet')
+  })
+
+  it('license upload fails when unauthenticated', async () => {
+    firebaseMock.auth.currentUser = null
+    const file = new File(['d'], 'lic.pdf')
+    await expect(uploadBusinessLicense(file)).rejects.toThrow('Nicht angemeldet')
   })
 })

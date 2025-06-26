@@ -58,6 +58,7 @@ Kopiere die Datei `.env.example` zu `.env` und fülle deine Firebase‑Credentia
 VITE_FIREBASE_API_KEY=<dein-key>
 VITE_FIREBASE_AUTH_DOMAIN=<deine-domain>
 ...
+VITE_GOOGLE_MAPS_API_KEY=<maps-key>
 ```
 
 Weitere Details zur Datenstruktur findest du in [docs/firestore.md](docs/firestore.md).
