@@ -45,21 +45,14 @@
               />
             </div>
 
-            <FormKit type="number" name="price" label="Preis (ab)" />
+            <FormKit type="number" name="price" label="Preis (ab)" min="0" />
 
-            <OpeningHoursEditor :openingHours="openingHours" @update="updateOpeningHours" />
-
-            <FormKit type="checkbox" name="is_247" label="24/7 Notdienst" v-model="is_247" />
-            <FormKit v-if="is_247" type="number" name="emergency_price" label="Notdienstpreis" />
+            <p class="text-sm text-gray-600">Öffnungszeiten werden automatisch von Google übernommen.</p>
 
             <div class="space-y-4 pt-4">
               <h3 class="font-semibold text-lg">Account</h3>
               <FormKit type="password" name="password" label="Passwort" validation="required|min:6" />
               <FormKit type="password" name="repeatPassword" label="Passwort wiederholen" validation="required|min:6" />
-              <div>
-                <label class="font-medium text-sm">Gewerbeschein (optional)</label>
-                <input type="file" class="mt-1 text-sm" @change="uploadLicense" />
-              </div>
             </div>
 
             <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
@@ -87,23 +80,19 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import GoogleAddressAutocomplete from '@/components/company/GoogleAddressAutocomplete.vue'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import GoogleMap from '@/components/company/GoogleMap.vue'
-import { uploadBusinessLicense, uploadCompanyLogo } from '@/services/storage'
+import { uploadCompanyLogo } from '@/services/storage'
 import { loginWithGoogle } from '@/services/auth'
 
-import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
 
 const error = ref('')
 const loading = ref(false)
-const is_247 = ref(false)
 const registerForm = ref(null)
 const useGoogle = ref(false)
 
 const show = ref(false)
 
 const logoFile = ref(null)
-const licenseFile = ref(null)
 const logoUrl = ref('')
-const licenseUrl = ref('')
 
 const address = ref({
   fulltext: '',
@@ -115,29 +104,9 @@ const address = ref({
   placeId: ''
 })
 
-const openingHours = ref({
-  monday: { open: '', close: '' },
-  tuesday: { open: '', close: '' },
-  wednesday: { open: '', close: '' },
-  thursday: { open: '', close: '' },
-  friday: { open: '', close: '' },
-  saturday: { open: '', close: '' },
-  sunday: { open: '', close: '' }
-})
-
 onMounted(() => {
   show.value = true
 })
-
-function updateOpeningHours({ day, type, value }) {
-  openingHours.value[day][type] = value
-}
-
-async function uploadLicense(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  licenseFile.value = file
-}
 
 function googleRegister() {
   useGoogle.value = true
@@ -178,9 +147,6 @@ const submitRegistration = async (formData) => {
     if (logoFile.value) {
       logoUrl.value = await uploadCompanyLogo(logoFile.value)
     }
-    if (licenseFile.value) {
-      licenseUrl.value = await uploadBusinessLicense(licenseFile.value)
-    }
 
   const companyData = { ...formData }
   delete companyData.password
@@ -194,14 +160,13 @@ const submitRegistration = async (formData) => {
     placeId: address.value.placeId,
   }
   companyData.logo_url = logoUrl.value
-  companyData.license_url = licenseUrl.value
   delete companyData.street
   delete companyData.postal_code
   delete companyData.city
 
     await setDoc(doc(db, 'companies', uid), {
       ...companyData,
-      opening_hours: openingHours.value,
+      opening_hours: {},
       created_at: serverTimestamp(),
     })
     window.alert('Danke! Wir prüfen deinen Eintrag und melden uns bei dir.')

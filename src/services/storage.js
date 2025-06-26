@@ -11,12 +11,3 @@ export async function uploadCompanyLogo(file) {
   return getDownloadURL(imgRef)
 }
 
-export async function uploadBusinessLicense(file) {
-  if (!auth.currentUser) {
-    throw new Error('Nicht angemeldet')
-  }
-  const path = `licenses/${auth.currentUser.uid}/${file.name}`
-  const licRef = storageRef(storage, path)
-  await uploadBytes(licRef, file)
-  return getDownloadURL(licRef)
-}
