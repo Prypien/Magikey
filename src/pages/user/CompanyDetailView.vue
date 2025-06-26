@@ -22,7 +22,6 @@
         <div class="space-y-1 mt-6">
           <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
           <DataRow label="Preis" :value="`ab ${company.price || '-'} €`" />
-          <DataRow label="Bewertung" :value="`${(company.rating || 0).toFixed(1)}⭐`" />
         </div>
 
         <div class="flex items-center gap-2 mt-4 font-semibold" :class="statusColor">
@@ -55,7 +54,6 @@
           </a>
         </div>
 
-        <CommentsSection :companyId="companyId" class="mt-6" />
       </div>
 
       <div class="md:w-1/2">
@@ -78,7 +76,6 @@ import { useRoute } from 'vue-router'
 import { db } from '@/firebase/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
-import CommentsSection from '@/components/user/CommentsSection.vue'
 
 const route = useRoute()
 const companyId = route.params.id

@@ -100,7 +100,6 @@ const submitRegistration = async (formData) => {
       ...companyData,
       opening_hours: openingHours.value,
       created_at: serverTimestamp(),
-      rating: 0.0,
     })
     window.location.href = '/dashboard'
   } catch (e) {

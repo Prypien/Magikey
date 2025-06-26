@@ -42,9 +42,6 @@
           </div>
         </div>
 
-        <p class="font-semibold text-gray-800 text-center">
-          Bewertung: {{ parseFloat(company.rating || 0).toFixed(1) }} ⭐
-        </p>
       </div>
     </Transition>
   </div>
