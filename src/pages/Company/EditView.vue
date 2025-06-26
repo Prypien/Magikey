@@ -1,6 +1,8 @@
 <template>
-  <div class="max-w-3xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">🔧 Firmenprofil bearbeiten</h1>
+  <div class="max-w-3xl mx-auto mt-10 p-8 bg-white rounded-xl shadow">
+    <h1 class="text-3xl font-semibold mb-8 text-center text-black">
+      🔧 Firmenprofil bearbeiten
+    </h1>
 
     <Transition name="fade">
       <FormKit
@@ -8,7 +10,7 @@
         :actions="false"
         @submit="saveChanges"
         :config="{ validationVisibility: 'live' }"
-        class="bg-white/90 rounded-xl shadow p-6 space-y-4"
+        class="space-y-6"
       >
         <CompanyImageUpload
           :initialImageUrl="company.logo_url"
@@ -21,20 +23,63 @@
           label="Firmenname"
           validation="required"
           v-model="company.company_name"
+          :classes="{ label: 'label', input: 'input' }"
         />
-        <FormKit type="tel" name="phone" label="Telefonnummer" v-model="company.phone" />
-        <FormKit type="text" name="address" label="Straße und Hausnummer" v-model="company.address" />
-        <FormKit type="text" name="city" label="Ort" v-model="company.city" />
-        <FormKit type="text" name="postal_code" label="Postleitzahl" v-model="company.postal_code" />
-        <FormKit type="number" name="price" label="Preis (ab)" v-model="company.price" />
-        <FormKit type="textarea" name="description" label="Beschreibung" v-model="company.description" />
+        <FormKit
+          type="tel"
+          name="phone"
+          label="Telefonnummer"
+          v-model="company.phone"
+          :classes="{ label: 'label', input: 'input' }"
+        />
+        <FormKit
+          type="text"
+          name="address"
+          label="Straße und Hausnummer"
+          v-model="company.address"
+          :classes="{ label: 'label', input: 'input' }"
+        />
+        <FormKit
+          type="text"
+          name="city"
+          label="Ort"
+          v-model="company.city"
+          :classes="{ label: 'label', input: 'input' }"
+        />
+        <FormKit
+          type="text"
+          name="postal_code"
+          label="Postleitzahl"
+          v-model="company.postal_code"
+          :classes="{ label: 'label', input: 'input' }"
+        />
+        <FormKit
+          type="number"
+          name="price"
+          label="Preis (ab)"
+          v-model="company.price"
+          :classes="{ label: 'label', input: 'input' }"
+        />
+        <FormKit
+          type="textarea"
+          name="description"
+          label="Beschreibung"
+          v-model="company.description"
+          :classes="{ label: 'label', input: 'textarea' }"
+        />
 
         <OpeningHoursEditor
           :openingHours="company.opening_hours"
           @update="updateOpeningHours"
         />
 
-        <FormKit type="checkbox" name="is_247" label="24/7 Notdienst" v-model="company.is_247" />
+        <FormKit
+          type="checkbox"
+          name="is_247"
+          label="24/7 Notdienst"
+          v-model="company.is_247"
+          :classes="{ label: 'label' }"
+        />
 
         <FormKit
           v-if="company.is_247"
@@ -43,6 +88,7 @@
           label="Notdienstpreis"
           validation="required"
           v-model="company.emergency_price"
+          :classes="{ label: 'label', input: 'input' }"
         />
 
         <div class="flex gap-4 pt-4">
