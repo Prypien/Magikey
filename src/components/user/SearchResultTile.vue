@@ -1,6 +1,6 @@
 <template>
   <li
-    class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-lg transform transition duration-300 hover:-translate-y-1"
+    class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-lg transition min-h-28"
     :class="borderColor"
     @click="navigateToDetails"
   >
@@ -18,7 +18,10 @@
         </span>
       </div>
       <p class="text-sm text-gray-600">PLZ: {{ company.postal_code }}</p>
-      <p class="text-sm">Preis: ab {{ company.price }} €</p>
+      <p v-if="isOpen" class="text-sm">Preis: ab {{ company.price }} €</p>
+      <p v-else-if="company.emergency_price" class="text-sm text-red-600">
+        Notdienstpreis: {{ company.emergency_price }} €
+      </p>
       <p>
         <span
           class="px-2 py-1 rounded-full text-xs font-semibold"
@@ -26,12 +29,6 @@
         >
           {{ openStatus }}
         </span>
-      </p>
-      <p
-        v-if="!isOpen && company.is_247 && company.emergency_price"
-        class="text-sm text-red-600"
-      >
-        Notdienstpreis: {{ company.emergency_price }} €
       </p>
     </div>
   </li>
