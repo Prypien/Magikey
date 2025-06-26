@@ -7,11 +7,19 @@
         v-model="postalCode"
         type="text"
         inputmode="numeric"
+        maxlength="5"
         placeholder="PLZ eingeben"
-        class="water-input"
+        class="water-input pr-12 rounded-full"
+        @focus="onFocus"
         @blur="onBlur"
         @input="onPostalInput"
       />
+      <span
+        class="absolute right-1 top-1/2 -translate-y-1/2 bg-gold/10 border border-gold/50 rounded-full w-10 h-10 flex items-center justify-center pointer-events-none transition-all duration-200"
+        :class="{ 'opacity-0 scale-75': searchFocused }"
+      >
+        <i class="fa fa-search text-gold"></i>
+      </span>
       <ul v-if="showSuggestions" class="dropdown">
         <li
           v-for="code in filteredSuggestions"
@@ -49,6 +57,7 @@ const companies = ref([])
 const loading = ref(true)
 const showFilter = ref(false)
 const showSuggestions = ref(false)
+const searchFocused = ref(false)
 const filters = ref({
   distance: 25,
   sortBy: 'price_asc',
@@ -74,16 +83,24 @@ const filteredSuggestions = computed(() =>
     : []
 )
 
-function onPostalInput() {
+function onPostalInput(e) {
+  const digits = e.target.value.replace(/\D/g, '')
+  postalCode.value = digits
   showSuggestions.value = filteredSuggestions.value.length > 0
-  showFilter.value = postalCode.value.length > 0
+  showFilter.value = true
 }
 
 function onBlur() {
   window.setTimeout(() => {
     showSuggestions.value = false
+    searchFocused.value = false
     if (!postalCode.value) showFilter.value = false
   }, 100)
+}
+
+function onFocus() {
+  searchFocused.value = true
+  showFilter.value = true
 }
 
 function selectSuggestion(code) {
