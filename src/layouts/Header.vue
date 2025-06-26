@@ -37,9 +37,7 @@
         </div>
       </template>
 
-      <template v-else>
-        <button @click="showLogin = true" class="btn-outline">Einloggen</button>
-      </template>
+
 
       <button @click="showOverlay = true" class="text-xl hover:text-gold" aria-label="Menü">
         <i class="fa fa-bars"></i>
@@ -47,7 +45,6 @@
     </div>
 
     <teleport to="body">
-      <LoginModal v-if="showLogin" @close="showLogin = false" />
       <OverlayMenu v-model="showOverlay" />
     </teleport>
   </header>
@@ -59,12 +56,10 @@ import { useRouter } from 'vue-router'
 import { auth } from '@/firebase/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
-import LoginModal from '@/components/company/LoginModal.vue'
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 
 const db = getFirestore()
 const router = useRouter()
-const showLogin = ref(false)
 const showMenu = ref(false)
 const showOverlay = ref(false)
 const companyData = ref(null)
