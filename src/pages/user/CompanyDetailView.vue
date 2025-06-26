@@ -1,7 +1,3 @@
-src/pages/user/CompanyDetailView.vue
-+60
--49
-
 <template>
   <div class="max-w-2xl mx-auto p-6">
     <!-- Zurück -->
