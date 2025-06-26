@@ -6,10 +6,7 @@
     </router-link>
 
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-      <router-link to="/so-funktionierts" class="hover:underline">So funktioniert’s</router-link>
-      <router-link to="/preise" class="hover:underline">Preise & Leistungen</router-link>
-      <router-link to="/unternehmen" class="hover:underline">Für Unternehmen</router-link>
-      <router-link to="/kontakt" class="hover:underline">Hilfe / Kontakt</router-link>
+      <router-link to="/hilfe" class="hover:underline">Hilfe</router-link>
     </nav>
 
     <div v-if="companyData" class="flex items-center gap-4">
@@ -27,7 +24,9 @@
     </div>
 
     <div v-else>
-      <Button size="sm" class="bg-white/90 text-black shadow-md backdrop-blur" @click="showLogin = true">Dein Unternehmen</Button>
+      <button @click="showLogin = true" class="text-xl hover:text-gold" aria-label="Unternehmen">
+        <i class="fa fa-building"></i>
+      </button>
     </div>
 
     <teleport to="body">
@@ -43,7 +42,6 @@ import { auth } from '@/firebase/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import LoginModal from '@/components/company/LoginModal.vue'
-import Button from '@/components/common/Button.vue'
 
 const db = getFirestore()
 const router = useRouter()
