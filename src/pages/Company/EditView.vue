@@ -137,8 +137,10 @@ onMounted(async () => {
 const saveChanges = async () => {
   if (!user) return
   await updateDoc(doc(db, 'companies', user.uid), company.value)
-  window.alert('Änderungen gespeichert.')
-  router.push('/dashboard')
+  router.push({
+    name: 'success',
+    query: { msg: 'Änderungen gespeichert', next: '/dashboard' }
+  })
 }
 
 const confirmDelete = async () => {

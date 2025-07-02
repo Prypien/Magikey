@@ -11,6 +11,7 @@ import CompanyDetailView from '@/pages/user/CompanyDetailView.vue'
 import ImpressumView from '@/pages/ImpressumView.vue'
 import DatenschutzView from '@/pages/DatenschutzView.vue'
 import HelpCenterView from '@/pages/HelpCenterView.vue'
+import SuccessView from '@/pages/SuccessView.vue'
 import ResetPasswordView from '@/pages/ResetPasswordView.vue'
 import NotFoundView from '@/pages/NotFoundView.vue'
 
@@ -46,6 +47,7 @@ const routes = [
       { path: 'impressum', name: 'impressum', component: ImpressumView },
       { path: 'datenschutz', name: 'datenschutz', component: DatenschutzView },
       { path: 'hilfe', name: 'help', component: HelpCenterView },
+      { path: 'success', name: 'success', component: SuccessView },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
