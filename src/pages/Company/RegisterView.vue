@@ -85,6 +85,7 @@
           type="number"
           name="price"
           label="Preis (ab)"
+          min="0"
           :classes="{ label: 'label', input: 'input' }"
         />
 
@@ -95,10 +96,6 @@
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
-        <OpeningHoursEditor
-          :openingHours="openingHours"
-          @update="updateOpeningHours"
-        />
 
         <FormKit
           type="checkbox"
@@ -114,6 +111,7 @@
           name="emergency_price"
           label="Notdienstpreis"
           validation="required"
+          min="0"
           :classes="{ label: 'label', input: 'input' }"
         />
 
@@ -130,24 +128,10 @@ import { auth, db } from '@/firebase/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
-import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
 
 const router = useRouter()
 const is247 = ref(false)
 
-const openingHours = ref({
-  monday: { open: '', close: '' },
-  tuesday: { open: '', close: '' },
-  wednesday: { open: '', close: '' },
-  thursday: { open: '', close: '' },
-  friday: { open: '', close: '' },
-  saturday: { open: '', close: '' },
-  sunday: { open: '', close: '' },
-})
-
-function updateOpeningHours({ day, type, value }) {
-  openingHours.value[day][type] = value
-}
 
 const register = async (form) => {
   try {
@@ -167,7 +151,6 @@ const register = async (form) => {
       description: form.description || '',
       is_247: form.is_247 || false,
       emergency_price: form.is_247 ? form.emergency_price || '' : '',
-      opening_hours: openingHours.value,
       created_at: new Date().toISOString(),
     })
     router.push('/dashboard')

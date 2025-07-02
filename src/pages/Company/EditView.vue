@@ -57,6 +57,7 @@
           type="number"
           name="price"
           label="Preis (ab)"
+          min="0"
           v-model="company.price"
           :classes="{ label: 'label', input: 'input' }"
         />
@@ -68,10 +69,6 @@
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
-        <OpeningHoursEditor
-          :openingHours="company.opening_hours"
-          @update="updateOpeningHours"
-        />
 
         <FormKit
           type="checkbox"
@@ -87,6 +84,7 @@
           name="emergency_price"
           label="Notdienstpreis"
           validation="required"
+          min="0"
           v-model="company.emergency_price"
           :classes="{ label: 'label', input: 'input' }"
         />
@@ -106,21 +104,10 @@ import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
-import OpeningHoursEditor from '@/components/company/OpeningHoursEditor.vue'
 import Button from '@/components/common/Button.vue'
 
 const router = useRouter()
 const user = auth.currentUser
-
-const emptyHours = {
-  monday: { open: '', close: '' },
-  tuesday: { open: '', close: '' },
-  wednesday: { open: '', close: '' },
-  thursday: { open: '', close: '' },
-  friday: { open: '', close: '' },
-  saturday: { open: '', close: '' },
-  sunday: { open: '', close: '' },
-}
 
 const company = ref({
   company_name: '',
@@ -133,12 +120,7 @@ const company = ref({
   logo_url: '',
   is_247: false,
   emergency_price: '',
-  opening_hours: { ...emptyHours },
 })
-
-function updateOpeningHours({ day, type, value }) {
-  company.value.opening_hours[day][type] = value
-}
 
 onMounted(async () => {
   if (!user) return
