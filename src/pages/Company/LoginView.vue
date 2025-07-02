@@ -3,7 +3,7 @@
     <h1 class="text-2xl font-semibold mb-6 text-center text-black">Login für Unternehmen</h1>
     <button
       @click="loginWithGoogleAccount"
-      class="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white rounded-lg shadow-sm py-2 px-4 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mb-2"
+      class="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white rounded-lg shadow-sm py-2 px-4 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold mb-2"
       aria-label="Mit Google anmelden"
     >
       <svg class="h-5 w-5" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
