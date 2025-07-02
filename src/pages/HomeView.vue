@@ -30,7 +30,9 @@
           {{ code }}
         </li>
       </ul>
-      <Filter v-if="showFilter" dropdown class="mt-1" @apply="applyFilters" />
+      <transition name="water-drop">
+        <Filter v-if="showFilter" dropdown class="mt-1" @apply="applyFilters" />
+      </transition>
     </div>
 
     <div class="mt-6">
