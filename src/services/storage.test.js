@@ -20,12 +20,13 @@ describe('storage service', () => {
     vi.clearAllMocks()
     firebaseMock.auth.currentUser = { uid: 'uid123' }
     globalThis.File = class { constructor(parts, name) { this.parts = parts; this.name = name } }
+    vi.spyOn(Date, 'now').mockReturnValue(1234567890)
   })
 
   it('uploads file and returns download url', async () => {
-    const file = new File(['a'], 'logo.png')
+    const file = new File(['a'], 'my logo.png')
     const url = await uploadCompanyLogo(file)
-    expect(storageRefMock).toHaveBeenCalledWith('storage-instance', 'company_logos/uid123/logo.png')
+    expect(storageRefMock).toHaveBeenCalledWith('storage-instance', 'company_logos/uid123/1234567890_my_logo.png')
     expect(uploadBytesMock).toHaveBeenCalledWith('ref', file)
     expect(url).toBe('https://download/url')
   })
