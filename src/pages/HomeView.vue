@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
     <h1 class="text-2xl font-semibold text-center mb-6">Magikey, der Schlüsseldienst in deiner Nähe</h1>
 
-    <div class="relative mb-4">
+<div class="relative mb-4" ref="searchContainer">
       <input
         v-model="postalCode"
         type="text"
@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { db } from '@/firebase/firebase'
 import { collection, getDocs } from 'firebase/firestore'
 
@@ -69,6 +69,7 @@ const loading = ref(true)
 const showFilter = ref(false)
 const showSuggestions = ref(false)
 const searchFocused = ref(false)
+const searchContainer = ref(null)
 const filters = ref({
   distance: 25,
   sortBy: 'price_asc',
@@ -118,6 +119,16 @@ function selectSuggestion(code) {
   showFilter.value = true
 }
 
+function handleClickOutside(event) {
+  if (
+    showFilter.value &&
+    searchContainer.value &&
+    !searchContainer.value.contains(event.target)
+  ) {
+    showFilter.value = false
+  }
+}
+
 async function useLocation() {
   if (!navigator.geolocation) return
   navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -134,6 +145,7 @@ async function useLocation() {
 }
 
 onMounted(async () => {
+  document.addEventListener('click', handleClickOutside)
   useLocation()
   try {
     const snapshot = await getDocs(collection(db, 'companies'))
@@ -143,6 +155,10 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 
 const filteredCompanies = computed(() => {
