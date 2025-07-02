@@ -6,7 +6,9 @@
       <p v-if="message" class="text-green-600 text-sm">{{ message }}</p>
       <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
       <Button :disabled="loading" class="w-full mt-4">
-        <span v-if="loading">Senden...</span>
+        <template v-if="loading">
+          <Loader size="20" />
+        </template>
         <span v-else>Reset-Link anfordern</span>
       </Button>
     </FormKit>
@@ -17,6 +19,7 @@
 import { ref } from 'vue'
 import { resetPassword } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
+import Loader from '@/components/common/Loader.vue'
 
 const email = ref('')
 const message = ref('')

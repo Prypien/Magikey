@@ -26,7 +26,9 @@
     <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
 
     <Button :disabled="loading" class="w-full mt-4">
-      <span v-if="loading">Lade...</span>
+      <template v-if="loading">
+        <Loader size="20" />
+      </template>
       <span v-else>Einloggen</span>
     </Button>
 
@@ -62,6 +64,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login as loginService, resetPassword as resetPasswordService } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
+import Loader from '@/components/common/Loader.vue'
 
 defineProps({
   showCancel: {

@@ -1,8 +1,9 @@
 <template>
   <div class="max-w-3xl mx-auto p-6">
     <Transition name="fade" mode="out-in">
-      <div v-if="loading" class="text-center text-gray-500 py-20">
-        ⏳ Lädt Firmendaten...
+      <div v-if="loading" class="flex flex-col items-center py-20 text-gray-500">
+        <Loader size="80" />
+        <p class="mt-2">Lädt Firmendaten...</p>
       </div>
       <div v-else-if="!company" class="text-center text-red-500 py-20">
         Keine Firmendaten gefunden.
@@ -57,6 +58,7 @@ import { ref, onMounted } from 'vue'
 import { auth, db } from '@/firebase/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
+import Loader from '@/components/common/Loader.vue'
 
 const company = ref(null)
 const loading = ref(true)
