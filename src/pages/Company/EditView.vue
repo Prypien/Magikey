@@ -15,6 +15,8 @@
         <CompanyImageUpload
           :initialImageUrl="company.logo_url"
           @uploaded="url => (company.logo_url = url)"
+          @upload-start="logoUploading = true"
+          @upload-end="logoUploading = false"
         />
 
         <FormKit
@@ -92,7 +94,13 @@
         />
 
         <div class="flex gap-4 pt-4">
-          <Button type="submit" class="flex-1">Änderungen speichern</Button>
+          <Button
+            type="submit"
+            class="flex-1"
+            :disabled="logoUploading || saving"
+          >
+            Änderungen speichern
+          </Button>
           <button type="button" @click="confirmDelete" class="btn-danger">Konto löschen</button>
         </div>
       </FormKit>
@@ -111,6 +119,9 @@ import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 
 const router = useRouter()
 const user = auth.currentUser
+
+const logoUploading = ref(false)
+const saving = ref(false)
 
 const company = ref({
   company_name: '',
@@ -135,8 +146,15 @@ onMounted(async () => {
 })
 
 const saveChanges = async () => {
-  if (!user) return
+  if (!user || logoUploading.value) {
+    if (logoUploading.value) {
+      window.alert('Bild wird noch hochgeladen. Bitte warten...')
+    }
+    return
+  }
+  saving.value = true
   await updateDoc(doc(db, 'companies', user.uid), company.value)
+  saving.value = false
   router.push({
     name: 'success',
     query: { msg: 'Änderungen gespeichert', next: '/dashboard' }
