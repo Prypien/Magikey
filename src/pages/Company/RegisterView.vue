@@ -125,6 +125,8 @@
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
+        <OpeningHoursForm v-model="openingHours" />
+
 
         <FormKit
           type="checkbox"
@@ -158,11 +160,13 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { loginWithGoogle } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
+import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 
 const router = useRouter()
 const is247 = ref(false)
 const googleLoading = ref(false)
 const googleError = ref('')
+const openingHours = ref({})
 
 
 const register = async (form) => {
@@ -181,6 +185,7 @@ const register = async (form) => {
       postal_code: form.postal_code || '',
       price: form.price || '',
       description: form.description || '',
+      opening_hours: openingHours.value,
       is_247: form.is_247 || false,
       emergency_price: form.is_247 ? form.emergency_price || '' : '',
       created_at: new Date().toISOString(),
