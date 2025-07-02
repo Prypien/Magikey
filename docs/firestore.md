@@ -16,6 +16,8 @@ companies (Collection)
     emergency_price: number
     is_247: boolean
     opening_hours: map
+      monday: map { open: string, close: string }
+      ...
     created_at: timestamp
 ```
 

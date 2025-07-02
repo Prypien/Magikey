@@ -69,6 +69,8 @@
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
+        <OpeningHoursForm v-model="company.opening_hours" />
+
 
         <FormKit
           type="checkbox"
@@ -105,6 +107,7 @@ import { auth, db } from '@/firebase/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import Button from '@/components/common/Button.vue'
+import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 
 const router = useRouter()
 const user = auth.currentUser
@@ -120,6 +123,7 @@ const company = ref({
   logo_url: '',
   is_247: false,
   emergency_price: '',
+  opening_hours: {},
 })
 
 onMounted(async () => {
