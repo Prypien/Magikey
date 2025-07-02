@@ -23,9 +23,10 @@ import { uploadCompanyLogo } from '@/services/storage'
 defineProps({
   initialImageUrl: String
 })
-const emit = defineEmits(['uploaded'])
+const emit = defineEmits(['uploaded', 'upload-start', 'upload-end'])
 
 const previewUrl = ref('')
+const isUploading = ref(false)
 
 function uploadImage(e) {
   const file = e.target.files[0]
@@ -41,6 +42,8 @@ function uploadImage(e) {
     return
   }
   previewUrl.value = window.URL.createObjectURL(file)
+  isUploading.value = true
+  emit('upload-start')
   uploadCompanyLogo(file)
     .then(url => {
       previewUrl.value = url
@@ -49,6 +52,10 @@ function uploadImage(e) {
     .catch(err => {
       console.error(err)
       window.alert('Fehler beim Hochladen des Bildes.')
+    })
+    .finally(() => {
+      isUploading.value = false
+      emit('upload-end')
     })
 }
 </script>
