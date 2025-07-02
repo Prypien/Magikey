@@ -37,7 +37,12 @@
 
         <div>
           <h3 class="font-bold mb-2 text-gray-800">Öffnungszeiten</h3>
-          <div v-for="day in days" :key="day.key" class="text-sm text-gray-700">
+          <div
+            v-for="day in days"
+            :key="day.key"
+            class="text-sm"
+            :class="dayStatus(day.key)"
+          >
             {{ day.label }}: {{ formatTimeRange(company.opening_hours?.[day.key]) }}
           </div>
         </div>
@@ -85,6 +90,12 @@ const days = [
 function formatTimeRange(range) {
   if (!range || !range.open || !range.close) return 'geschlossen'
   return `${range.open} – ${range.close}`
+}
+
+function dayStatus(day) {
+  const hours = company.value.opening_hours?.[day]
+  if (!hours || !hours.open || !hours.close) return 'text-gray-500'
+  return 'text-black'
 }
 </script>
 

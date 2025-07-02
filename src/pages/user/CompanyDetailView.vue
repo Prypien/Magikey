@@ -32,8 +32,8 @@
         <div class="mt-6">
           <h2 class="font-semibold mb-2 text-black">Öffnungszeiten</h2>
           <div class="bg-gray-50 border rounded-lg p-4">
-            <div v-for="day in days" :key="day" class="text-sm">
-              <strong>{{ dayLabel(day) }}:</strong>
+            <div v-for="day in days" :key="day" class="text-sm" :class="dayStatus(day)">
+              <strong class="mr-1">{{ dayLabel(day) }}:</strong>
               {{ formatTimeRange(company.opening_hours?.[day]) }}
             </div>
           </div>
@@ -122,6 +122,12 @@ const statusColor = computed(() => {
   if (company.value.is_247) return 'text-red-600'
   return 'text-gray-500'
 })
+
+function dayStatus(day) {
+  const hours = company.value.opening_hours?.[day]
+  if (!hours || !hours.open || !hours.close) return 'text-gray-500'
+  return 'text-black'
+}
 
 function dayLabel(day) {
   return {

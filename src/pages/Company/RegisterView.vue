@@ -190,7 +190,10 @@ const register = async (form) => {
       emergency_price: form.is_247 ? form.emergency_price || '' : '',
       created_at: new Date().toISOString(),
     })
-    router.push('/dashboard')
+    router.push({
+      name: 'success',
+      query: { msg: 'Unternehmen erfolgreich registriert', next: '/dashboard' }
+    })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
   }
