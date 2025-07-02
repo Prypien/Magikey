@@ -101,21 +101,4 @@
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   }
 
-  .water-filter {
-    @apply overflow-hidden rounded-xl backdrop-blur-md border border-gold/50;
-    background: linear-gradient(135deg, #f9f8f8, #fff8d9, #f9f8f8);
-    background-size: 400% 400%;
-    animation: water-bg 10s ease infinite;
-  }
-
-  .water-drop-enter-from,
-  .water-drop-leave-to {
-    opacity: 0;
-    transform: scaleY(0);
-    transform-origin: top;
-  }
-  .water-drop-enter-active,
-  .water-drop-leave-active {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
 }

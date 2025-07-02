@@ -2,7 +2,7 @@
   <div
     :class="[
       dropdown
-        ? 'dropdown water-filter p-4 space-y-4'
+        ? 'dropdown p-4 space-y-4'
         : 'bg-white shadow-md rounded-xl p-4 border border-gray-200 space-y-4'
     ]"
   >
@@ -27,6 +27,7 @@
       </div>
 
     </div>
+
 
     <div class="grid gap-2 sm:grid-cols-2">
       <label class="flex items-center gap-2">
