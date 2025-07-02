@@ -34,7 +34,10 @@
     </div>
 
     <div class="mt-6">
-      <p v-if="loading">⏳ Firmen werden geladen...</p>
+      <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
+        <Loader size="80" />
+        <p class="mt-2">Firmen werden geladen...</p>
+      </div>
       <template v-else>
         <div v-if="filteredCompanies.length === 0" class="text-gray-500">
           <p>Leider kein Anbieter gefunden. Trag dich ein, wir benachrichtigen dich!</p>
@@ -55,6 +58,7 @@ import { collection, getDocs } from 'firebase/firestore'
 import Filter from '@/components/user/Filter.vue'
 import SearchResults from '@/components/user/SearchResults.vue'
 import NotifyForm from '@/components/user/NotifyForm.vue'
+import Loader from '@/components/common/Loader.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
 
 const postalCode = ref('')

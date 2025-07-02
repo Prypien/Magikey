@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center text-center min-h-[60vh] px-4">
     <lottie-player
-      src="/lotties/success.json"
+      src="/lotties/haken.json"
       background="transparent"
       speed="1"
       style="width: 200px; height: 200px;"
@@ -18,7 +18,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-const message = route.query.msg || 'Aktion erfolgreich'
+const message = route.query.msg || 'Alles gespeichert'
 const next = route.query.next || '/dashboard'
 
 function goNext() {

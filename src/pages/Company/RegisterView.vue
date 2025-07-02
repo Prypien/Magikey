@@ -33,7 +33,9 @@
       <span class="text-gray-700 font-medium">Mit Google registrieren</span>
     </button>
     <p v-if="googleError" class="text-red-600 text-sm text-center mt-2">{{ googleError }}</p>
-    <p v-if="googleLoading" class="text-gray-600 text-sm text-center mt-2">Lade...</p>
+    <div v-if="googleLoading" class="flex justify-center mt-2">
+      <Loader size="40" />
+    </div>
     <div class="text-center text-gray-400 mb-6">oder mit E-Mail registrieren</div>
 
     <Transition name="fade">
@@ -161,6 +163,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { loginWithGoogle } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
+import Loader from '@/components/common/Loader.vue'
 
 const router = useRouter()
 const is247 = ref(false)
