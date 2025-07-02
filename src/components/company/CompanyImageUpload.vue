@@ -18,11 +18,12 @@
 
 <script setup>
 import { ref } from 'vue'
+import { uploadCompanyLogo } from '@/services/storage'
 
 defineProps({
   initialImageUrl: String
 })
-const emit = defineEmits(['selected'])
+const emit = defineEmits(['uploaded'])
 
 const previewUrl = ref('')
 
@@ -35,7 +36,19 @@ function uploadImage(e) {
     return
   }
 
+  if (!['image/jpeg', 'image/png'].includes(file.type)) {
+    window.alert('Nur JPEG oder PNG Bilder sind erlaubt.')
+    return
+  }
   previewUrl.value = window.URL.createObjectURL(file)
-  emit('selected', file)
+  uploadCompanyLogo(file)
+    .then(url => {
+      previewUrl.value = url
+      emit('uploaded', url)
+    })
+    .catch(err => {
+      console.error(err)
+      window.alert('Fehler beim Hochladen des Bildes.')
+    })
 }
 </script>
