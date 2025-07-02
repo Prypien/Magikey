@@ -2,7 +2,7 @@
   <div
     :class="[
       dropdown
-        ? 'dropdown p-4 space-y-4'
+        ? 'dropdown water-filter p-4 space-y-4'
         : 'bg-white shadow-md rounded-xl p-4 border border-gray-200 space-y-4'
     ]"
   >
