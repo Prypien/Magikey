@@ -67,7 +67,7 @@ const days = [
   { key: 'sunday', label: 'Sonntag' }
 ]
 
-const sameForAll = ref(true)
+const sameForAll = ref(false)
 const allOpen = ref('')
 const allClose = ref('')
 
@@ -80,11 +80,24 @@ watch(
   () => props.modelValue,
   val => {
     if (!val) return
+    let firstDay = null
+    let allSame = true
     days.forEach(d => {
-      if (val[d.key]) {
-        openingHours.value[d.key] = { ...emptyHours(), ...val[d.key] }
+      const cur = val[d.key] || {}
+      openingHours.value[d.key] = { ...emptyHours(), ...cur }
+      if (!firstDay) {
+        firstDay = cur
+      } else if (cur.open !== firstDay.open || cur.close !== firstDay.close) {
+        allSame = false
       }
     })
+    if (firstDay && firstDay.open && firstDay.close && allSame) {
+      sameForAll.value = true
+      allOpen.value = firstDay.open
+      allClose.value = firstDay.close
+    } else {
+      sameForAll.value = false
+    }
   },
   { immediate: true }
 )

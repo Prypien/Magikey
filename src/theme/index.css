@@ -8,6 +8,13 @@
   100% { background-position: 0% 50%; }
 }
 
+:root {
+  --fk-color-primary: #d9a908;
+  --fk-color-checked: var(--fk-color-primary);
+  --fk-color-border-focus: var(--fk-color-primary);
+  --fk-color-input-selection: rgba(217, 169, 8, 0.25);
+}
+
 @layer base {
   html {
     font-family: 'Montserrat', sans-serif;
