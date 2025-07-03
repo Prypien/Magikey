@@ -1,64 +1,27 @@
 <template>
   <div class="form-section">
-    <label class="flex items-center gap-2 mb-4">
-      <input type="checkbox" v-model="sameForAll" class="accent-gold" />
-      <span class="text-sm">Gilt an allen Tagen die gleichen Öffnungszeiten?</span>
-    </label>
-
-    <div v-if="sameForAll" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-      <div>
-        <label class="label">Öffnungszeit von</label>
-        <input type="time" v-model="allOpen" class="input" />
-      </div>
-      <div>
-        <label class="label">bis</label>
-        <input type="time" v-model="allClose" class="input" />
-      </div>
-    </div>
-
-    <div v-else class="space-y-3 mb-4">
-      <div
+    <label class="block font-semibold mb-2">Wochentage</label>
+    <div class="flex gap-2 mb-4">
+      <button
         v-for="day in days"
         :key="day.key"
-        class="grid grid-cols-1 sm:grid-cols-4 items-center gap-2"
-      >
-        <span class="text-sm sm:col-span-1">{{ day.label }}</span>
-        <input
-          type="time"
-          v-model="openingHours[day.key].open"
-          class="input sm:col-span-1"
-          :disabled="isClosed(day.key)"
-        />
-        <input
-          type="time"
-          v-model="openingHours[day.key].close"
-          class="input sm:col-span-1"
-          :disabled="isClosed(day.key)"
-        />
-        <button
-          type="button"
-          class="text-xs text-gray-500 sm:col-span-1"
-          @click="toggleClosed(day.key)"
-        >
-          {{ isClosed(day.key) ? "Geöffnet" : "Geschlossen" }}
-        </button>
-      </div>
-      <button
+        :class="[
+          'w-10 py-1 rounded-2xl border text-sm font-medium',
+          selectedDays.includes(day.key)
+            ? 'bg-gold text-white border-gold shadow'
+            : 'bg-white text-gray-600 border-gray-300'
+        ]"
+        @click="toggleDay(day.key)"
         type="button"
-        class="text-sm text-gold underline"
-        @click="copyMonday"
       >
-        Montag auf alle übernehmen
+        {{ day.short }}
       </button>
     </div>
-
-    <div class="flex gap-4">
-      <button type="button" class="btn-outline py-1 px-3 text-sm" @click="set247">
-        24/7
-      </button>
-      <button type="button" class="btn-outline py-1 px-3 text-sm" @click="setAllClosed">
-        Alle geschlossen
-      </button>
+    <div class="flex items-center gap-3">
+      <label class="text-sm">Uhrzeit:</label>
+      <input type="time" v-model="open" class="input w-24" />
+      <span>–</span>
+      <input type="time" v-model="close" class="input w-24" />
     </div>
   </div>
 </template>
@@ -72,107 +35,56 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const days = [
-  { key: 'monday', label: 'Montag' },
-  { key: 'tuesday', label: 'Dienstag' },
-  { key: 'wednesday', label: 'Mittwoch' },
-  { key: 'thursday', label: 'Donnerstag' },
-  { key: 'friday', label: 'Freitag' },
-  { key: 'saturday', label: 'Samstag' },
-  { key: 'sunday', label: 'Sonntag' }
+  { key: 'monday', short: 'Mo' },
+  { key: 'tuesday', short: 'Di' },
+  { key: 'wednesday', short: 'Mi' },
+  { key: 'thursday', short: 'Do' },
+  { key: 'friday', short: 'Fr' },
+  { key: 'saturday', short: 'Sa' },
+  { key: 'sunday', short: 'So' }
 ]
 
-// Refs
-const sameForAll = ref(false)
-const allOpen = ref('')
-const allClose = ref('')
-const openingHours = ref(
-  days.reduce((acc, d) => ({ ...acc, [d.key]: { open: '', close: '', closed: false } }), {})
-)
+const selectedDays = ref(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])
+const open = ref('')
+const close = ref('')
 
-// Helper: Ist der Tag geschlossen?
-function isClosed(dayKey) {
-  return openingHours.value[dayKey].closed
-}
-
-function toggleClosed(dayKey) {
-  openingHours.value[dayKey].closed = !openingHours.value[dayKey].closed
-  if (openingHours.value[dayKey].closed) {
-    openingHours.value[dayKey].open = ''
-    openingHours.value[dayKey].close = ''
-  }
-}
-
-// Watch .modelValue -> local state (für Edit/Reload)
+// Sync mit v-model
 watch(
   () => props.modelValue,
   val => {
     if (!val) return
-    days.forEach(d => {
-      openingHours.value[d.key] = {
-        open: val[d.key]?.open || '',
-        close: val[d.key]?.close || '',
-        closed: val[d.key]?.closed || false
-      }
-    })
-    // Check if all days are equal and not closed
-    const first = openingHours.value[days[0].key]
-    const allSame =
-      days.every(
-        d =>
-          openingHours.value[d.key].open === first.open &&
-          openingHours.value[d.key].close === first.close &&
-          !openingHours.value[d.key].closed
-      ) && first.open && first.close
-    sameForAll.value = !!allSame
-    if (allSame) {
-      allOpen.value = first.open
-      allClose.value = first.close
-    }
+    selectedDays.value = val.days || []
+    open.value = val.open || ''
+    close.value = val.close || ''
   },
   { immediate: true }
 )
 
-// Update emit wenn sich openingHours ändern
-watch(
-  openingHours,
-  val => {
-    emit('update:modelValue', Object.fromEntries(days.map(d => [d.key, { ...val[d.key] }])))
-  },
-  { deep: true }
-)
-
-// Watch „alle gleich“ + Öffnungszeiten
-watch([sameForAll, allOpen, allClose], () => {
-  if (sameForAll.value) {
-    days.forEach(d => {
-      openingHours.value[d.key] = {
-        open: allOpen.value,
-        close: allClose.value,
-        closed: false
-      }
-    })
-  }
+// Emit
+watch([selectedDays, open, close], () => {
+  emit('update:modelValue', {
+    days: selectedDays.value,
+    open: open.value,
+    close: close.value
+  })
 })
 
-// Button-Functions
-function copyMonday() {
-  const m = { ...openingHours.value.monday }
-  days.forEach(d => {
-    openingHours.value[d.key] = { ...m }
-  })
-}
-function set247() {
-  sameForAll.value = true
-  allOpen.value = '00:00'
-  allClose.value = '23:59'
-  days.forEach(d => {
-    openingHours.value[d.key] = { open: '00:00', close: '23:59', closed: false }
-  })
-}
-function setAllClosed() {
-  sameForAll.value = false
-  days.forEach(d => {
-    openingHours.value[d.key] = { open: '', close: '', closed: true }
-  })
+function toggleDay(key) {
+  if (selectedDays.value.includes(key)) {
+    selectedDays.value = selectedDays.value.filter(d => d !== key)
+  } else {
+    selectedDays.value.push(key)
+  }
 }
 </script>
+
+<style scoped>
+.input {
+  @apply border rounded-xl px-2 py-1 w-24 text-sm focus:ring-2 focus:border-gold border-gray-300;
+}
+.bg-gold {
+  background-color: #d9a908 !important;
+  color: #fff !important;
+  border-color: #d9a908 !important;
+}
+</style>
