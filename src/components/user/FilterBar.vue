@@ -1,37 +1,39 @@
 <template>
-  <div class="sticky top-0 z-30 bg-white flex gap-2 py-2 px-3 rounded-2xl shadow overflow-x-auto">
+  <div
+    class="sticky top-2 z-30 flex gap-2 bg-white/80 backdrop-blur-md px-2 py-3 rounded-2xl shadow-lg w-full max-w-3xl mx-auto border border-gray-100 overflow-x-auto"
+  >
     <FilterChip
-      :active="filters.openNow"
-      :icon="Clock"
+      icon="Clock"
       label="Jetzt geöffnet"
+      :active="filters.openNow"
       @click="toggle('openNow')"
     />
     <FilterChip
-      :active="priceActive"
-      :icon="Euro"
+      icon="Euro"
       label="Preis"
-      :showChevron="true"
+      :active="priceActive"
       @click="showPrice = true"
     />
-    <div class="flex items-center px-3 py-2 rounded-2xl border bg-white" :class="filters.location ? 'border-gold text-gold' : 'border-gray-200 text-gray-700'">
-      <MapPin class="w-5 h-5 mr-2" />
+    <div class="relative flex items-center">
+      <MapPin class="w-5 h-5 text-gold mr-1" />
       <input
         v-model="filters.location"
         placeholder="Wo?"
-        class="bg-transparent focus:outline-none w-20 sm:w-32"
+        class="bg-transparent border-none focus:ring-0 placeholder:text-gray-400 text-sm w-16 sm:w-24"
+        autocomplete="postal-code"
       />
     </div>
     <FilterPriceSheet
       v-model="filters.price"
       :visible="showPrice"
-      @close="showPrice = false; priceActive = true"
+      @close="showPrice = false"
     />
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
-import { Clock, Euro, MapPin } from 'lucide-vue-next'
+import { reactive, ref, watch, computed } from 'vue'
+import { MapPin } from 'lucide-vue-next'
 import FilterChip from './FilterChip.vue'
 import FilterPriceSheet from './FilterPriceSheet.vue'
 
@@ -46,7 +48,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const filters = reactive({ ...props.modelValue })
 const showPrice = ref(false)
-const priceActive = ref(false)
+const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 100)
 
 watch(filters, () => {
   emit('update:modelValue', { ...filters })
