@@ -63,6 +63,12 @@ VITE_GOOGLE_MAPS_API_KEY=<maps-key>
 
 Weitere Details zur Datenstruktur findest du in [docs/firestore.md](docs/firestore.md).
 
+Die Sicherheitsregeln für Firestore und Storage liegen in den Dateien
+`firestore.rules` und `storage.rules`. Sie werden über die
+`firebase.json` eingebunden und regeln unter anderem, dass nur
+verifizierte Firmenprofile öffentlich lesbar sind und Logos nur vom
+Eigentümer hochgeladen werden dürfen.
+
 ## Build
 
 ```bash
