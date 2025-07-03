@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-semibold text-center mb-6">{{ t('home.heading') }}</h1>
+    <h1 class="text-2xl font-semibold text-center mb-6">Magikey, der Schlüsseldienst in deiner Nähe</h1>
 
 <div class="relative mb-4" ref="searchContainer">
       <input
@@ -8,7 +8,7 @@
         type="text"
         inputmode="numeric"
         maxlength="5"
-        :placeholder="t('home.searchPlaceholder')"
+        placeholder="Wo brauchst du Hilfe? Postleitzahl"
         class="water-input pr-12 rounded-full"
         @focus="onFocus"
         @blur="onBlur"
@@ -36,11 +36,11 @@
     <div class="mt-6">
       <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
         <Loader :size="80" />
-        <p class="mt-2">{{ t('home.loading') }}</p>
+        <p class="mt-2">Firmen werden geladen...</p>
       </div>
       <template v-else>
         <div v-if="filteredCompanies.length === 0" class="text-gray-500">
-          <p>{{ t('home.noResults') }}</p>
+          <p>Leider kein Anbieter gefunden. Trag dich ein, wir benachrichtigen dich!</p>
           <NotifyForm />
         </div>
         <SearchResults v-else :companies="filteredCompanies" />
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, inject } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { getCompanies } from '@/services/company'
 
 import Filter from '@/components/user/Filter.vue'
@@ -59,8 +59,6 @@ import SearchResults from '@/components/user/SearchResults.vue'
 import NotifyForm from '@/components/user/NotifyForm.vue'
 import Loader from '@/components/common/Loader.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
-
-const t = inject('t')
 
 const postalCode = ref('')
 const companies = ref([])
