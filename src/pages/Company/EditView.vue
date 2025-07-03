@@ -19,7 +19,8 @@
         </Button>
         <p v-if="verificationSent" class="text-green-600 text-sm mt-2">E-Mail wurde gesendet.</p>
       </div>
-      <FormKit
+    </Transition>
+    <FormKit
         type="form"
         :actions="false"
         @submit="saveChanges"
@@ -118,7 +119,6 @@
           <button type="button" @click="confirmDelete" class="btn-danger">Konto löschen</button>
         </div>
       </FormKit>
-    </Transition>
   </div>
 </template>
 
