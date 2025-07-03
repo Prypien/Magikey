@@ -35,7 +35,7 @@
 
     <div class="mt-6">
       <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
-        <Loader size="80" />
+        <Loader :size="80" />
         <p class="mt-2">Firmen werden geladen...</p>
       </div>
       <template v-else>

@@ -7,7 +7,7 @@
       <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
       <Button :disabled="loading" class="w-full mt-4">
         <template v-if="loading">
-          <Loader size="20" />
+          <Loader :size="20" />
         </template>
         <span v-else>Reset-Link anfordern</span>
       </Button>

@@ -34,7 +34,7 @@
     </button>
     <p v-if="googleError" class="text-red-600 text-sm text-center mt-2">{{ googleError }}</p>
     <div v-if="googleLoading" class="flex justify-center mt-2">
-      <Loader size="40" />
+      <Loader :size="40" />
     </div>
     <div class="text-center text-gray-400 mb-6">oder mit E-Mail registrieren</div>
 
