@@ -13,6 +13,7 @@
     <div class="flex-1 space-y-1">
       <div class="flex justify-between items-start">
         <h3 class="font-semibold text-lg">{{ company.company_name }}</h3>
+        <span v-if="!company.verified" class="text-xs text-red-500">Not verified</span>
       </div>
       <p class="text-sm text-gray-600">PLZ: {{ company.postal_code }}</p>
       <p v-if="isOpen" class="text-sm">Preis: ab {{ company.price }} €</p>

@@ -13,8 +13,9 @@
             alt="Firmenlogo"
             class="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
           />
-          <h1 class="text-3xl font-bold mt-4 text-black">
+          <h1 class="text-3xl font-bold mt-4 text-black flex items-center gap-2">
             {{ company.company_name || 'Unbekannt' }}
+            <span v-if="!company.verified" class="text-sm text-red-600">Not verified</span>
           </h1>
           <p class="text-sm text-gray-500 mt-1">{{ fullAddress }}</p>
         </div>

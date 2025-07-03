@@ -158,7 +158,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase/firebase'
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { loginWithGoogle } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
@@ -194,12 +194,9 @@ const register = async (form) => {
       created_at: new Date().toISOString(),
       verified: false,
     })
-    await sendEmailVerification(user, {
-      url: `${window.location.origin}/verify-email`,
-    })
     router.push({
       name: 'success',
-      query: { msg: 'Bestätige deine E-Mail über den Link', next: '/dashboard' }
+      query: { msg: 'Registrierung erfolgreich', next: '/dashboard' }
     })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
