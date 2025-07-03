@@ -19,14 +19,9 @@
       <template v-if="!companyData">
         <router-link to="/register" class="btn-outline hidden md:inline-flex items-center">
           <i class="fa fa-key mr-2 animate-bounce"></i>
-          {{ t('header.becomeSolver') }}
+          Werde Problemsolver:in
         </router-link>
       </template>
-
-      <button @click="toggleLanguage" class="text-xl hover:text-gold focus:outline-none flex items-center" aria-label="Sprache">
-        <i class="fa fa-globe"></i>
-        <span class="ml-1 text-sm uppercase">{{ locale }}</span>
-      </button>
 
       <button
         @click="toggleOverlay"
@@ -46,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth } from '@/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
@@ -58,17 +53,11 @@ const router = useRouter()
 const showOverlay = ref(false)
 const companyData = ref(null)
 const menuButton = ref(null)
-const t = inject('t')
-const locale = inject('locale')
-const setLocale = inject('setLocale')
 
 function toggleOverlay() {
   showOverlay.value = !showOverlay.value
 }
 
-function toggleLanguage() {
-  setLocale(locale.value === 'de' ? 'en' : 'de')
-}
 
 function handleClickOutside(event) {
   if (showOverlay.value && !menuButton.value.contains(event.target)) {
