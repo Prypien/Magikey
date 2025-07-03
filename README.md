@@ -69,6 +69,31 @@ Die Sicherheitsregeln für Firestore und Storage liegen in den Dateien
 verifizierte Firmenprofile öffentlich lesbar sind und Logos nur vom
 Eigentümer hochgeladen werden dürfen.
 
+## Storage CORS-Konfiguration
+
+Damit Uploads vom lokalen Frontend funktionieren, muss CORS im
+Storage-Bucket aktiviert sein. Lege dazu eine Datei `cors.json` mit
+folgendem Inhalt an:
+
+```json
+[
+  {
+    "origin": ["http://localhost:5173"],
+    "method": ["GET", "POST", "PUT"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization"]
+  }
+]
+```
+
+Aktiviere die Einstellung anschließend mit der Google Cloud CLI:
+
+```bash
+gsutil cors set cors.json gs://magikey-5f3ef.appspot.com
+```
+
+Danach akzeptiert der Bucket Anfragen von `http://localhost:5173`.
+
 ## Build
 
 ```bash
