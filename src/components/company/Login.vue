@@ -63,8 +63,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login as loginService, resetPassword as resetPasswordService } from '@/services/auth'
-import { auth, db } from '@/firebase/firebase'
-import { doc, updateDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
 import Loader from '@/components/common/Loader.vue'
 
@@ -89,13 +87,8 @@ const login = async () => {
   loading.value = true
   try {
     await loginService(email.value, password.value)
-    if (auth.currentUser?.emailVerified) {
-      await updateDoc(doc(db, 'companies', auth.currentUser.uid), { verified: true })
-      emit('success')
-      router.push('/dashboard')
-    } else {
-      error.value = 'Bitte bestätige zuerst deine E-Mail.'
-    }
+    emit('success')
+    router.push('/dashboard')
   } catch (e) {
     error.value = e.message
   } finally {

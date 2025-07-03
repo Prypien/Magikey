@@ -53,7 +53,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { db } from '@/firebase/firebase'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 
 import Filter from '@/components/user/Filter.vue'
 import SearchResults from '@/components/user/SearchResults.vue'
@@ -146,8 +146,7 @@ onMounted(async () => {
   document.addEventListener('click', handleClickOutside)
   useLocation()
   try {
-    const q = query(collection(db, 'companies'), where('verified', '==', true))
-    const snapshot = await getDocs(q)
+    const snapshot = await getDocs(collection(db, 'companies'))
     companies.value = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
   } catch (err) {
     console.error('Fehler beim Laden:', err)
