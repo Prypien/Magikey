@@ -21,8 +21,9 @@
   }
   body {
     @apply bg-white text-black;
-    background: linear-gradient(135deg, #f9f8f8, #fff8d9, #f9f8f8);
-    background-size: 400% 400%;
+    background-image: url('/background.svg'), linear-gradient(135deg, #f9f8f8, #fff8d9, #f9f8f8);
+    background-size: cover, 400% 400%;
+    background-repeat: no-repeat;
     animation: water-bg 15s ease infinite;
   }
 }
