@@ -2,7 +2,7 @@
   <div class="max-w-3xl mx-auto p-6">
     <Transition name="fade" mode="out-in">
       <div v-if="loading" class="flex flex-col items-center py-20 text-gray-500">
-        <Loader size="80" />
+        <Loader :size="80" />
         <p class="mt-2">Lädt Firmendaten...</p>
       </div>
       <div v-else-if="!company" class="text-center text-red-500 py-20">

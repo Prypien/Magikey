@@ -27,7 +27,7 @@
 
     <Button :disabled="loading" class="w-full mt-4">
       <template v-if="loading">
-        <Loader size="20" />
+        <Loader :size="20" />
       </template>
       <span v-else>Einloggen</span>
     </Button>

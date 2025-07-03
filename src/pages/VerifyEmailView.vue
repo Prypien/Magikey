@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center text-center min-h-[60vh] px-4">
     <template v-if="loading">
-      <Loader size="80" />
+      <Loader :size="80" />
       <p class="mt-2">Überprüfe Link...</p>
     </template>
     <template v-else-if="success">
