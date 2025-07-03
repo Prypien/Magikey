@@ -49,7 +49,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth } from '@/firebase/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 
 const db = getFirestore()
@@ -93,7 +93,7 @@ async function fetchCompanyData(user) {
 }
 
 async function logout() {
-  await auth.signOut()
+  await signOut(auth)
   router.push('/')
 }
 </script>
