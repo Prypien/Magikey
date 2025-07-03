@@ -1,9 +1,18 @@
-import { getFunctions, httpsCallable } from 'firebase/functions'
-import { app } from '../firebase'
+/* global fetch */
+export async function getPostalFromCoords(lat, lng) {
+  const url =
+    import.meta.env.VITE_FUNCTION_URL ||
+    `https://us-central1-${import.meta.env.VITE_FIREBASE_PROJECT_ID}.cloudfunctions.net/postalCodeFromCoords`
 
-const functions = getFunctions(app)
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lat, lng }),
+  })
 
-export function getPostalFromCoords(lat, lng) {
-  const fn = httpsCallable(functions, 'postalCodeFromCoords')
-  return fn({ lat, lng }).then(r => r.data)
+  if (!res.ok) {
+    throw new Error('Request failed')
+  }
+
+  return res.json()
 }
