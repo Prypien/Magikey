@@ -11,10 +11,11 @@ vi.mock('firebase/auth', () => ({
   signOut: vi.fn(() => Promise.resolve()),
   GoogleAuthProvider: vi.fn(),
   signInWithPopup: vi.fn(() => Promise.resolve('google')),
+  sendEmailVerification: vi.fn(() => Promise.resolve()),
 }))
 
-import { login, resetPassword, logout, loginWithGoogle, register } from './auth'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithPopup } from 'firebase/auth'
+import { login, resetPassword, logout, loginWithGoogle, register, sendVerificationEmail } from './auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithPopup, sendEmailVerification } from 'firebase/auth'
 
 describe('auth service', () => {
   beforeEach(() => {
@@ -45,4 +46,11 @@ describe('auth service', () => {
     await register('new@mail.com', 'secret')
     expect(createUserWithEmailAndPassword).toHaveBeenCalledWith('auth-instance', 'new@mail.com', 'secret')
   })
+
+  it('sendVerificationEmail calls firebase sendEmailVerification', async () => {
+    const user = { uid: '1' }
+    await sendVerificationEmail(user)
+    expect(sendEmailVerification).toHaveBeenCalled()
+  })
 })
+
