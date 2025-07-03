@@ -74,8 +74,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { db } from '@/firebase/firebase'
-import { doc, getDoc } from 'firebase/firestore'
+import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
 
 const route = useRoute()
@@ -85,9 +84,13 @@ const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
 
 onMounted(async () => {
   if (companyId) {
-    const snapshot = await getDoc(doc(db, 'companies', companyId))
-    if (snapshot.exists()) {
-      company.value = snapshot.data()
+    try {
+      const data = await getCompany(companyId)
+      if (data) {
+        company.value = data
+      }
+    } catch (err) {
+      console.error('Fehler beim Laden:', err)
     }
   }
 })

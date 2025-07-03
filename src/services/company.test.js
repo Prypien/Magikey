@@ -4,7 +4,9 @@ const firestoreMocks = vi.hoisted(() => ({
   getDocs: vi.fn(),
   getDoc: vi.fn(),
   collection: vi.fn(() => 'collection'),
-  doc: vi.fn(() => 'doc')
+  doc: vi.fn(() => 'doc'),
+  query: vi.fn(() => 'query'),
+  where: vi.fn(() => 'where')
 }))
 
 vi.mock('@/firebase/firebase', () => ({ db: 'db-instance' }))
@@ -23,7 +25,9 @@ describe('company service', () => {
     })
     const comps = await getCompanies()
     expect(firestoreMocks.collection).toHaveBeenCalledWith('db-instance', 'companies')
-    expect(firestoreMocks.getDocs).toHaveBeenCalledWith('collection')
+    expect(firestoreMocks.where).toHaveBeenCalledWith('verified', '==', true)
+    expect(firestoreMocks.query).toHaveBeenCalledWith('collection', 'where')
+    expect(firestoreMocks.getDocs).toHaveBeenCalledWith('query')
     expect(comps).toEqual([{ id: 'a', name: 'A' }])
   })
 
