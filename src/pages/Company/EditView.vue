@@ -5,6 +5,20 @@
     </h1>
 
     <Transition name="fade">
+      <div v-if="!company.verified" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-4">
+        <p class="text-yellow-800">Dein Profil ist noch nicht verifiziert.</p>
+        <Button
+          size="sm"
+          class="mt-2"
+          type="button"
+          @click="verifyProfile"
+          :disabled="verificationSending"
+        >
+          <template v-if="verificationSending">Senden...</template>
+          <template v-else>Verifizierungsmail senden</template>
+        </Button>
+        <p v-if="verificationSent" class="text-green-600 text-sm mt-2">E-Mail wurde gesendet.</p>
+      </div>
       <FormKit
         type="form"
         :actions="false"
@@ -116,12 +130,15 @@ import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import Button from '@/components/common/Button.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
+import { sendVerificationEmail } from '@/services/auth'
 
 const router = useRouter()
 const user = auth.currentUser
 
 const logoUploading = ref(false)
 const saving = ref(false)
+const verificationSending = ref(false)
+const verificationSent = ref(false)
 
 const company = ref({
   company_name: '',
@@ -168,5 +185,18 @@ const confirmDelete = async () => {
   await user.delete()
   window.alert('Konto gelöscht')
   router.push('/')
+}
+
+const verifyProfile = async () => {
+  if (!user) return
+  verificationSending.value = true
+  try {
+    await sendVerificationEmail(user)
+    verificationSent.value = true
+  } catch (e) {
+    window.alert('Fehler beim Senden der Verifizierungsmail: ' + e.message)
+  } finally {
+    verificationSending.value = false
+  }
 }
 </script>
