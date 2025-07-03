@@ -9,6 +9,26 @@
         Keine Firmendaten gefunden.
       </div>
       <div v-else class="bg-white/90 rounded-xl shadow p-6 space-y-6">
+        <Transition name="fade">
+          <div v-if="!company.verified" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-4">
+            <p class="text-yellow-800">Dein Profil ist noch nicht verifiziert.</p>
+            <Button
+              size="sm"
+              class="mt-2"
+              type="button"
+              @click="verifyProfile"
+              :disabled="verificationSending"
+            >
+              <template v-if="verificationSending">Senden...</template>
+              <template v-else>Verifizierungsmail senden</template>
+            </Button>
+            <p v-if="verificationSent" class="text-green-600 text-sm mt-2">E-Mail wurde gesendet.</p>
+          </div>
+          <div v-else class="bg-green-50 border-l-4 border-green-400 p-4 rounded mb-4 flex items-center gap-2">
+            <i class="fa fa-check-circle text-green-600"></i>
+            <p class="text-green-800 font-semibold">Profil verifiziert</p>
+          </div>
+        </Transition>
         <div class="flex flex-col items-center">
           <img
             v-if="company.logo_url"
@@ -59,9 +79,13 @@ import { auth, db } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
+import Button from '@/components/common/Button.vue'
+import { sendVerificationEmail } from '@/services/auth'
 
 const company = ref(null)
 const loading = ref(true)
+const verificationSending = ref(false)
+const verificationSent = ref(false)
 
 onMounted(async () => {
   const user = auth.currentUser
@@ -98,6 +122,20 @@ function dayStatus(day) {
   const hours = company.value.opening_hours?.[day]
   if (!hours || !hours.open || !hours.close) return 'text-gray-500'
   return 'text-black'
+}
+
+async function verifyProfile() {
+  const user = auth.currentUser
+  if (!user) return
+  verificationSending.value = true
+  try {
+    await sendVerificationEmail(user)
+    verificationSent.value = true
+  } catch (e) {
+    window.alert('Fehler beim Senden der Verifizierungsmail: ' + e.message)
+  } finally {
+    verificationSending.value = false
+  }
 }
 </script>
 
