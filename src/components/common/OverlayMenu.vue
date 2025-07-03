@@ -6,22 +6,22 @@
     >
       <ul class="space-y-3">
         <li>
-          <router-link to="/hilfe" class="menu-link">Hilfe-Center</router-link>
+          <router-link to="/hilfe" class="menu-link">{{ t('overlay.helpCenter') }}</router-link>
         </li>
         <li v-if="!companyData">
-          <router-link to="/register" class="menu-link">Problemsolver:in werden</router-link>
+          <router-link to="/register" class="menu-link">{{ t('overlay.becomeSolver') }}</router-link>
         </li>
         <li>
-          <router-link to="/" class="menu-link">Schlosser finden</router-link>
+          <router-link to="/" class="menu-link">{{ t('overlay.findLocksmith') }}</router-link>
         </li>
         <li v-if="!companyData">
-          <router-link to="/login" class="menu-link">Einloggen</router-link>
+          <router-link to="/login" class="menu-link">{{ t('overlay.login') }}</router-link>
         </li>
         <li v-if="companyData">
-          <router-link to="/edit" class="menu-link">Profil bearbeiten</router-link>
+          <router-link to="/edit" class="menu-link">{{ t('overlay.editProfile') }}</router-link>
         </li>
         <li v-if="companyData">
-          <button @click="$emit('logout')" class="menu-link w-full text-left">Abmelden</button>
+          <button @click="$emit('logout')" class="menu-link w-full text-left">{{ t('overlay.logout') }}</button>
         </li>
       </ul>
     </div>
@@ -29,13 +29,15 @@
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { watch, inject } from 'vue'
 
 const props = defineProps({
   modelValue: Boolean,
   companyData: Object
 })
 const emit = defineEmits(['update:modelValue', 'logout'])
+
+const t = inject('t')
 
 function close() {
   emit('update:modelValue', false)
