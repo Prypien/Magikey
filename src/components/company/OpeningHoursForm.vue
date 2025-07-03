@@ -44,7 +44,7 @@ const days = [
   { key: 'sunday', short: 'So' }
 ]
 
-const selectedDays = ref(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])
+const selectedDays = ref(Object.keys(props.modelValue).length ? Object.keys(props.modelValue) : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])
 const open = ref('')
 const close = ref('')
 
@@ -53,20 +53,23 @@ watch(
   () => props.modelValue,
   val => {
     if (!val) return
-    selectedDays.value = val.days || []
-    open.value = val.open || ''
-    close.value = val.close || ''
+    const keys = Object.keys(val)
+    if (keys.length) {
+      selectedDays.value = keys
+      open.value = val[keys[0]]?.open || ''
+      close.value = val[keys[0]]?.close || ''
+    }
   },
   { immediate: true }
 )
 
 // Emit
 watch([selectedDays, open, close], () => {
-  emit('update:modelValue', {
-    days: selectedDays.value,
-    open: open.value,
-    close: close.value
+  const result = {}
+  selectedDays.value.forEach(day => {
+    result[day] = { open: open.value, close: close.value }
   })
+  emit('update:modelValue', result)
 })
 
 function toggleDay(key) {
