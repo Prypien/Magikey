@@ -23,10 +23,24 @@
         class="grid grid-cols-1 sm:grid-cols-4 items-center gap-2"
       >
         <span class="text-sm sm:col-span-1">{{ day.label }}</span>
-        <input type="time" v-model="openingHours[day.key].open" class="input sm:col-span-1" />
-        <input type="time" v-model="openingHours[day.key].close" class="input sm:col-span-1" />
-        <button type="button" class="text-xs text-gray-500 sm:col-span-1" @click="setClosed(day.key)">
-          Geschlossen
+        <input
+          type="time"
+          v-model="openingHours[day.key].open"
+          class="input sm:col-span-1"
+          :disabled="isClosed(day.key)"
+        />
+        <input
+          type="time"
+          v-model="openingHours[day.key].close"
+          class="input sm:col-span-1"
+          :disabled="isClosed(day.key)"
+        />
+        <button
+          type="button"
+          class="text-xs text-gray-500 sm:col-span-1"
+          @click="toggleClosed(day.key)"
+        >
+          {{ isClosed(day.key) ? "Geöffnet" : "Geschlossen" }}
         </button>
       </div>
       <button
@@ -67,74 +81,98 @@ const days = [
   { key: 'sunday', label: 'Sonntag' }
 ]
 
+// Refs
 const sameForAll = ref(false)
 const allOpen = ref('')
 const allClose = ref('')
-
-const emptyHours = () => ({ open: '', close: '' })
 const openingHours = ref(
-  days.reduce((acc, d) => ({ ...acc, [d.key]: emptyHours() }), {})
+  days.reduce((acc, d) => ({ ...acc, [d.key]: { open: '', close: '', closed: false } }), {})
 )
 
+// Helper: Ist der Tag geschlossen?
+function isClosed(dayKey) {
+  return openingHours.value[dayKey].closed
+}
+
+function toggleClosed(dayKey) {
+  openingHours.value[dayKey].closed = !openingHours.value[dayKey].closed
+  if (openingHours.value[dayKey].closed) {
+    openingHours.value[dayKey].open = ''
+    openingHours.value[dayKey].close = ''
+  }
+}
+
+// Watch .modelValue -> local state (für Edit/Reload)
 watch(
   () => props.modelValue,
   val => {
     if (!val) return
-    let firstDay = null
-    let allSame = true
     days.forEach(d => {
-      const cur = val[d.key] || {}
-      openingHours.value[d.key] = { ...emptyHours(), ...cur }
-      if (!firstDay) {
-        firstDay = cur
-      } else if (cur.open !== firstDay.open || cur.close !== firstDay.close) {
-        allSame = false
+      openingHours.value[d.key] = {
+        open: val[d.key]?.open || '',
+        close: val[d.key]?.close || '',
+        closed: val[d.key]?.closed || false
       }
     })
-    if (firstDay && firstDay.open && firstDay.close && allSame) {
-      sameForAll.value = true
-      allOpen.value = firstDay.open
-      allClose.value = firstDay.close
-    } else {
-      sameForAll.value = false
+    // Check if all days are equal and not closed
+    const first = openingHours.value[days[0].key]
+    const allSame =
+      days.every(
+        d =>
+          openingHours.value[d.key].open === first.open &&
+          openingHours.value[d.key].close === first.close &&
+          !openingHours.value[d.key].closed
+      ) && first.open && first.close
+    sameForAll.value = !!allSame
+    if (allSame) {
+      allOpen.value = first.open
+      allClose.value = first.close
     }
   },
   { immediate: true }
 )
 
-watch(openingHours, val => emit('update:modelValue', val), { deep: true })
+// Update emit wenn sich openingHours ändern
+watch(
+  openingHours,
+  val => {
+    emit('update:modelValue', Object.fromEntries(days.map(d => [d.key, { ...val[d.key] }])))
+  },
+  { deep: true }
+)
 
+// Watch „alle gleich“ + Öffnungszeiten
 watch([sameForAll, allOpen, allClose], () => {
   if (sameForAll.value) {
     days.forEach(d => {
-      openingHours.value[d.key] = { open: allOpen.value, close: allClose.value }
+      openingHours.value[d.key] = {
+        open: allOpen.value,
+        close: allClose.value,
+        closed: false
+      }
     })
   }
 })
 
+// Button-Functions
 function copyMonday() {
   const m = { ...openingHours.value.monday }
   days.forEach(d => {
     openingHours.value[d.key] = { ...m }
   })
 }
-
-function setClosed(day) {
-  openingHours.value[day] = { open: '', close: '' }
-}
-
 function set247() {
+  sameForAll.value = true
   allOpen.value = '00:00'
   allClose.value = '23:59'
-  sameForAll.value = true
   days.forEach(d => {
-    openingHours.value[d.key] = { open: '00:00', close: '23:59' }
+    openingHours.value[d.key] = { open: '00:00', close: '23:59', closed: false }
   })
 }
-
 function setAllClosed() {
+  sameForAll.value = false
   days.forEach(d => {
-    openingHours.value[d.key] = { open: '', close: '' }
+    openingHours.value[d.key] = { open: '', close: '', closed: true }
   })
 }
 </script>
