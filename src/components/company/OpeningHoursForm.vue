@@ -1,11 +1,11 @@
 <template>
   <div class="form-section">
-    <label class="flex items-center gap-2 mb-2">
-      <input type="checkbox" v-model="sameForAll" />
+    <label class="flex items-center gap-2 mb-4">
+      <input type="checkbox" v-model="sameForAll" class="accent-gold" />
       <span class="text-sm">Gilt an allen Tagen die gleichen Öffnungszeiten?</span>
     </label>
 
-    <div v-if="sameForAll" class="grid grid-cols-2 gap-2 mb-2">
+    <div v-if="sameForAll" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
       <div>
         <label class="label">Öffnungszeit von</label>
         <input type="time" v-model="allOpen" class="input" />
@@ -16,16 +16,16 @@
       </div>
     </div>
 
-    <div v-else class="space-y-2 mb-2">
+    <div v-else class="space-y-3 mb-4">
       <div
         v-for="day in days"
         :key="day.key"
-        class="grid grid-cols-4 items-center gap-2"
+        class="grid grid-cols-1 sm:grid-cols-4 items-center gap-2"
       >
-        <span class="text-sm">{{ day.label }}</span>
-        <input type="time" v-model="openingHours[day.key].open" class="input" />
-        <input type="time" v-model="openingHours[day.key].close" class="input" />
-        <button type="button" class="text-xs text-gray-500" @click="setClosed(day.key)">
+        <span class="text-sm sm:col-span-1">{{ day.label }}</span>
+        <input type="time" v-model="openingHours[day.key].open" class="input sm:col-span-1" />
+        <input type="time" v-model="openingHours[day.key].close" class="input sm:col-span-1" />
+        <button type="button" class="text-xs text-gray-500 sm:col-span-1" @click="setClosed(day.key)">
           Geschlossen
         </button>
       </div>
@@ -39,10 +39,10 @@
     </div>
 
     <div class="flex gap-4">
-      <button type="button" class="text-sm text-gold underline" @click="set247">
+      <button type="button" class="btn-outline py-1 px-3 text-sm" @click="set247">
         24/7
       </button>
-      <button type="button" class="text-sm text-gold underline" @click="setAllClosed">
+      <button type="button" class="btn-outline py-1 px-3 text-sm" @click="setAllClosed">
         Alle geschlossen
       </button>
     </div>
