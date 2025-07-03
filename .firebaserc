@@ -1,1 +1,5 @@
-{ "projects": { "default": "DEIN-PROJEKT-ID" } }
+{
+  "projects": {
+    "default": "magikey-5f3ef"
+  }
+}

@@ -4,7 +4,7 @@
       to="/"
       class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
     >
-      <img src="/logo.png" alt="Logo" class="h-8 w-auto" />
+      <img src="/logo.png" alt="Logo" class="h-10 w-auto" />
       <span class="font-bold text-lg text-gold">Magikey</span>
     </router-link>
 
