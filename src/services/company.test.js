@@ -47,4 +47,16 @@ describe('company service', () => {
     const comp = await getCompany('missing')
     expect(comp).toBeNull()
   })
+
+  it('returns empty array on fetch error', async () => {
+    firestoreMocks.getDocs.mockRejectedValueOnce(new Error('fail'))
+    const comps = await getCompanies()
+    expect(comps).toEqual([])
+  })
+
+  it('returns null on fetch error for single company', async () => {
+    firestoreMocks.getDoc.mockRejectedValueOnce(new Error('fail'))
+    const comp = await getCompany('a')
+    expect(comp).toBeNull()
+  })
 })
