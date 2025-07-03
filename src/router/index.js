@@ -12,6 +12,7 @@ import ImpressumView from '@/pages/ImpressumView.vue'
 import DatenschutzView from '@/pages/DatenschutzView.vue'
 import HelpCenterView from '@/pages/HelpCenterView.vue'
 import SuccessView from '@/pages/SuccessView.vue'
+import VerifyEmailView from '@/pages/VerifyEmailView.vue'
 import ResetPasswordView from '@/pages/ResetPasswordView.vue'
 import NotFoundView from '@/pages/NotFoundView.vue'
 
@@ -48,6 +49,7 @@ const routes = [
       { path: 'datenschutz', name: 'datenschutz', component: DatenschutzView },
       { path: 'hilfe', name: 'help', component: HelpCenterView },
       { path: 'success', name: 'success', component: SuccessView },
+      { path: 'verify-email', name: 'verify-email', component: VerifyEmailView },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },

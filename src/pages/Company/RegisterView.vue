@@ -158,7 +158,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { loginWithGoogle } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
@@ -192,10 +192,14 @@ const register = async (form) => {
       is_247: form.is_247 || false,
       emergency_price: form.is_247 ? form.emergency_price || '' : '',
       created_at: new Date().toISOString(),
+      verified: false,
+    })
+    await sendEmailVerification(user, {
+      url: `${window.location.origin}/verify-email`,
     })
     router.push({
       name: 'success',
-      query: { msg: 'Unternehmen erfolgreich registriert', next: '/dashboard' }
+      query: { msg: 'Bestätige deine E-Mail über den Link', next: '/dashboard' }
     })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
@@ -215,6 +219,7 @@ const registerWithGoogle = async () => {
         email: user.email || '',
         company_name: user.displayName || '',
         created_at: new Date().toISOString(),
+        verified: true,
       }
       await setDoc(docRef, data)
     } else {
