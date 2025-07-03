@@ -22,7 +22,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { auth, db } from '@/firebase/firebase'
+import { auth, db } from '@/firebase'
 import { applyActionCode } from 'firebase/auth'
 import { doc, updateDoc } from 'firebase/firestore'
 import Loader from '@/components/common/Loader.vue'

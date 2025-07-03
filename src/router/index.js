@@ -16,7 +16,7 @@ import VerifyEmailView from '@/pages/VerifyEmailView.vue'
 import ResetPasswordView from '@/pages/ResetPasswordView.vue'
 import NotFoundView from '@/pages/NotFoundView.vue'
 
-import { auth } from '@/firebase/firebase'
+import { auth } from '@/firebase'
 
 const routes = [
   {

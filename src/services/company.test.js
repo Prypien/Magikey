@@ -9,7 +9,7 @@ const firestoreMocks = vi.hoisted(() => ({
   where: vi.fn(() => 'where')
 }))
 
-vi.mock('@/firebase/firebase', () => ({ db: 'db-instance' }))
+vi.mock('@/firebase', () => ({ db: 'db-instance' }))
 vi.mock('firebase/firestore', () => firestoreMocks)
 
 import { getCompanies, getCompany } from './company'

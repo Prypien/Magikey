@@ -37,7 +37,7 @@
 import Login from '@/components/company/Login.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '@/firebase/firebase'
+import { db } from '@/firebase'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { loginWithGoogle } from '@/services/auth'
 

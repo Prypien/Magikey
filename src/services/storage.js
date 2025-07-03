@@ -1,4 +1,4 @@
-import { storage, auth } from '@/firebase/firebase'
+import { storage, auth } from '@/firebase'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 export async function uploadCompanyLogo(file) {

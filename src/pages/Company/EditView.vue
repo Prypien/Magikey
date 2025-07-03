@@ -111,7 +111,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, db } from '@/firebase/firebase'
+import { auth, db } from '@/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import Button from '@/components/common/Button.vue'

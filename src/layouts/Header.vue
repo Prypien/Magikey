@@ -47,7 +47,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth } from '@/firebase/firebase'
+import { auth } from '@/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import OverlayMenu from '@/components/common/OverlayMenu.vue'

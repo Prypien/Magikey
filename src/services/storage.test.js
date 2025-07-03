@@ -6,7 +6,7 @@ const storageRefMock = vi.hoisted(() => vi.fn(() => 'ref'))
 const uploadBytesMock = vi.hoisted(() => vi.fn(() => Promise.resolve()))
 const getDownloadURLMock = vi.hoisted(() => vi.fn(() => Promise.resolve('https://download/url')))
 
-vi.mock('@/firebase/firebase', () => firebaseMock)
+vi.mock('@/firebase', () => firebaseMock)
 vi.mock('firebase/storage', () => ({
   ref: storageRefMock,
   uploadBytes: uploadBytesMock,
