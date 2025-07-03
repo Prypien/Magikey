@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { db } from '@/firebase/firebase'
+import { db } from '@/firebase'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 
 const email = ref('')

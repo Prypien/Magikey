@@ -1,4 +1,4 @@
-import { db } from '@/firebase/firebase'
+import { db } from '@/firebase'
 import { collection, getDocs, getDoc, doc, query, where } from 'firebase/firestore'
 
 export async function getCompanies() {

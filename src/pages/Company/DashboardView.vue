@@ -55,7 +55,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { auth, db } from '@/firebase/firebase'
+import { auth, db } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
