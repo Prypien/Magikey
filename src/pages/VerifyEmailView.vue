@@ -23,8 +23,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
-import { applyActionCode } from 'firebase/auth'
-import { doc, updateDoc } from 'firebase/firestore'
+import { applyActionCode, checkActionCode } from 'firebase/auth'
+import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import Loader from '@/components/common/Loader.vue'
 
 const route = useRoute()
@@ -39,9 +39,16 @@ onMounted(async () => {
     return
   }
   try {
+    const info = await checkActionCode(auth, code)
     await applyActionCode(auth, code)
     if (auth.currentUser) {
       await updateDoc(doc(db, 'companies', auth.currentUser.uid), { verified: true })
+    } else if (info?.data?.email) {
+      const q = query(collection(db, 'companies'), where('email', '==', info.data.email))
+      const snap = await getDocs(q)
+      for (const docSnap of snap.docs) {
+        await updateDoc(docSnap.ref, { verified: true })
+      }
     }
     success.value = true
   } catch (err) {
