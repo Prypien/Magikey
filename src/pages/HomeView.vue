@@ -36,7 +36,7 @@ const loading = ref(true)
 
 const filters = ref({
   openNow: false,
-  price: [0, 100],
+  price: [0, 1000],
   location: ''
 })
 

@@ -33,10 +33,10 @@ import { X } from 'lucide-vue-next'
 const props = defineProps({
   modelValue: {
     type: Array,
-    default: () => [0, 100]
+    default: () => [0, 1000]
   },
   min: { type: Number, default: 0 },
-  max: { type: Number, default: 500 },
+  max: { type: Number, default: 1000 },
   visible: { type: Boolean, default: false }
 })
 
