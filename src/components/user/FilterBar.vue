@@ -16,21 +16,7 @@
           autocomplete="postal-code"
           @focus="activeField = 'location'"
         />
-        <transition name="fade">
-          <ul
-            v-if="activeField === 'location'"
-            class="dropdown mt-2 left-0 right-0"
-          >
-            <li
-              v-for="s in suggestions"
-              :key="s"
-              class="dropdown-item"
-              @click="selectLocation(s)"
-            >
-              {{ s }}
-            </li>
-          </ul>
-        </transition>
+        <!-- Input field for location, suggestions removed as free input is desired -->
       </div>
       <button
         class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200"
@@ -71,7 +57,7 @@ import FilterPriceSheet from './FilterPriceSheet.vue'
 const props = defineProps({
   modelValue: {
     type: Object,
-    default: () => ({ openNow: false, price: [0, 100], location: '' })
+  default: () => ({ openNow: false, price: [0, 1000], location: '' })
   }
 })
 
@@ -81,8 +67,7 @@ const root = ref(null)
 const filters = reactive({ ...props.modelValue })
 const showPrice = ref(false)
 const activeField = ref(null)
-const suggestions = ['10115', '10243', '80331', '20095']
-const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 100)
+const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
 
 watch(filters, () => {
   emit('update:modelValue', { ...filters })
@@ -106,10 +91,6 @@ function toggle(key) {
   filters[key] = !filters[key]
 }
 
-function selectLocation(s) {
-  filters.location = s
-  activeField.value = null
-}
 
 function openPrice() {
   showPrice.value = true
