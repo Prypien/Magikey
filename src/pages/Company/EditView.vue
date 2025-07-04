@@ -188,7 +188,7 @@ const confirmDelete = async () => {
 }
 
 const verifyProfile = async () => {
-  if (!user) return
+  if (!user || verificationSending.value) return
   verificationSending.value = true
   try {
     await sendVerificationEmail(user)

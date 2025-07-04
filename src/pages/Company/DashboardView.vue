@@ -126,7 +126,7 @@ function dayStatus(day) {
 
 async function verifyProfile() {
   const user = auth.currentUser
-  if (!user) return
+  if (!user || verificationSending.value) return
   verificationSending.value = true
   try {
     await sendVerificationEmail(user)
