@@ -1,11 +1,11 @@
 <template>
   <div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
     <div
-      class="flex items-center w-full max-w-3xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100"
+      class="flex items-center w-full max-w-4xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100"
     >
       <div
         class="relative flex items-center gap-2 px-4 flex-1 transition-all duration-200"
-        :class="{ 'ring-2 ring-gold bg-white scale-105 z-10': activeField === 'location' }"
+        :class="{ 'ring-2 ring-gold bg-white scale-105 z-10': activeField === 'location' || filters.location }"
         @click.stop="activeField = 'location'"
       >
         <MapPin class="w-5 h-5 text-gold" />
