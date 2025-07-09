@@ -1,4 +1,5 @@
 <template>
+  <!-- Startseite mit Filterleiste und Firmenliste -->
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
     <h1 class="text-2xl font-semibold text-center mb-6">Magikey, der Schlüsseldienst in deiner Nähe</h1>
 
@@ -23,6 +24,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+// Service zum Abrufen der Firmen
 import { getCompanies } from '@/services/company'
 
 import FilterBar from '@/components/user/FilterBar.vue'
@@ -31,6 +33,7 @@ import NotifyForm from '@/components/user/NotifyForm.vue'
 import Loader from '@/components/common/Loader.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
 
+// Firmenliste und Ladezustand
 const companies = ref([])
 const loading = ref(true)
 
@@ -40,6 +43,7 @@ const filters = ref({
   location: ''
 })
 
+// Versucht, die Postleitzahl über Geolocation zu ermitteln
 async function useLocation() {
   if (!navigator.geolocation) return
   navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -52,6 +56,7 @@ async function useLocation() {
   })
 }
 
+// Daten initial laden
 onMounted(async () => {
   useLocation()
   try {
@@ -63,6 +68,7 @@ onMounted(async () => {
   }
 })
 
+// Filterlogik für die Ergebnissliste
 const filteredCompanies = computed(() => {
   const now = new Date()
   const currentMinutes = now.getHours() * 60 + now.getMinutes()

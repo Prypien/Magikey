@@ -1,8 +1,10 @@
+// Firebase Initialisierung und Helper-Funktionen
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
+// Konfigurationswerte aus Umgebungsvariablen
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -12,8 +14,10 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
+// Firebase-App initialisieren
 const app = initializeApp(firebaseConfig)
 
+// Einzelne Dienste exportieren
 const auth = getAuth(app)
 const db = getFirestore(app)
 const storage = getStorage(app)

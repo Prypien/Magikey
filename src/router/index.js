@@ -1,7 +1,10 @@
+// Router-Konfiguration der Anwendung
 import { createRouter, createWebHistory } from 'vue-router'
 
+// Layout-Komponente
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
+// Seitenkomponenten
 import HomeView from '@/pages/HomeView.vue'
 import LoginView from '@/pages/company/LoginView.vue'
 import RegisterView from '@/pages/company/RegisterView.vue'
@@ -16,8 +19,10 @@ import VerifyEmailView from '@/pages/VerifyEmailView.vue'
 import ResetPasswordView from '@/pages/ResetPasswordView.vue'
 import NotFoundView from '@/pages/NotFoundView.vue'
 
+// Firebase-Auth-Instanz zum Prüfen von Login-Status
 import { auth } from '@/firebase'
 
+// Definierte Routen
 const routes = [
   {
     path: '/',
@@ -55,11 +60,13 @@ const routes = [
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
 ]
 
+// Router erstellen
 const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
+// Navigation Guard für geschützte Routen
 router.beforeEach((to, from, next) => {
   const user = auth.currentUser
   const requiresAuth = to.meta.requiresAuth
