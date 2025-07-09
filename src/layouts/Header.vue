@@ -1,4 +1,5 @@
 <template>
+  <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
   <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center relative">
     <router-link
       to="/"
@@ -11,6 +12,7 @@
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex items-center gap-3">
+      <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
       <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-2 hover:underline">
         <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
         <span class="font-medium">{{ companyData.company_name }}</span>
@@ -23,6 +25,7 @@
         </router-link>
       </template>
 
+      <!-- Button zum Öffnen des mobilen Overlays -->
       <button
         @click="toggleOverlay"
         class="text-xl hover:text-gold transition-colors focus:outline-none"
@@ -41,30 +44,39 @@
 </template>
 
 <script setup>
+// Reaktives State-Management und Lifecycle-Hooks
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+// Firebase-Dienste
 import { auth } from '@/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
+// Overlay-Menü-Komponente
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 
 const db = getFirestore()
 const router = useRouter()
+// steuert die Sichtbarkeit des Menüs
 const showOverlay = ref(false)
+// Daten des eingelog gten Unternehmens
 const companyData = ref(null)
+// Referenz auf den Menü-Button für Click-Outside-Handling
 const menuButton = ref(null)
 
+// Menü ein- oder ausblenden
 function toggleOverlay() {
   showOverlay.value = !showOverlay.value
 }
 
 
+// schließt das Overlay, wenn außerhalb geklickt wird
 function handleClickOutside(event) {
   if (showOverlay.value && !menuButton.value.contains(event.target)) {
     showOverlay.value = false
   }
 }
 
+// Listener registrieren und Initialdaten laden
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   fetchCompanyData(auth.currentUser)
@@ -75,6 +87,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
+// Lädt die Unternehmensdaten des eingeloggten Users
 async function fetchCompanyData(user) {
   if (!user) {
     companyData.value = null
@@ -89,6 +102,7 @@ async function fetchCompanyData(user) {
   }
 }
 
+// Ausloggen des Users und Redirect
 async function logout() {
   await signOut(auth)
   router.push('/')

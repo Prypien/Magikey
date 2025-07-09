@@ -1,3 +1,4 @@
+<!-- Dropdown-Menü für Navigation und Aktionen -->
 <template>
   <transition name="grow-down">
     <div
@@ -29,6 +30,7 @@
 </template>
 
 <script setup>
+// Props und Events definieren
 import { watch } from 'vue'
 
 const props = defineProps({
@@ -36,9 +38,11 @@ const props = defineProps({
   companyData: Object
 })
 const emit = defineEmits(['update:modelValue', 'logout'])
+// Menü schließen
 
 
 function close() {
+// ESC-Taste schließt das Menü
   emit('update:modelValue', false)
 }
 
@@ -46,6 +50,7 @@ function handleKey(e) {
   if (e.key === 'Escape') close()
 }
 
+// Listener je nach Sichtbarkeit registrieren
 watch(
   () => props.modelValue,
   (val) => {
