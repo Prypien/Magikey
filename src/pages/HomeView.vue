@@ -1,8 +1,10 @@
 <template>
   <!-- Startseite mit Filterleiste und Firmenliste -->
-  <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
+  <div class="min-h-screen bg-white px-4 py-6 sm:px-6 max-w-4xl mx-auto">
 
-    <div class="mt-6">
+    <h1 class="text-2xl font-semibold text-center mb-4">Schlüsseldienste in deiner Nähe</h1>
+
+    <div>
       <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
         <Loader :size="80" />
         <p class="mt-2">Firmen werden geladen...</p>
