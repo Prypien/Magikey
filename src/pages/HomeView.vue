@@ -1,5 +1,5 @@
+<!-- Startseite mit Filterleiste und Firmenliste -->
 <template>
-  <!-- Startseite mit Filterleiste und Firmenliste -->
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
 
     <div class="mt-6">

@@ -1,3 +1,4 @@
+<!-- Hilfeseite mit FAQ und Anleitungen -->
 <template>
   <div class="prose mx-auto space-y-6">
     <section>

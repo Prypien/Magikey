@@ -1,3 +1,4 @@
+<!-- Zeigt die Datenschutzerklärung an -->
 <template>
   <div class="max-w-2xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4">Datenschutzerklärung</h1>
