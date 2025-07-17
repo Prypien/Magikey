@@ -2,7 +2,6 @@ import { storage, auth } from '@/firebase'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 export async function uploadCompanyLogo(file) {
-  console.log('Upload startet, User:', auth.currentUser)
   if (!auth.currentUser) {
     throw new Error('Nicht angemeldet')
   }
@@ -11,7 +10,6 @@ export async function uploadCompanyLogo(file) {
   const imgRef = storageRef(storage, path)
   await uploadBytes(imgRef, file)
   const url = await getDownloadURL(imgRef)
-  console.log('Upload abgeschlossen, URL:', url)
   return url
 }
 
