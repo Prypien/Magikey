@@ -14,9 +14,9 @@
 
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
-    <div class="flex-1 flex justify-center px-4">
+    <div class="flex-1 flex justify-center px-4" v-if="showFilterBar">
       <FilterBar
-        class="w-full max-w-xl"
+        class="w-full max-w-2xl"
         :expanded="searchActive"
         @focus="searchActive = true"
         @blur="searchActive = false"
@@ -57,8 +57,8 @@
 
 <script setup>
 // Reaktives State-Management und Lifecycle-Hooks
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 // Firebase-Dienste
 import { auth } from '@/firebase'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
@@ -69,6 +69,9 @@ import FilterBar from '@/components/user/FilterBar.vue'
 
 const db = getFirestore()
 const router = useRouter()
+const route = useRoute()
+
+const showFilterBar = computed(() => route.name === 'home')
 // steuert die Sichtbarkeit des Menüs
 const showOverlay = ref(false)
 // Daten des eingelog gten Unternehmens

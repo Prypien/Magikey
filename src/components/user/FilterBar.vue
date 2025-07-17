@@ -1,8 +1,8 @@
 <template>
 <div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
     <div
-      class="flex items-center w-full max-w-4xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100 transition-all duration-200"
-      :class="{ 'scale-105': expanded }"
+      class="flex items-center w-full max-w-4xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100 transition-all duration-200 py-2"
+      :class="{ 'scale-105 py-3': expanded }"
     >
       <div
         class="relative flex items-center gap-2 px-4 flex-1 transition-all duration-200"
