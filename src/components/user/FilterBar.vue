@@ -1,11 +1,11 @@
 <template>
 <div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
     <div
-      class="flex flex-col sm:flex-row items-center w-full max-w-4xl divide-y sm:divide-x rounded-xl shadow-lg bg-white/80 backdrop-blur border border-gray-100 transition-all duration-200 py-3 sm:py-2 text-base sm:text-sm overflow-hidden"
+      class="flex items-center w-full max-w-4xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100 transition-all duration-200 py-3 sm:py-2 text-base sm:text-sm overflow-hidden"
       :class="{ 'scale-105 py-3': expanded }"
     >
       <div
-        class="relative flex items-center gap-2 px-4 flex-1 transition-all duration-200 w-full py-3 sm:py-2"
+        class="relative flex items-center gap-2 px-4 flex-1 transition-all duration-200 py-3 sm:py-2"
         :class="{ 'bg-white scale-105 z-10': activeField === 'location' || filters.location }"
         @click.stop="activeField = 'location'"
       >
@@ -27,7 +27,7 @@
         <!-- Input field for location, suggestions removed as free input is desired -->
       </div>
       <button
-        class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200 w-full sm:w-auto py-3 sm:py-2 text-base sm:text-sm"
+        class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200 py-3 sm:py-2 text-base sm:text-sm"
         :class="{ 'text-gold bg-white scale-105 z-10': activeField === 'openNow' || filters.openNow }"
         @click.stop="toggle('openNow'); activeField = 'openNow'"
       >
@@ -38,7 +38,7 @@
         </span>
       </button>
       <button
-        class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200 w-full sm:w-auto py-3 sm:py-2 text-base sm:text-sm"
+        class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200 py-3 sm:py-2 text-base sm:text-sm"
         :class="{ 'text-gold bg-white scale-105 z-10': activeField === 'price' || priceActive }"
         @click.stop="openPrice"
       >
@@ -50,7 +50,7 @@
         </span>
         <ChevronDown v-else class="w-4 h-4" />
       </button>
-      <div class="pl-4 pr-4 w-full sm:w-auto flex justify-end py-3 sm:py-0">
+      <div class="pl-4 pr-4 flex justify-end py-3 sm:py-0">
         <button class="p-2 bg-gold rounded-full text-white hover:bg-gold/90" aria-label="Suchen">
           <Search class="w-4 h-4" />
         </button>
