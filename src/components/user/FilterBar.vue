@@ -65,25 +65,21 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, computed, onMounted, onBeforeUnmount } from 'vue'
 import { MapPin, Clock, Euro, ChevronDown, Search, X } from '@/components/icons'
 import FilterPriceSheet from './FilterPriceSheet.vue'
+import { filters } from '@/stores/filters'
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({ openNow: false, price: [0, 1000], location: '' })
-  },
+defineProps({
   expanded: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
-const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
+const emit = defineEmits(['focus', 'blur'])
 
 const root = ref(null)
-const filters = reactive({ ...props.modelValue })
 const showPrice = ref(false)
 const activeField = ref(null)
 const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
@@ -95,10 +91,6 @@ watch(activeField, (val) => {
     emit('blur')
   }
 })
-
-watch(filters, () => {
-  emit('update:modelValue', { ...filters })
-}, { deep: true })
 
 function onClickOutside(e) {
   if (root.value && !root.value.contains(e.target)) {
