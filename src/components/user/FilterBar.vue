@@ -1,7 +1,8 @@
 <template>
-  <div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
+<div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
     <div
-      class="flex items-center w-full max-w-4xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100"
+      class="flex items-center w-full max-w-4xl divide-x rounded-full shadow-lg bg-white/80 backdrop-blur border border-gray-100 transition-all duration-200"
+      :class="{ 'scale-105': expanded }"
     >
       <div
         class="relative flex items-center gap-2 px-4 flex-1 transition-all duration-200"
@@ -70,17 +71,29 @@ import FilterPriceSheet from './FilterPriceSheet.vue'
 const props = defineProps({
   modelValue: {
     type: Object,
-  default: () => ({ openNow: false, price: [0, 1000], location: '' })
+    default: () => ({ openNow: false, price: [0, 1000], location: '' })
+  },
+  expanded: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
 
 const root = ref(null)
 const filters = reactive({ ...props.modelValue })
 const showPrice = ref(false)
 const activeField = ref(null)
 const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
+
+watch(activeField, (val) => {
+  if (val) {
+    emit('focus')
+  } else {
+    emit('blur')
+  }
+})
 
 watch(filters, () => {
   emit('update:modelValue', { ...filters })
