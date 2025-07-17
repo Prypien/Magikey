@@ -62,6 +62,8 @@ onMounted(async () => {
   }
 })
 
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+
 // Filterlogik für die Ergebnissliste
 const filteredCompanies = computed(() => {
   const now = new Date()
@@ -73,12 +75,15 @@ const filteredCompanies = computed(() => {
     let isOpen = true
     if (filters.openNow) {
       try {
-        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-        const today = days[now.getDay() - 1]
+        let dayIndex = now.getDay() - 1
+        if (dayIndex < 0) dayIndex = 6
+        const today = days[dayIndex]
         const hours = company.opening_hours?.[today]
         if (hours?.open && hours?.close) {
-          const openM = parseInt(hours.open.split(':')[0]) * 60 + parseInt(hours.open.split(':')[1])
-          const closeM = parseInt(hours.close.split(':')[0]) * 60 + parseInt(hours.close.split(':')[1])
+          const [oh, om] = hours.open.split(':').map(Number)
+          const [ch, cm] = hours.close.split(':').map(Number)
+          const openM = oh * 60 + om
+          const closeM = ch * 60 + cm
           isOpen = currentMinutes >= openM && currentMinutes <= closeM
         } else {
           isOpen = false
