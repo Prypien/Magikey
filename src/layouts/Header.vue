@@ -20,7 +20,6 @@
         class="w-full max-w-xl"
         :expanded="searchActive"
         @focus="searchActive = true"
-        @blur="searchActive = false"
       />
     </div>
 
