@@ -43,7 +43,8 @@
         @click.stop="openPrice"
       >
         <Euro class="w-5 h-5" />
-        <span class="hidden sm:inline">Preis</span>
+        <span class="hidden sm:inline" v-if="!priceActive">Preis</span>
+        <span class="hidden sm:inline" v-else>{{ filters.price[0] }}€ - {{ filters.price[1] }}€</span>
         <span v-if="priceActive" @click.stop="clear('price')" class="ml-1 text-gray-400 hover:text-black cursor-pointer">
           <X class="w-3 h-3" />
         </span>
