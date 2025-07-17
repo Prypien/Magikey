@@ -15,12 +15,23 @@
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex-1 flex justify-center px-4" v-if="showFilterBar">
-      <FilterBar
-        class="w-full max-w-2xl"
-        :expanded="searchActive"
-        @focus="searchActive = true"
-        @blur="searchActive = false"
-      />
+      <button
+        v-if="isMobile && !searchActive"
+        @click="searchActive = true"
+        class="p-2 text-xl text-gray-700"
+        aria-label="Suche öffnen"
+      >
+        <Search class="w-6 h-6" />
+      </button>
+      <transition name="slide-down">
+        <FilterBar
+          v-show="!isMobile || searchActive"
+          class="w-full max-w-2xl"
+          :expanded="searchActive"
+          @focus="searchActive = true"
+          @blur="searchActive = false"
+        />
+      </transition>
     </div>
 
     <div class="flex items-center gap-3">
@@ -66,6 +77,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 // Overlay-Menü-Komponente
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 import FilterBar from '@/components/user/FilterBar.vue'
+import { Search } from '@/components/icons'
 
 const db = getFirestore()
 const router = useRouter()
@@ -80,6 +92,8 @@ const companyData = ref(null)
 const menuButton = ref(null)
 // zeigt an, ob die Suchleiste aktiv ist
 const searchActive = ref(false)
+// zeigt, ob die Ansicht mobil ist
+const isMobile = ref(false)
 
 // Menü ein- oder ausblenden
 function toggleOverlay() {
@@ -101,10 +115,16 @@ function handleScroll() {
   }
 }
 
+function updateMobile() {
+  isMobile.value = window.innerWidth < 640
+}
+
 // Listener registrieren und Initialdaten laden
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   window.addEventListener('scroll', handleScroll)
+  window.addEventListener('resize', updateMobile)
+  updateMobile()
   fetchCompanyData(auth.currentUser)
   onAuthStateChanged(auth, fetchCompanyData)
 })
@@ -112,6 +132,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', updateMobile)
 })
 
 // Lädt die Unternehmensdaten des eingeloggten Users
@@ -140,5 +161,15 @@ async function logout() {
 .rotate-90 {
   transform: rotate(90deg);
   transition: transform 0.2s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-0.75rem);
+}
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 </style>
