@@ -8,8 +8,8 @@
       to="/"
       class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
     >
-      <img src="/logo.png" alt="Logo" class="h-10 w-auto" />
-      <span class="font-bold text-lg text-gold">Magikey</span>
+      <img src="/logo.png" alt="Logo" class="h-12 w-auto" />
+      <span class="font-bold text-xl text-gold">Magikey</span>
     </router-link>
 
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
