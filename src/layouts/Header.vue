@@ -16,18 +16,10 @@
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex-1 flex justify-center px-4" v-if="showFilterBar">
-      <button
-        v-if="isMobile && !searchActive"
-        @click="searchActive = true"
-        class="flex items-center justify-between w-full px-4 py-3 rounded-full border border-gray-300 bg-white shadow text-gray-700"
-        aria-label="Suche öffnen"
-      >
-        <span class="text-sm">Suche</span>
-        <Search class="w-5 h-5" />
-      </button>
+      <MobileFilterBar v-if="isMobile" />
       <transition name="slide-down">
         <FilterBar
-          v-show="!isMobile || searchActive"
+          v-show="!isMobile"
           class="w-full max-w-2xl"
           :expanded="searchActive"
           @focus="searchActive = true"
@@ -79,7 +71,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 // Overlay-Menü-Komponente
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 import FilterBar from '@/components/user/FilterBar.vue'
-import { Search } from '@/components/icons'
+import MobileFilterBar from '@/components/user/MobileFilterBar.vue'
 
 const db = getFirestore()
 const router = useRouter()
