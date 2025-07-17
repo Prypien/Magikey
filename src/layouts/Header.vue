@@ -7,6 +7,7 @@
     <router-link
       to="/"
       class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
+      v-show="!isMobile"
     >
       <img src="/logo.png" alt="Logo" class="h-12 w-auto" />
       <span class="font-bold text-xl text-gold">Magikey</span>
@@ -18,10 +19,11 @@
       <button
         v-if="isMobile && !searchActive"
         @click="searchActive = true"
-        class="p-2 text-xl text-gray-700"
+        class="flex items-center justify-between w-full px-4 py-3 rounded-full border border-gray-300 bg-white shadow text-gray-700"
         aria-label="Suche öffnen"
       >
-        <Search class="w-6 h-6" />
+        <span class="text-sm">Suche</span>
+        <Search class="w-5 h-5" />
       </button>
       <transition name="slide-down">
         <FilterBar
@@ -36,13 +38,13 @@
 
     <div class="flex items-center gap-3">
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
-      <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-2 hover:underline">
+      <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-2 hover:underline" v-show="!isMobile">
         <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
         <span class="font-medium">{{ companyData.company_name }}</span>
       </router-link>
 
       <template v-if="!companyData">
-        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center">
+        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center" v-show="!isMobile">
           <i class="fa fa-key mr-2 animate-bounce"></i>
           Werde Problemsolver:in
         </router-link>
