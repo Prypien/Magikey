@@ -83,7 +83,7 @@ function toggleDay(key) {
 
 <style scoped>
 .input {
-  @apply border rounded-xl px-2 py-1 w-24 text-sm focus:ring-2 focus:border-gold border-gray-300;
+  @apply border rounded-xl px-2 py-1 w-24 text-sm focus:ring-2 focus:ring-gold focus:border-gold border-gray-300;
 }
 .bg-gold {
   background-color: #d9a908 !important;
