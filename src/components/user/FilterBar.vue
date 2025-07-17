@@ -128,4 +128,6 @@ function closePrice() {
   showPrice.value = false
   activeField.value = null
 }
+
+defineExpose({ openPrice })
 </script>
