@@ -5,7 +5,7 @@
     >
       <div
         class="relative flex items-center gap-2 px-4 flex-1 transition-all duration-200"
-        :class="{ 'ring-2 ring-gold bg-white scale-105 z-10': activeField === 'location' || filters.location }"
+        :class="{ 'bg-white scale-105 z-10': activeField === 'location' || filters.location }"
         @click.stop="activeField = 'location'"
       >
         <MapPin class="w-5 h-5 text-gold" />
@@ -20,7 +20,7 @@
       </div>
       <button
         class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200"
-        :class="{ 'text-gold ring-2 ring-gold bg-white scale-105 z-10': activeField === 'openNow' || filters.openNow }"
+        :class="{ 'text-gold bg-white scale-105 z-10': activeField === 'openNow' || filters.openNow }"
         @click.stop="toggle('openNow'); activeField = 'openNow'"
       >
         <Clock class="w-5 h-5" />
@@ -28,7 +28,7 @@
       </button>
       <button
         class="relative flex items-center gap-2 px-4 flex-shrink-0 hover:bg-gray-50 transition-all duration-200"
-        :class="{ 'text-gold ring-2 ring-gold bg-white scale-105 z-10': activeField === 'price' || priceActive }"
+        :class="{ 'text-gold bg-white scale-105 z-10': activeField === 'price' || priceActive }"
         @click.stop="openPrice"
       >
         <Euro class="w-5 h-5" />
