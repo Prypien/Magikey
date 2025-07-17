@@ -1,6 +1,6 @@
 <template>
   <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
-  <header class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex justify-between items-center relative">
+  <header class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex items-center justify-between relative">
     <router-link
       to="/"
       class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
@@ -10,6 +10,10 @@
     </router-link>
 
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
+
+    <div class="flex-1 flex justify-center px-4">
+      <FilterBar v-model="filters" class="w-full max-w-xl" />
+    </div>
 
     <div class="flex items-center gap-3">
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
@@ -53,6 +57,8 @@ import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 // Overlay-Menü-Komponente
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
+import FilterBar from '@/components/user/FilterBar.vue'
+import { filters } from '@/stores/filters'
 
 const db = getFirestore()
 const router = useRouter()
