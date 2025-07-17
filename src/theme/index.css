@@ -26,7 +26,7 @@
 
 @layer components {
   .input {
-    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-black focus:ring-2 focus:ring-black;
+    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold;
   }
 
   .water-input {
@@ -42,11 +42,11 @@
   }
 
   .textarea {
-    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm resize-none placeholder-gray-500 focus:outline-none focus:border-black focus:ring-2 focus:ring-black;
+    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm resize-none placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold;
   }
 
   .btn {
-    @apply bg-gold text-black font-medium py-3 px-6 rounded-full shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50 transform hover:scale-105 hover:bg-gold/90;
+    @apply bg-gold text-black font-medium py-3 px-6 rounded-full shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-gold disabled:opacity-50 transform hover:scale-105 hover:bg-gold/90;
   }
 
   .btn-outline {
@@ -96,6 +96,18 @@
   .slide-fade-enter-active,
   .slide-fade-leave-active {
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  /* Style native range sliders with gold */
+  input[type='range']::-webkit-slider-thumb {
+    @apply bg-gold h-4 w-4 rounded-full border-none cursor-pointer;
+  }
+  input[type='range']::-moz-range-thumb {
+    @apply bg-gold h-4 w-4 rounded-full border-none cursor-pointer;
+  }
+  input[type='range']::-webkit-slider-runnable-track,
+  input[type='range']::-moz-range-track {
+    @apply bg-gold/30 h-2 rounded-full;
   }
 
 }

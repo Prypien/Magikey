@@ -31,6 +31,6 @@ const sizeClass = computed(() =>
 
 <style scoped>
 .btn {
-  @apply bg-gold text-black rounded-full font-medium shadow transition-colors duration-200 hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50;
+  @apply bg-gold text-black rounded-full font-medium shadow transition-colors duration-200 hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold disabled:opacity-50;
 }
 </style>
