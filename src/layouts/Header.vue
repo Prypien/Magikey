@@ -16,10 +16,10 @@
 
     <div class="flex-1 flex justify-center px-4">
       <FilterBar
-        v-model="filters"
         class="w-full max-w-xl"
         :expanded="searchActive"
         @focus="searchActive = true"
+        @blur="searchActive = false"
       />
     </div>
 
@@ -66,7 +66,6 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 // Overlay-Menü-Komponente
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 import FilterBar from '@/components/user/FilterBar.vue'
-import { filters } from '@/stores/filters'
 
 const db = getFirestore()
 const router = useRouter()
