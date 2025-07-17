@@ -1,6 +1,9 @@
 <template>
   <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
-  <header class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex items-center justify-between relative">
+  <header
+    class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex items-center justify-between relative transition-all duration-200"
+    :class="{ 'py-6': searchActive }"
+  >
     <router-link
       to="/"
       class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
@@ -12,7 +15,13 @@
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
 
     <div class="flex-1 flex justify-center px-4">
-      <FilterBar v-model="filters" class="w-full max-w-xl" />
+      <FilterBar
+        v-model="filters"
+        class="w-full max-w-xl"
+        :expanded="searchActive"
+        @focus="searchActive = true"
+        @blur="searchActive = false"
+      />
     </div>
 
     <div class="flex items-center gap-3">
@@ -68,6 +77,8 @@ const showOverlay = ref(false)
 const companyData = ref(null)
 // Referenz auf den Menü-Button für Click-Outside-Handling
 const menuButton = ref(null)
+// zeigt an, ob die Suchleiste aktiv ist
+const searchActive = ref(false)
 
 // Menü ein- oder ausblenden
 function toggleOverlay() {
@@ -82,15 +93,24 @@ function handleClickOutside(event) {
   }
 }
 
+// reduziert die Größe von Header und Suche beim Scrollen
+function handleScroll() {
+  if (searchActive.value && window.scrollY > 0) {
+    searchActive.value = false
+  }
+}
+
 // Listener registrieren und Initialdaten laden
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  window.addEventListener('scroll', handleScroll)
   fetchCompanyData(auth.currentUser)
   onAuthStateChanged(auth, fetchCompanyData)
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('scroll', handleScroll)
 })
 
 // Lädt die Unternehmensdaten des eingeloggten Users
