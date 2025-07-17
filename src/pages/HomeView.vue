@@ -1,9 +1,6 @@
 <template>
   <!-- Startseite mit Filterleiste und Firmenliste -->
   <div class="min-h-screen bg-white px-4 py-8 sm:px-6 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-semibold text-center mb-6">Magikey, der Schlüsseldienst in deiner Nähe</h1>
-
-    <FilterBar v-model="filters" class="mb-6" />
 
     <div class="mt-6">
       <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
@@ -27,21 +24,16 @@ import { ref, computed, onMounted } from 'vue'
 // Service zum Abrufen der Firmen
 import { getCompanies } from '@/services/company'
 
-import FilterBar from '@/components/user/FilterBar.vue'
 import SearchResults from '@/components/user/SearchResults.vue'
 import NotifyForm from '@/components/user/NotifyForm.vue'
 import Loader from '@/components/common/Loader.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
+import { filters } from '@/stores/filters'
 
 // Firmenliste und Ladezustand
 const companies = ref([])
 const loading = ref(true)
 
-const filters = ref({
-  openNow: false,
-  price: [0, 1000],
-  location: ''
-})
 
 // Versucht, die Postleitzahl über Geolocation zu ermitteln
 async function useLocation() {
@@ -49,7 +41,7 @@ async function useLocation() {
   navigator.geolocation.getCurrentPosition(async (pos) => {
     try {
       const { postalCode } = await getPostalFromCoords(pos.coords.latitude, pos.coords.longitude)
-      if (postalCode) filters.value.location = postalCode
+      if (postalCode) filters.location = postalCode
     } catch (err) {
       console.error('Geolocation fehlgeschlagen', err)
     }
@@ -74,10 +66,10 @@ const filteredCompanies = computed(() => {
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
   return companies.value.filter((company) => {
-    const matchesPLZ = company.postal_code?.includes(filters.value.location)
+    const matchesPLZ = company.postal_code?.includes(filters.location)
 
     let isOpen = true
-    if (filters.value.openNow) {
+    if (filters.openNow) {
       try {
         const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
         const today = days[now.getDay() - 1]
@@ -95,9 +87,9 @@ const filteredCompanies = computed(() => {
     }
 
     const price = parseInt(company.price || '0')
-    const inPrice = price >= filters.value.price[0] && price <= filters.value.price[1]
+    const inPrice = price >= filters.price[0] && price <= filters.price[1]
 
-    const matchesOpen = !filters.value.openNow || isOpen
+    const matchesOpen = !filters.openNow || isOpen
 
     return matchesPLZ && matchesOpen && inPrice
   })
