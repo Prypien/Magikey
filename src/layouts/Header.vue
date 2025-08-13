@@ -2,21 +2,21 @@
   <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
   <header
     ref="headerRef"
-    class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex items-center justify-between relative transition-all duration-200"
+    class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-sm flex items-center justify-between relative transition-all duration-200"
     :class="{ 'py-6': searchActive }"
   >
-      <router-link
-        to="/"
-        class="flex items-center gap-2 px-3 py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
-        v-show="!hideNavOnHomeMobile"
-      >
-      <img src="/logo.png" alt="Logo" class="h-12 w-auto" />
-      <span class="font-bold text-xl text-gold">Magikey</span>
+    <router-link
+      to="/"
+      class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
+      v-show="!hideNavOnHomeMobile"
+    >
+      <img src="/logo.png" alt="Logo" class="h-10 sm:h-12 w-auto" />
+      <span class="font-bold text-lg sm:text-xl text-gold">Magikey</span>
     </router-link>
 
-    <nav class="hidden md:flex items-center gap-6 text-sm font-medium"></nav>
+    <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium"></nav>
 
-    <div class="flex-1 flex justify-center px-4" v-if="showFilterBar">
+    <div class="flex-1 flex justify-center px-2 sm:px-4" v-if="showFilterBar">
       <MobileFilterBar v-if="isMobile" />
       <transition name="slide-down">
         <FilterBar
@@ -29,11 +29,11 @@
       </transition>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 sm:gap-3">
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
-      <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-2 hover:underline" v-show="!hideNavOnHomeMobile">
-        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-9 h-9 rounded-full object-cover" />
-        <span class="font-medium">{{ companyData.company_name }}</span>
+      <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-1 sm:gap-2 hover:underline" v-show="!hideNavOnHomeMobile">
+        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover" />
+        <span class="font-medium text-sm sm:text-base">{{ companyData.company_name }}</span>
       </router-link>
 
       <template v-if="!companyData">
@@ -46,7 +46,7 @@
       <!-- Button zum Öffnen des mobilen Overlays -->
       <button
         @click="toggleOverlay"
-        class="text-xl hover:text-gold transition-colors focus:outline-none"
+        class="text-lg sm:text-xl hover:text-gold transition-colors focus:outline-none"
         :class="{ 'rotate-90': showOverlay }"
         aria-label="Menü"
         ref="menuButton"
