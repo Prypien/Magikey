@@ -10,18 +10,18 @@
       class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
       v-show="!hideNavOnHomeMobile"
     >
-      <img src="/logo.png" alt="Logo" class="h-10 sm:h-12 w-auto" />
-      <span class="font-bold text-lg sm:text-xl text-gold">Magikey</span>
+      <img src="/logo.png" alt="Logo" class="h-8 sm:h-10 md:h-12 w-auto" />
+      <span class="font-bold text-base sm:text-lg md:text-xl text-gold">Magikey</span>
     </router-link>
 
     <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium"></nav>
 
-    <div class="flex-1 flex justify-center px-2 sm:px-4" v-if="showFilterBar">
+    <div class="flex-1 min-w-0 flex justify-center px-2 sm:px-4" v-if="showFilterBar">
       <MobileFilterBar v-if="isMobile" />
       <transition name="slide-down">
         <FilterBar
           v-show="!isMobile"
-          class="w-full max-w-2xl"
+          class="w-full max-w-2xl min-w-0"
           :expanded="searchActive"
           @focus="searchActive = true"
           @blur="searchActive = false"
@@ -29,11 +29,11 @@
       </transition>
     </div>
 
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="flex items-center gap-1 sm:gap-2 md:gap-3">
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
       <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-1 sm:gap-2 hover:underline" v-show="!hideNavOnHomeMobile">
-        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover" />
-        <span class="font-medium text-sm sm:text-base">{{ companyData.company_name }}</span>
+        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full object-cover" />
+        <span class="font-medium text-xs sm:text-sm md:text-base">{{ companyData.company_name }}</span>
       </router-link>
 
       <template v-if="!companyData">
@@ -46,7 +46,7 @@
       <!-- Button zum Öffnen des mobilen Overlays -->
       <button
         @click="toggleOverlay"
-        class="text-lg sm:text-xl hover:text-gold transition-colors focus:outline-none"
+        class="text-base sm:text-lg md:text-xl hover:text-gold transition-colors focus:outline-none"
         :class="{ 'rotate-90': showOverlay }"
         aria-label="Menü"
         ref="menuButton"
