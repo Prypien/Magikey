@@ -1,6 +1,7 @@
 <template>
   <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
   <header
+    ref="headerRef"
     class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-6 py-4 shadow-sm flex items-center justify-between relative transition-all duration-200"
     :class="{ 'py-6': searchActive }"
   >
@@ -73,6 +74,8 @@ import OverlayMenu from '@/components/common/OverlayMenu.vue'
 import FilterBar from '@/components/user/FilterBar.vue'
 import MobileFilterBar from '@/components/user/MobileFilterBar.vue'
 
+const emit = defineEmits(['update-height'])
+
 const db = getFirestore()
 const router = useRouter()
 const route = useRoute()
@@ -86,8 +89,11 @@ const showOverlay = ref(false)
 const companyData = ref(null)
 // Referenz auf den Menü-Button für Click-Outside-Handling
 const menuButton = ref(null)
+// Referenz auf den Header für dynamische Höhe
+const headerRef = ref(null)
 // zeigt an, ob die Suchleiste aktiv ist
 const searchActive = ref(false)
+let resizeObserver = null
 // zeigt, ob die Ansicht mobil ist
 // Menü ein- oder ausblenden
 function toggleOverlay() {
@@ -121,12 +127,22 @@ onMounted(() => {
   updateMobile()
   fetchCompanyData(auth.currentUser)
   onAuthStateChanged(auth, fetchCompanyData)
+  if (headerRef.value) {
+    emit('update-height', headerRef.value.offsetHeight)
+    resizeObserver = new window.ResizeObserver((entries) => {
+      emit('update-height', entries[0].contentRect.height)
+    })
+    resizeObserver.observe(headerRef.value)
+  }
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('resize', updateMobile)
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
 })
 
 // Lädt die Unternehmensdaten des eingeloggten Users
