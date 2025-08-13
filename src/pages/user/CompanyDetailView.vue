@@ -45,15 +45,16 @@
           <p class="text-gray-700">{{ company.description || 'Keine Beschreibung' }}</p>
         </div>
 
-        <div v-if="lockTypeLabels.length" class="mt-6">
+        <div v-if="lockTypeIcons.length" class="mt-6">
           <h2 class="font-semibold mb-2 text-black">Kompatible Schlösser</h2>
           <div class="flex flex-wrap gap-2">
             <span
-              v-for="t in lockTypeLabels"
-              :key="t"
-              class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full"
+              v-for="(icon, idx) in lockTypeIcons"
+              :key="idx"
+              class="bg-gray-100 text-gray-800 text-xl px-2 py-1 rounded-full"
+              :title="lockTypeLabels[idx]"
             >
-              {{ t }}
+              {{ icon }}
             </span>
           </div>
         </div>
@@ -89,7 +90,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
-import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
+import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
 
 const route = useRoute()
 const companyId = route.params.id
@@ -166,5 +167,9 @@ function formatTimeRange(range) {
 
 const lockTypeLabels = computed(() =>
   (company.value.lock_types || []).map((t) => LOCK_TYPE_LABELS[t] || t)
+)
+
+const lockTypeIcons = computed(() =>
+  (company.value.lock_types || []).map((t) => LOCK_TYPE_ICONS[t] || '')
 )
 </script>

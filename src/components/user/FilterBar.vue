@@ -1,7 +1,7 @@
 <template>
   <div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
     <div
-      class="flex w-full max-w-4xl items-center divide-x overflow-hidden rounded-full border border-gray-100 bg-white/80 px-4 py-3 text-base shadow-lg backdrop-blur transition-all duration-200 sm:py-2 sm:text-sm"
+      class="flex w-full max-w-5xl items-center divide-x overflow-hidden rounded-full border border-gray-100 bg-white/80 px-4 py-3 text-base shadow-lg backdrop-blur transition-all duration-200 sm:py-2 sm:text-sm"
       :class="{ 'scale-105 py-3': expanded }"
     >
       <div

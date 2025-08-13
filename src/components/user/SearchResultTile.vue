@@ -28,8 +28,18 @@
           {{ openStatus }}
         </span>
       </p>
-      <p v-if="lockTypeLabels.length" class="text-xs text-gray-500">
-        Kompatibel mit: {{ lockTypeLabels.join(', ') }}
+      <p
+        v-if="lockTypeIcons.length"
+        class="text-xs text-gray-500 flex items-center gap-1"
+      >
+        <span>Kompatibel mit:</span>
+        <span
+          v-for="(icon, idx) in lockTypeIcons"
+          :key="idx"
+          :title="lockTypeLabels[idx]"
+        >
+          {{ icon }}
+        </span>
       </p>
     </div>
   </li>
@@ -38,7 +48,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
+import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
 
 const props = defineProps({
   company: {
@@ -87,6 +97,10 @@ const borderColor = computed(() =>
 
 const lockTypeLabels = computed(() =>
   (props.company.lock_types || []).map((t) => LOCK_TYPE_LABELS[t] || t)
+)
+
+const lockTypeIcons = computed(() =>
+  (props.company.lock_types || []).map((t) => LOCK_TYPE_ICONS[t] || '')
 )
 
 function navigateToDetails() {
