@@ -1,80 +1,73 @@
 <template>
-  <div ref="root" class="sm:hidden flex justify-center px-2 sticky top-2 z-30">
+  <div ref="root" class="sticky top-2 z-30 flex justify-center px-2 sm:hidden">
     <div class="relative">
       <button
         @click="expanded = !expanded"
-        class="p-3 bg-gold rounded-full text-white shadow-lg focus:outline-none"
+        class="rounded-full bg-gold p-3 text-white shadow-lg focus:outline-none"
         aria-label="Suchen"
       >
-        <Search class="w-5 h-5" />
+        <Search class="h-5 w-5" />
       </button>
       <transition
-        enter-active-class="transition-transform duration-300 origin-top ease-out"
+        enter-active-class="origin-top transition-transform duration-300 ease-out"
         enter-from-class="scale-y-0 opacity-0"
         enter-to-class="scale-y-100 opacity-100"
-        leave-active-class="transition-transform duration-200 origin-top ease-in"
+        leave-active-class="origin-top transition-transform duration-200 ease-in"
         leave-from-class="scale-y-100 opacity-100"
         leave-to-class="scale-y-0 opacity-0"
       >
         <div
           v-if="expanded"
-          class="absolute left-1/2 -translate-x-1/2 mt-2 w-[90vw] max-w-sm bg-white border rounded-xl shadow-lg p-4 space-y-4 z-40"
+          class="absolute left-1/2 z-40 mt-2 w-[90vw] max-w-sm -translate-x-1/2 space-y-4 rounded-xl border bg-white p-4 shadow-lg"
         >
           <div class="flex items-center gap-2">
-            <MapPin class="w-5 h-5 text-gold" />
+            <MapPin class="h-5 w-5 text-gold" />
             <input
               v-model="filters.location"
               placeholder="PLZ"
-              class="flex-1 border rounded px-2 py-1 text-sm focus:outline-none"
+              class="flex-1 rounded border px-2 py-1 text-sm focus:outline-none"
             />
             <button
               v-if="filters.location"
-              @click="clear('location')"
+              @click="clearFilter('location')"
               class="text-gray-400 hover:text-black"
             >
-              <X class="w-3 h-3" />
+              <X class="h-3 w-3" />
             </button>
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Clock class="w-5 h-5 text-gold" />
+              <Clock class="h-5 w-5 text-gold" />
               <span class="text-sm">Jetzt geöffnet</span>
             </div>
-            <input
-              type="checkbox"
-              v-model="filters.openNow"
-              class="form-checkbox h-4 w-4 text-gold"
-            />
+            <input type="checkbox" v-model="filters.openNow" class="h-4 w-4 form-checkbox text-gold" />
           </div>
           <div>
             <button
               @click="openPrice"
-              class="w-full flex items-center justify-between border rounded px-2 py-1 text-sm"
+              class="flex w-full items-center justify-between rounded border px-2 py-1 text-sm"
             >
               <div class="flex items-center gap-2">
-                <Euro class="w-5 h-5 text-gold" />
+                <Euro class="h-5 w-5 text-gold" />
                 <span v-if="!priceActive">Preisauswahl</span>
                 <span v-else>{{ filters.price[0] }}€ - {{ filters.price[1] }}€</span>
               </div>
-              <ChevronDown v-if="!priceActive" class="w-4 h-4 text-gray-500" />
+              <ChevronDown v-if="!priceActive" class="h-4 w-4 text-gray-500" />
             </button>
           </div>
         </div>
       </transition>
     </div>
-    <FilterPriceSheet
-      v-model="filters.price"
-      :visible="showPrice"
-      @close="closePrice"
-    />
+    <FilterPriceSheet v-model="filters.price" :visible="showPrice" @close="closePrice" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, defineAsyncComponent } from 'vue'
 import { Search, MapPin, Clock, Euro, ChevronDown, X } from '@/components/icons'
-import FilterPriceSheet from './FilterPriceSheet.vue'
-import { filters } from '@/stores/filters'
+import { filters, clearFilter } from '@/stores/filters'
+
+const FilterPriceSheet = defineAsyncComponent(() => import('./FilterPriceSheet.vue'))
 
 const expanded = ref(false)
 const showPrice = ref(false)
@@ -95,12 +88,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
-
-function clear(key) {
-  if (key === 'location') {
-    filters.location = ''
-  }
-}
 
 function openPrice() {
   showPrice.value = true

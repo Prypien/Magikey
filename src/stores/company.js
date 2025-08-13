@@ -1,0 +1,60 @@
+import { ref, computed } from 'vue'
+import { getCompanies } from '@/services/company'
+import { filters } from './filters'
+
+const companies = ref([])
+const loading = ref(false)
+
+export async function fetchCompanies() {
+  loading.value = true
+  try {
+    companies.value = await getCompanies()
+  } catch (err) {
+    console.error('Fehler beim Laden:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+
+export const filteredCompanies = computed(() => {
+  const now = new Date()
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+
+  return companies.value.filter((company) => {
+    const matchesPLZ = company.postal_code?.includes(filters.location)
+
+    let isOpen = true
+    if (filters.openNow) {
+      try {
+        let dayIndex = now.getDay() - 1
+        if (dayIndex < 0) dayIndex = 6
+        const today = days[dayIndex]
+        const hours = company.opening_hours?.[today]
+        if (hours?.open && hours?.close) {
+          const [oh, om] = hours.open.split(':').map(Number)
+          const [ch, cm] = hours.close.split(':').map(Number)
+          const openM = oh * 60 + om
+          const closeM = ch * 60 + cm
+          isOpen = currentMinutes >= openM && currentMinutes <= closeM
+        } else {
+          isOpen = false
+        }
+      } catch (_) {
+        isOpen = false
+      }
+    }
+
+    const price = parseInt(company.price || '0')
+    const inPrice = price >= filters.price[0] && price <= filters.price[1]
+
+    const matchesOpen = !filters.openNow || isOpen
+
+    return matchesPLZ && matchesOpen && inPrice
+  })
+})
+
+export function useCompanyStore() {
+  return { companies, loading, fetchCompanies, filteredCompanies }
+}
