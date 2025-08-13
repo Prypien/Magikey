@@ -4,20 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Layout-Komponente
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
-// Seitenkomponenten
+// Startseite wird häufig genutzt und bleibt im Hauptbundle
 import HomeView from '@/pages/HomeView.vue'
-import LoginView from '@/pages/company/LoginView.vue'
-import RegisterView from '@/pages/company/RegisterView.vue'
-import DashboardView from '@/pages/company/DashboardView.vue'
-import EditView from '@/pages/company/EditView.vue'
-import CompanyDetailView from '@/pages/user/CompanyDetailView.vue'
-import ImpressumView from '@/pages/ImpressumView.vue'
-import DatenschutzView from '@/pages/DatenschutzView.vue'
-import HelpCenterView from '@/pages/HelpCenterView.vue'
-import SuccessView from '@/pages/SuccessView.vue'
-import VerifyEmailView from '@/pages/VerifyEmailView.vue'
-import ResetPasswordView from '@/pages/ResetPasswordView.vue'
-import NotFoundView from '@/pages/NotFoundView.vue'
 
 // Firebase-Auth-Instanz zum Prüfen von Login-Status
 import { auth } from '@/firebase'
@@ -29,35 +17,35 @@ const routes = [
     component: DefaultLayout,
     children: [
       { path: '', name: 'home', component: HomeView },
-      { path: 'login', name: 'login', component: LoginView },
-      { path: 'register', name: 'register', component: RegisterView },
-      { path: 'reset-password', name: 'reset-password', component: ResetPasswordView },
+      { path: 'login', name: 'login', component: () => import('@/pages/company/LoginView.vue') },
+      { path: 'register', name: 'register', component: () => import('@/pages/company/RegisterView.vue') },
+      { path: 'reset-password', name: 'reset-password', component: () => import('@/pages/ResetPasswordView.vue') },
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: DashboardView,
+        component: () => import('@/pages/company/DashboardView.vue'),
         meta: { requiresAuth: true },
       },
       {
         path: 'edit',
         name: 'edit',
-        component: EditView,
+        component: () => import('@/pages/company/EditView.vue'),
         meta: { requiresAuth: true },
       },
       {
         path: 'details/:id',
         name: 'details',
-        component: CompanyDetailView,
+        component: () => import('@/pages/user/CompanyDetailView.vue'),
         props: true,
       },
-      { path: 'impressum', name: 'impressum', component: ImpressumView },
-      { path: 'datenschutz', name: 'datenschutz', component: DatenschutzView },
-      { path: 'hilfe', name: 'help', component: HelpCenterView },
-      { path: 'success', name: 'success', component: SuccessView },
-      { path: 'verify-email', name: 'verify-email', component: VerifyEmailView },
+      { path: 'impressum', name: 'impressum', component: () => import('@/pages/ImpressumView.vue') },
+      { path: 'datenschutz', name: 'datenschutz', component: () => import('@/pages/DatenschutzView.vue') },
+      { path: 'hilfe', name: 'help', component: () => import('@/pages/HelpCenterView.vue') },
+      { path: 'success', name: 'success', component: () => import('@/pages/SuccessView.vue') },
+      { path: 'verify-email', name: 'verify-email', component: () => import('@/pages/VerifyEmailView.vue') },
     ],
   },
-  { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/pages/NotFoundView.vue') },
 ]
 
 // Router erstellen
