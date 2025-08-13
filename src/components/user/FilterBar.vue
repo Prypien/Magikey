@@ -75,8 +75,7 @@
 
 <script setup>
 import { ref, watch, computed, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
-import { MapPin, Clock, Euro, ChevronDown, Search, X } from '@/components/icons'
-import { Lock } from 'lucide-vue-next'
+import { MapPin, Clock, Euro, ChevronDown, Search, X, Lock } from '@/components/icons'
 import { filters, toggleFilter, clearFilter } from '@/stores/filters'
 
 const FilterPriceSheet = defineAsyncComponent(() => import('./FilterPriceSheet.vue'))
