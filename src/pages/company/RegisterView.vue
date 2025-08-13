@@ -127,6 +127,16 @@
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
+        <div>
+          <label class="label">Schlosstypen</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label v-for="opt in lockTypeOptions" :key="opt.value" class="flex items-center gap-2 text-sm">
+              <input type="checkbox" :value="opt.value" v-model="lockTypes" class="accent-gold" />
+              <span>{{ opt.label }}</span>
+            </label>
+          </div>
+        </div>
+
         <OpeningHoursForm v-model="openingHours" />
 
 
@@ -164,12 +174,15 @@ import { loginWithGoogle } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import Loader from '@/components/common/Loader.vue'
+import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
 
 const router = useRouter()
 const is247 = ref(false)
 const googleLoading = ref(false)
 const googleError = ref('')
 const openingHours = ref({})
+const lockTypes = ref([])
+const lockTypeOptions = LOCK_TYPE_OPTIONS
 
 
 const register = async (form) => {
@@ -188,6 +201,7 @@ const register = async (form) => {
       postal_code: form.postal_code || '',
       price: form.price || '',
       description: form.description || '',
+      lock_types: lockTypes.value,
       opening_hours: openingHours.value,
       is_247: form.is_247 || false,
       emergency_price: form.is_247 ? form.emergency_price || '' : '',

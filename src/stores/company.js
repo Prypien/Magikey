@@ -50,8 +50,11 @@ export const filteredCompanies = computed(() => {
     const inPrice = price >= filters.price[0] && price <= filters.price[1]
 
     const matchesOpen = !filters.openNow || isOpen
+    const matchesLock =
+      filters.lockTypes.length === 0 ||
+      (company.lock_types || []).some((t) => filters.lockTypes.includes(t))
 
-    return matchesPLZ && matchesOpen && inPrice
+    return matchesPLZ && matchesOpen && inPrice && matchesLock
   })
 })
 

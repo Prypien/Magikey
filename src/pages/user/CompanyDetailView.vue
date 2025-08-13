@@ -45,6 +45,19 @@
           <p class="text-gray-700">{{ company.description || 'Keine Beschreibung' }}</p>
         </div>
 
+        <div v-if="lockTypeLabels.length" class="mt-6">
+          <h2 class="font-semibold mb-2 text-black">Kompatible Schlösser</h2>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="t in lockTypeLabels"
+              :key="t"
+              class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full"
+            >
+              {{ t }}
+            </span>
+          </div>
+        </div>
+
         <div class="mt-8 flex gap-4 justify-center">
           <a
             v-if="company.phone"
@@ -76,6 +89,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
+import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 
 const route = useRoute()
 const companyId = route.params.id
@@ -149,4 +163,8 @@ function formatTimeRange(range) {
   if (!range || !range.open || !range.close) return 'geschlossen'
   return `${range.open} – ${range.close}`
 }
+
+const lockTypeLabels = computed(() =>
+  (company.value.lock_types || []).map((t) => LOCK_TYPE_LABELS[t] || t)
+)
 </script>

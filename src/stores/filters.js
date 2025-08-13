@@ -3,7 +3,8 @@ import { reactive } from 'vue'
 export const filters = reactive({
   openNow: false,
   price: [0, 1000],
-  location: ''
+  location: '',
+  lockTypes: []
 })
 
 export function toggleFilter(key) {
@@ -15,6 +16,8 @@ export function clearFilter(key) {
     filters.price = [0, 1000]
   } else if (key === 'location') {
     filters.location = ''
+  } else if (key === 'lockTypes') {
+    filters.lockTypes = []
   } else {
     filters[key] = false
   }

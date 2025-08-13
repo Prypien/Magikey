@@ -55,22 +55,39 @@
               <ChevronDown v-if="!priceActive" class="h-4 w-4 text-gray-500" />
             </button>
           </div>
+          <div>
+            <button
+              @click="openLockTypes"
+              class="flex w-full items-center justify-between rounded border px-2 py-1 text-sm mt-2"
+            >
+              <div class="flex items-center gap-2">
+                <Lock class="h-5 w-5 text-gold" />
+                <span v-if="!filters.lockTypes.length">Schlösser</span>
+                <span v-else>{{ filters.lockTypes.length }} ausgewählt</span>
+              </div>
+              <ChevronDown v-if="!filters.lockTypes.length" class="h-4 w-4 text-gray-500" />
+            </button>
+          </div>
         </div>
       </transition>
     </div>
     <FilterPriceSheet v-model="filters.price" :visible="showPrice" @close="closePrice" />
+    <FilterLockTypeSheet v-model="filters.lockTypes" :visible="showLockTypes" @close="closeLockTypes" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, defineAsyncComponent } from 'vue'
 import { Search, MapPin, Clock, Euro, ChevronDown, X } from '@/components/icons'
+import { Lock } from 'lucide-vue-next'
 import { filters, clearFilter } from '@/stores/filters'
 
 const FilterPriceSheet = defineAsyncComponent(() => import('./FilterPriceSheet.vue'))
+const FilterLockTypeSheet = defineAsyncComponent(() => import('./FilterLockTypeSheet.vue'))
 
 const expanded = ref(false)
 const showPrice = ref(false)
+const showLockTypes = ref(false)
 const root = ref(null)
 
 const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
@@ -95,6 +112,14 @@ function openPrice() {
 
 function closePrice() {
   showPrice.value = false
+}
+
+function openLockTypes() {
+  showLockTypes.value = true
+}
+
+function closeLockTypes() {
+  showLockTypes.value = false
 }
 </script>
 

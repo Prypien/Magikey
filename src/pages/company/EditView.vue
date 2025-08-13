@@ -86,6 +86,16 @@
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
+        <div>
+          <label class="label">Schlosstypen</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label v-for="opt in lockTypeOptions" :key="opt.value" class="flex items-center gap-2 text-sm">
+              <input type="checkbox" :value="opt.value" v-model="company.lock_types" class="accent-gold" />
+              <span>{{ opt.label }}</span>
+            </label>
+          </div>
+        </div>
+
         <OpeningHoursForm v-model="company.opening_hours" />
 
 
@@ -131,6 +141,7 @@ import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import Button from '@/components/common/Button.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import { sendVerificationEmail } from '@/services/auth'
+import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
 
 const router = useRouter()
 const user = auth.currentUser
@@ -152,6 +163,7 @@ const company = ref({
   is_247: false,
   emergency_price: '',
   opening_hours: {},
+  lock_types: [],
 })
 
 onMounted(async () => {
@@ -161,6 +173,8 @@ onMounted(async () => {
     company.value = { ...company.value, ...docSnap.data() }
   }
 })
+
+const lockTypeOptions = LOCK_TYPE_OPTIONS
 
 const saveChanges = async () => {
   if (!user || logoUploading.value) {
