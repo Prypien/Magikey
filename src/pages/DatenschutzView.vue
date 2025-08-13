@@ -1,16 +1,14 @@
 <template>
   <div class="max-w-3xl mx-auto p-6">
-    <nav class="mb-6 flex gap-4 text-sm">
+    <nav class="mb-6 flex gap-4">
       <router-link
         to="/impressum"
-        class="hover:underline"
-        :class="{ 'font-semibold text-gold': route.name === 'impressum' }"
+        :class="route.name === 'impressum' ? 'btn text-sm' : 'btn-outline text-sm'"
         >Impressum</router-link
       >
       <router-link
         to="/datenschutz"
-        class="hover:underline"
-        :class="{ 'font-semibold text-gold': route.name === 'datenschutz' }"
+        :class="route.name === 'datenschutz' ? 'btn text-sm' : 'btn-outline text-sm'"
         >Datenschutz</router-link
       >
     </nav>
