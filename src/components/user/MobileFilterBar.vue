@@ -8,50 +8,59 @@
       >
         <Search class="w-5 h-5" />
       </button>
-      <div
-        v-if="expanded"
-        class="absolute right-0 mt-2 w-64 bg-white border rounded-xl shadow-lg p-4 space-y-4 z-40"
+      <transition
+        enter-active-class="transition-transform duration-300 origin-top ease-out"
+        enter-from-class="scale-y-0 opacity-0"
+        enter-to-class="scale-y-100 opacity-100"
+        leave-active-class="transition-transform duration-200 origin-top ease-in"
+        leave-from-class="scale-y-100 opacity-100"
+        leave-to-class="scale-y-0 opacity-0"
       >
-        <div class="flex items-center gap-2">
-          <MapPin class="w-5 h-5 text-gold" />
-          <input
-            v-model="filters.location"
-            placeholder="PLZ"
-            class="flex-1 border rounded px-2 py-1 text-sm focus:outline-none"
-          />
-          <button
-            v-if="filters.location"
-            @click="clear('location')"
-            class="text-gray-400 hover:text-black"
-          >
-            <X class="w-3 h-3" />
-          </button>
-        </div>
-        <div class="flex items-center justify-between">
+        <div
+          v-if="expanded"
+          class="absolute left-1/2 -translate-x-1/2 mt-2 w-[90vw] max-w-sm bg-white border rounded-xl shadow-lg p-4 space-y-4 z-40"
+        >
           <div class="flex items-center gap-2">
-            <Clock class="w-5 h-5 text-gold" />
-            <span class="text-sm">Jetzt geöffnet</span>
+            <MapPin class="w-5 h-5 text-gold" />
+            <input
+              v-model="filters.location"
+              placeholder="PLZ"
+              class="flex-1 border rounded px-2 py-1 text-sm focus:outline-none"
+            />
+            <button
+              v-if="filters.location"
+              @click="clear('location')"
+              class="text-gray-400 hover:text-black"
+            >
+              <X class="w-3 h-3" />
+            </button>
           </div>
-          <input
-            type="checkbox"
-            v-model="filters.openNow"
-            class="form-checkbox h-4 w-4 text-gold"
-          />
-        </div>
-        <div>
-          <button
-            @click="openPrice"
-            class="w-full flex items-center justify-between border rounded px-2 py-1 text-sm"
-          >
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <Euro class="w-5 h-5 text-gold" />
-              <span v-if="!priceActive">Preisauswahl</span>
-              <span v-else>{{ filters.price[0] }}€ - {{ filters.price[1] }}€</span>
+              <Clock class="w-5 h-5 text-gold" />
+              <span class="text-sm">Jetzt geöffnet</span>
             </div>
-            <ChevronDown v-if="!priceActive" class="w-4 h-4 text-gray-500" />
-          </button>
+            <input
+              type="checkbox"
+              v-model="filters.openNow"
+              class="form-checkbox h-4 w-4 text-gold"
+            />
+          </div>
+          <div>
+            <button
+              @click="openPrice"
+              class="w-full flex items-center justify-between border rounded px-2 py-1 text-sm"
+            >
+              <div class="flex items-center gap-2">
+                <Euro class="w-5 h-5 text-gold" />
+                <span v-if="!priceActive">Preisauswahl</span>
+                <span v-else>{{ filters.price[0] }}€ - {{ filters.price[1] }}€</span>
+              </div>
+              <ChevronDown v-if="!priceActive" class="w-4 h-4 text-gray-500" />
+            </button>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
     <FilterPriceSheet
       v-model="filters.price"
