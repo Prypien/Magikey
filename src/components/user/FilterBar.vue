@@ -1,11 +1,11 @@
 <template>
-  <div ref="root" class="sticky top-2 z-30 flex justify-center px-2" @click.self="activeField = null">
+  <div ref="root" class="sticky top-2 z-30 flex justify-center px-2 min-w-0" @click.self="activeField = null">
     <div
-      class="flex w-full max-w-5xl items-center divide-x overflow-hidden rounded-full border border-gray-100 bg-white/80 px-4 py-3 text-base shadow-lg backdrop-blur transition-all duration-200 sm:py-2 sm:text-sm"
+      class="flex w-full max-w-5xl items-center divide-x overflow-hidden rounded-full border border-gray-100 bg-white/80 px-4 py-3 text-base shadow-lg backdrop-blur transition-all duration-200 sm:py-2 sm:text-sm min-w-0"
       :class="{ 'scale-105 py-3': expanded }"
     >
       <div
-        class="relative flex flex-1 items-center gap-2 py-3 px-4 transition-all duration-200 sm:py-2"
+        class="relative flex flex-1 min-w-0 items-center gap-2 py-3 px-4 transition-all duration-200 sm:py-2"
         :class="{ 'z-10 scale-105 bg-white': activeField === 'location' || filters.location }"
         @click.stop="activeField = 'location'"
       >
@@ -13,7 +13,7 @@
         <input
           v-model="filters.location"
           placeholder="Wo?"
-          class="flex-1 border-none bg-transparent text-base placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+          class="flex-1 min-w-0 border-none bg-transparent text-base placeholder:text-gray-400 focus:ring-0 sm:text-sm"
           autocomplete="postal-code"
           @focus="activeField = 'location'"
         />
@@ -26,43 +26,43 @@
         </button>
       </div>
       <button
-        class="relative flex flex-shrink-0 items-center gap-2 py-3 px-4 text-base transition-all duration-200 hover:bg-gray-50 sm:py-2 sm:text-sm"
+        class="relative flex items-center gap-2 py-3 px-4 text-base transition-all duration-200 hover:bg-gray-50 sm:py-2 sm:text-sm"
         :class="{ 'z-10 scale-105 bg-white text-gold': activeField === 'openNow' || filters.openNow }"
         @click.stop="toggleFilter('openNow'); activeField = 'openNow'"
       >
         <Clock class="h-5 w-5" />
-        <span class="hidden sm:inline">Jetzt geöffnet</span>
+        <span class="hidden lg:inline">Jetzt geöffnet</span>
         <span v-if="filters.openNow" @click.stop="clearFilter('openNow')" class="ml-1 cursor-pointer text-gray-400 hover:text-black">
           <X class="h-3 w-3" />
         </span>
       </button>
       <button
-        class="relative flex flex-shrink-0 items-center gap-2 py-3 px-4 text-base transition-all duration-200 hover:bg-gray-50 sm:py-2 sm:text-sm"
+        class="relative flex items-center gap-2 py-3 px-4 text-base transition-all duration-200 hover:bg-gray-50 sm:py-2 sm:text-sm"
         :class="{ 'z-10 scale-105 bg-white text-gold': activeField === 'price' || priceActive }"
         @click.stop="openPrice"
       >
         <Euro class="h-5 w-5" />
-        <span class="hidden sm:inline" v-if="!priceActive">Preis</span>
-        <span class="hidden sm:inline" v-else>{{ filters.price[0] }}€ - {{ filters.price[1] }}€</span>
+        <span class="hidden lg:inline" v-if="!priceActive">Preis</span>
+        <span class="hidden lg:inline" v-else>{{ filters.price[0] }}€ - {{ filters.price[1] }}€</span>
         <span v-if="priceActive" @click.stop="clearFilter('price')" class="ml-1 cursor-pointer text-gray-400 hover:text-black">
           <X class="h-3 w-3" />
         </span>
         <ChevronDown v-else class="h-4 w-4" />
       </button>
       <button
-        class="relative flex flex-shrink-0 items-center gap-2 py-3 px-4 text-base transition-all duration-200 hover:bg-gray-50 sm:py-2 sm:text-sm"
+        class="relative flex items-center gap-2 py-3 px-4 text-base transition-all duration-200 hover:bg-gray-50 sm:py-2 sm:text-sm"
         :class="{ 'z-10 scale-105 bg-white text-gold': activeField === 'lockTypes' || filters.lockTypes.length }"
         @click.stop="openLockTypes"
       >
         <Lock class="h-5 w-5" />
-        <span class="hidden sm:inline" v-if="!filters.lockTypes.length">Schlösser</span>
-        <span class="hidden sm:inline" v-else>{{ filters.lockTypes.length }} ausgewählt</span>
+        <span class="hidden lg:inline" v-if="!filters.lockTypes.length">Schlösser</span>
+        <span class="hidden lg:inline" v-else>{{ filters.lockTypes.length }} ausgewählt</span>
         <span v-if="filters.lockTypes.length" @click.stop="clearFilter('lockTypes')" class="ml-1 cursor-pointer text-gray-400 hover:text-black">
           <X class="h-3 w-3" />
         </span>
         <ChevronDown v-else class="h-4 w-4" />
       </button>
-      <div class="flex justify-end py-3 pl-4 pr-4 sm:py-0">
+      <div class="flex flex-shrink-0 justify-end py-3 pl-4 pr-4 sm:py-0">
         <button class="rounded-full bg-gold p-2 text-white hover:bg-gold/90" aria-label="Suchen">
           <Search class="h-4 w-4" />
         </button>
