@@ -28,6 +28,9 @@
           {{ openStatus }}
         </span>
       </p>
+      <p v-if="lockTypeLabels.length" class="text-xs text-gray-500">
+        Kompatibel mit: {{ lockTypeLabels.join(', ') }}
+      </p>
     </div>
   </li>
 </template>
@@ -35,6 +38,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 
 const props = defineProps({
   company: {
@@ -79,6 +83,10 @@ const statusClass = computed(() =>
 
 const borderColor = computed(() =>
   isOpen.value ? 'border-green-500' : props.company.is_247 ? 'border-red-500' : 'border-gray-300'
+)
+
+const lockTypeLabels = computed(() =>
+  (props.company.lock_types || []).map((t) => LOCK_TYPE_LABELS[t] || t)
 )
 
 function navigateToDetails() {
