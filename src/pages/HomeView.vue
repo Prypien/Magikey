@@ -21,17 +21,9 @@
     <div
       v-if="showIntro"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      @click.self="showIntro = false"
+      @click.self="closeIntro"
     >
-      <div class="w-full max-w-md">
-        <IntroPopup />
-        <button
-          class="mt-4 w-full rounded bg-black py-2 text-white"
-          @click="showIntro = false"
-        >
-          Schließen
-        </button>
-      </div>
+      <IntroPopup @close="closeIntro" />
     </div>
   </transition>
 </template>
@@ -46,14 +38,21 @@ import { filters } from '@/stores/filters'
 import { useCompanyStore } from '@/stores/company'
 import { auth } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
+import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 
 const NotifyForm = defineAsyncComponent(() => import('@/components/user/NotifyForm.vue'))
 
 const { loading, fetchCompanies, filteredCompanies } = useCompanyStore()
 const showIntro = ref(false)
+const INTRO_KEY = 'introShown'
 const title = computed(() => {
   let text = 'Schlüsseldienste'
   if (filters.location) text += ` in ${filters.location}`
+  if (filters.openNow) text += ' die jetzt geöffnet sind'
+  if (filters.lockTypes.length) {
+    const labels = filters.lockTypes.map((t) => LOCK_TYPE_LABELS[t]).join(', ')
+    text += ` für ${labels}`
+  }
   if (filters.price[1] < 1000) text += ` bis ${filters.price[1]}€`
   return text
 })
@@ -74,9 +73,14 @@ async function useLocation() {
 // Daten initial laden
 onMounted(async () => {
   onAuthStateChanged(auth, (user) => {
-    if (!user) showIntro.value = true
+    if (!user && !window.sessionStorage.getItem(INTRO_KEY)) showIntro.value = true
   })
   useLocation()
   await fetchCompanies()
 })
+
+function closeIntro() {
+  showIntro.value = false
+  window.sessionStorage.setItem(INTRO_KEY, '1')
+}
 </script>
