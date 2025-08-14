@@ -4,13 +4,18 @@
       Keine Ergebnisse gefunden
     </p>
 
-    <ul v-else class="grid grid-cols-1 gap-4 auto-rows-fr">
+    <TransitionGroup
+      v-else
+      name="slide"
+      tag="ul"
+      class="grid grid-cols-1 gap-4 auto-rows-fr"
+    >
       <SearchResultTile
         v-for="company in companies"
         :key="company.id"
         :company="company"
       />
-    </ul>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -24,3 +29,16 @@ defineProps({
   }
 })
 </script>
+
+<style scoped>
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+</style>
