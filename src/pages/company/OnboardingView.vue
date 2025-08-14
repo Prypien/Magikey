@@ -97,45 +97,12 @@
       </div>
     </div>
 
-    <!-- Schritt 3: Schlosstypen -->
+    <!-- Schritt 3: Services -->
     <div v-else-if="step === 3">
       <FormKit
         type="form"
         :actions="false"
         @submit="handleStep3"
-        class="space-y-6"
-      >
-        <div>
-          <label class="label">Schlosstypen</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label
-              v-for="opt in lockTypeOptions"
-              :key="opt.value"
-              class="flex items-center gap-2 text-sm"
-            >
-              <input
-                type="checkbox"
-                :value="opt.value"
-                v-model="form.lock_types"
-                class="accent-gold"
-              />
-              <span>{{ opt.label }}</span>
-            </label>
-          </div>
-        </div>
-        <div class="flex justify-between">
-          <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
-          <Button>Weiter</Button>
-        </div>
-      </FormKit>
-    </div>
-
-    <!-- Schritt 4: Services -->
-    <div v-else-if="step === 4">
-      <FormKit
-        type="form"
-        :actions="false"
-        @submit="handleStep4"
         class="space-y-6"
       >
         <FormKit
@@ -178,8 +145,8 @@
       </FormKit>
     </div>
 
-    <!-- Schritt 5: Vorschau & Bestätigung -->
-    <div v-else-if="step === 5" class="space-y-4">
+    <!-- Schritt 4: Vorschau & Bestätigung -->
+    <div v-else-if="step === 4" class="space-y-4">
       <h2 class="text-xl font-semibold mb-4">Vorschau</h2>
       <div class="text-sm space-y-1">
         <p><strong>Firma:</strong> {{ form.company_name }}</p>
@@ -192,15 +159,44 @@
           <strong>24/7:</strong>
           {{ form.is_247 ? 'Ja (Preis: ' + form.emergency_price + ')' : 'Nein' }}
         </p>
-        <p>
-          <strong>Schlosstypen:</strong>
-          {{ form.lock_types.join(', ') || '-' }}
-        </p>
       </div>
       <div class="flex justify-between mt-6">
         <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
-        <Button type="button" @click="register">Bestätigen</Button>
+        <Button type="button" @click="step++">Weiter</Button>
       </div>
+    </div>
+
+    <!-- Schritt 5: Welche Schlösser kannst du knacken? -->
+    <div v-else-if="step === 5">
+      <FormKit
+        type="form"
+        :actions="false"
+        @submit="register"
+        class="space-y-6"
+      >
+        <div>
+          <label class="label">Welche Schlösser kannst du knacken?</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label
+              v-for="opt in lockTypeOptions"
+              :key="opt.value"
+              class="flex items-center gap-2 text-sm"
+            >
+              <input
+                type="checkbox"
+                :value="opt.value"
+                v-model="form.lock_types"
+                class="accent-gold"
+              />
+              <span>{{ opt.label }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
+          <Button>Bestätigen</Button>
+        </div>
+      </FormKit>
     </div>
 
     <!-- Schritt 6: Bild & Verifizierung -->
@@ -266,15 +262,11 @@ function handleStep1(data) {
   step.value = 2
 }
 
-function handleStep3() {
-  step.value = 4
-}
-
-function handleStep4(data) {
+function handleStep3(data) {
   form.value.price = data.price
   form.value.description = data.description
   form.value.emergency_price = data.emergency_price
-  step.value = 5
+  step.value = 4
 }
 
 async function register() {
