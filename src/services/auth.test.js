@@ -28,7 +28,7 @@ describe('auth service', () => {
   it('resetPassword calls firebase sendPasswordResetEmail', async () => {
     await resetPassword('mail@example.com')
     expect(sendPasswordResetEmail).toHaveBeenCalledWith('auth-instance', 'mail@example.com', {
-      url: '/reset-password/confirm',
+      url: 'https://magikey.de/reset-password/confirm',
       handleCodeInApp: true,
     })
   })
@@ -46,7 +46,10 @@ describe('auth service', () => {
   it('sendVerificationEmail calls firebase sendEmailVerification', async () => {
     const user = { uid: '1' }
     await sendVerificationEmail(user)
-    expect(sendEmailVerification).toHaveBeenCalled()
+    expect(sendEmailVerification).toHaveBeenCalledWith(user, {
+      url: 'https://magikey.de/verify',
+      handleCodeInApp: true,
+    })
   })
 })
 
