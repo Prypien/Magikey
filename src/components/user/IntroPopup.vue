@@ -1,8 +1,5 @@
 <template>
-  <!-- Intro-Panel unterhalb der Filterleiste -->
-  <section
-    class="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-6 mt-2 mb-6"
-  >
+  <section class="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-6">
     <h1 class="mb-3 flex items-center gap-2 text-lg font-semibold sm:text-xl">
       <span class="text-gold">
         <i class="fa fa-key"></i>
@@ -28,3 +25,4 @@
 <script setup>
 // Dieses Panel ist rein informativ und benötigt keine Logik
 </script>
+
