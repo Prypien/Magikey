@@ -91,7 +91,7 @@
       </div>
     </div>
 
-    <!-- Schritt 3: Services -->
+    <!-- Schritt 3: Preis & Beschreibung -->
     <div v-else-if="step === 3">
       <FormKit
         type="form"
@@ -139,33 +139,12 @@
       </FormKit>
     </div>
 
-    <!-- Schritt 4: Vorschau & Bestätigung -->
-    <div v-else-if="step === 4" class="space-y-4">
-      <h2 class="text-xl font-semibold mb-4">Vorschau</h2>
-      <div class="text-sm space-y-1">
-        <p><strong>Firma:</strong> {{ form.company_name }}</p>
-        <p><strong>E-Mail:</strong> {{ form.email }}</p>
-        <p><strong>Telefon:</strong> {{ form.phone }}</p>
-        <p><strong>Adresse:</strong> {{ form.address }}, {{ form.postal_code }} {{ form.city }}</p>
-        <p><strong>Preis:</strong> {{ form.price }}</p>
-        <p><strong>Beschreibung:</strong> {{ form.description }}</p>
-        <p>
-          <strong>24/7:</strong>
-          {{ form.is_247 ? 'Ja (Preis: ' + form.emergency_price + ')' : 'Nein' }}
-        </p>
-      </div>
-      <div class="flex justify-between mt-6">
-        <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
-        <Button type="button" @click="step++">Weiter</Button>
-      </div>
-    </div>
-
-    <!-- Schritt 5: Welche Schlösser kannst du knacken? -->
-    <div v-else-if="step === 5">
+    <!-- Schritt 4: Welche Schlösser kannst du knacken? -->
+    <div v-else-if="step === 4">
       <FormKit
         type="form"
         :actions="false"
-        @submit="register"
+        @submit="handleStep4"
         class="space-y-6"
       >
         <div>
@@ -188,28 +167,46 @@
         </div>
         <div class="flex justify-between">
           <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
-          <Button>Bestätigen</Button>
+          <Button>Weiter</Button>
         </div>
       </FormKit>
+    </div>
+
+    <!-- Schritt 5: Vorschau & Bestätigung -->
+    <div v-else-if="step === 5" class="space-y-4">
+      <h2 class="text-xl font-semibold mb-4">Vorschau</h2>
+      <div class="text-sm space-y-1">
+        <p><strong>Firma:</strong> {{ form.company_name }}</p>
+        <p><strong>E-Mail:</strong> {{ form.email }}</p>
+        <p><strong>Telefon:</strong> {{ form.phone }}</p>
+        <p><strong>Adresse:</strong> {{ form.address }}, {{ form.postal_code }} {{ form.city }}</p>
+        <p><strong>Preis:</strong> {{ form.price }}</p>
+        <p><strong>Beschreibung:</strong> {{ form.description }}</p>
+        <p><strong>Schlosstypen:</strong> {{ form.lock_types.map(lt => lockTypeLabels[lt]).join(', ') }}</p>
+        <p>
+          <strong>24/7:</strong>
+          {{ form.is_247 ? 'Ja (Preis: ' + form.emergency_price + ')' : 'Nein' }}
+        </p>
+      </div>
+      <div class="flex justify-between mt-6">
+        <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
+        <Button type="button" @click="register">Bestätigen</Button>
+      </div>
     </div>
 
     <!-- Schritt 6: Bild & Verifizierung -->
     <div v-else-if="step === 6" class="space-y-6">
       <h2 class="text-xl font-semibold mb-4">Profilbild & Verifizierung</h2>
       <CompanyImageUpload @uploaded="updateLogo" />
-      <FormKit
-        type="email"
-        v-model="verificationEmail"
-        label="E-Mail für Verifizierung"
-        validation="required|email"
-        :classes="{ label: 'label', input: 'input' }"
-      />
       <p class="text-sm text-gray-600">
-        Du kannst diesen Schritt überspringen, aber solange du nicht verifiziert bist, wirst du nicht angezeigt.
+        Klicke auf "Verifizierungs-E-Mail senden", um deine Adresse
+        <strong>{{ form.email }}</strong> zu bestätigen. Du kannst diesen Schritt
+        überspringen, aber solange du nicht verifiziert bist, wirst du nicht
+        angezeigt.
       </p>
       <div class="flex justify-between">
         <Button type="button" class="btn-outline" @click="finishWithoutVerification">Überspringen</Button>
-        <Button type="button" @click="sendVerification">Verifizieren</Button>
+        <Button type="button" @click="sendVerification">Verifizierungs-E-Mail senden</Button>
       </div>
     </div>
   </div>
@@ -219,18 +216,17 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
-import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, updateDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
-import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
+import { LOCK_TYPE_OPTIONS, LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 import { sendVerificationEmail } from '@/services/auth'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 
 const router = useRouter()
 const step = ref(1)
-const verificationEmail = ref('')
 
 const form = ref({
   company_name: '',
@@ -251,6 +247,7 @@ const form = ref({
 })
 
 const lockTypeOptions = LOCK_TYPE_OPTIONS
+const lockTypeLabels = LOCK_TYPE_LABELS
 
 function handleStep1(data) {
   Object.assign(form.value, data)
@@ -262,6 +259,10 @@ function handleStep3(data) {
   form.value.description = data.description
   form.value.emergency_price = data.emergency_price
   step.value = 4
+}
+
+function handleStep4() {
+  step.value = 5
 }
 
 async function register() {
@@ -292,7 +293,6 @@ async function register() {
       created_at: new Date().toISOString(),
       verified: false,
     })
-    verificationEmail.value = form.value.email
     step.value = 6
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
@@ -308,15 +308,7 @@ function updateLogo(url) {
 
 async function sendVerification() {
   try {
-    if (verificationEmail.value && auth.currentUser) {
-      if (verificationEmail.value !== auth.currentUser.email) {
-        await updateEmail(auth.currentUser, verificationEmail.value)
-        await updateDoc(doc(db, 'companies', auth.currentUser.uid), {
-          email: verificationEmail.value,
-        })
-      }
-      await sendVerificationEmail()
-    }
+    await sendVerificationEmail()
     router.push({
       name: 'success',
       query: { msg: 'Verifizierungs-E-Mail gesendet', next: '/dashboard' }
