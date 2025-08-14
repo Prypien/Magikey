@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { getCompanies } from '@/services/company'
 import { filters } from './filters'
+import { DAYS } from '@/constants/days'
 
 const companies = ref([])
 const loading = ref(false)
@@ -16,8 +17,6 @@ export async function fetchCompanies() {
   }
 }
 
-const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-
 export const filteredCompanies = computed(() => {
   const now = new Date()
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
@@ -30,7 +29,7 @@ export const filteredCompanies = computed(() => {
       try {
         let dayIndex = now.getDay() - 1
         if (dayIndex < 0) dayIndex = 6
-        const today = days[dayIndex]
+        const today = DAYS[dayIndex]
         const hours = company.opening_hours?.[today]
         if (hours?.open && hours?.close) {
           const [oh, om] = hours.open.split(':').map(Number)

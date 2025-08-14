@@ -81,6 +81,7 @@ import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
 import Button from '@/components/common/Button.vue'
 import { sendVerificationEmail } from '@/services/auth'
+import { DAYS, DAY_LABELS } from '@/constants/days'
 
 const company = ref(null)
 const loading = ref(true)
@@ -103,15 +104,7 @@ onMounted(async () => {
   }
 })
 
-const days = [
-  { key: 'monday', label: 'Mo' },
-  { key: 'tuesday', label: 'Di' },
-  { key: 'wednesday', label: 'Mi' },
-  { key: 'thursday', label: 'Do' },
-  { key: 'friday', label: 'Fr' },
-  { key: 'saturday', label: 'Sa' },
-  { key: 'sunday', label: 'So' },
-]
+const days = DAYS.map(key => ({ key, label: DAY_LABELS[key] }))
 
 function formatTimeRange(range) {
   if (!range || !range.open || !range.close) return 'geschlossen'
