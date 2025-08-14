@@ -24,7 +24,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
 import { applyActionCode, checkActionCode } from 'firebase/auth'
-import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore'
+import { updateDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import Loader from '@/components/common/Loader.vue'
 
 const route = useRoute()
@@ -41,12 +41,13 @@ onMounted(async () => {
   try {
     const info = await checkActionCode(auth, code)
     await applyActionCode(auth, code)
+    const email = info?.data?.email
     // Reload the current user so emailVerified is updated locally
-    if (auth.currentUser) {
+    if (auth.currentUser && auth.currentUser.email === email) {
       await auth.currentUser.reload()
-      await updateDoc(doc(db, 'companies', auth.currentUser.uid), { verified: true })
-    } else if (info?.data?.email) {
-      const q = query(collection(db, 'companies'), where('email', '==', info.data.email))
+    }
+    if (email) {
+      const q = query(collection(db, 'companies'), where('email', '==', email))
       const snap = await getDocs(q)
       for (const docSnap of snap.docs) {
         await updateDoc(docSnap.ref, { verified: true })
