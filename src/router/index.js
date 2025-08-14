@@ -22,6 +22,11 @@ const routes = [
       { path: 'onboarding', name: 'onboarding', component: () => import('@/pages/company/OnboardingView.vue') },
       { path: 'reset-password', name: 'reset-password', component: () => import('@/pages/ResetPasswordView.vue') },
       {
+        path: 'reset-password/confirm',
+        name: 'reset-password-confirm',
+        component: () => import('@/pages/ResetPasswordConfirmView.vue'),
+      },
+      {
         path: 'dashboard',
         name: 'dashboard',
         component: () => import('@/pages/company/DashboardView.vue'),

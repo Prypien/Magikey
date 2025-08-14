@@ -12,7 +12,14 @@ export async function login(email, password) {
 }
 
 export async function resetPassword(email) {
-  return sendPasswordResetEmail(auth, email)
+  const baseUrl =
+    import.meta.env.VITE_PUBLIC_URL ||
+    (typeof window !== 'undefined' ? window.location.origin : '')
+  const actionCodeSettings = {
+    url: baseUrl + '/reset-password/confirm',
+    handleCodeInApp: true,
+  }
+  return sendPasswordResetEmail(auth, email, actionCodeSettings)
 }
 
 export async function logout() {

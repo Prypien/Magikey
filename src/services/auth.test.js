@@ -27,7 +27,10 @@ describe('auth service', () => {
 
   it('resetPassword calls firebase sendPasswordResetEmail', async () => {
     await resetPassword('mail@example.com')
-    expect(sendPasswordResetEmail).toHaveBeenCalledWith('auth-instance', 'mail@example.com')
+    expect(sendPasswordResetEmail).toHaveBeenCalledWith('auth-instance', 'mail@example.com', {
+      url: '/reset-password/confirm',
+      handleCodeInApp: true,
+    })
   })
 
   it('logout calls firebase signOut', async () => {
