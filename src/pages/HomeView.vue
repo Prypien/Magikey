@@ -1,7 +1,7 @@
 <template>
-  <!-- Startseite mit Filterleiste und Firmenliste -->
+  <!-- Startseite mit Filterleiste, Hero-Panel und Firmenliste -->
   <div class="mx-auto max-w-4xl min-h-screen bg-white px-4 py-6 sm:px-6">
-    <h1 class="mb-4 text-center text-2xl font-semibold">Schlüsseldienste in deiner Nähe</h1>
+    <HeroSection />
 
     <div>
       <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
@@ -23,6 +23,7 @@
 import { onMounted, defineAsyncComponent } from 'vue'
 import SearchResults from '@/components/user/SearchResults.vue'
 import Loader from '@/components/common/Loader.vue'
+import HeroSection from '@/components/user/HeroSection.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
 import { filters } from '@/stores/filters'
 import { useCompanyStore } from '@/stores/company'
