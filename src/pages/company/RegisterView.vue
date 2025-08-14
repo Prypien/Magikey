@@ -137,6 +137,7 @@ import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
+import { sendVerificationEmail } from '@/services/auth'
 
 const router = useRouter()
 const is247 = ref(false)
@@ -168,9 +169,10 @@ const register = async (form) => {
       created_at: new Date().toISOString(),
       verified: false,
     })
+    await sendVerificationEmail(user)
     router.push({
       name: 'success',
-      query: { msg: 'Registrierung erfolgreich', next: '/dashboard' }
+      query: { msg: 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.', next: '/dashboard' }
     })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
