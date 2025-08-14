@@ -236,7 +236,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
@@ -299,23 +299,27 @@ async function register() {
       )
       user = cred.user
     }
-    await setDoc(doc(db, 'companies', user.uid), {
-      company_name: form.value.company_name,
-      email: form.value.email,
-      phone: form.value.phone,
-      address: form.value.address,
-      city: form.value.city,
-      postal_code: form.value.postal_code,
-      price: form.value.price,
-      description: form.value.description,
-      lock_types: form.value.lock_types,
-      opening_hours: form.value.opening_hours,
-      is_247: form.value.is_247,
-      emergency_price: form.value.is_247 ? form.value.emergency_price || '' : '',
-      logo_url: form.value.logo_url || '',
-      created_at: new Date().toISOString(),
-      verified: false,
-    })
+    const companyRef = doc(db, 'companies', user.uid)
+    const existing = await getDoc(companyRef)
+    if (!existing.exists()) {
+      await setDoc(companyRef, {
+        company_name: form.value.company_name,
+        email: form.value.email,
+        phone: form.value.phone,
+        address: form.value.address,
+        city: form.value.city,
+        postal_code: form.value.postal_code,
+        price: form.value.price,
+        description: form.value.description,
+        lock_types: form.value.lock_types,
+        opening_hours: form.value.opening_hours,
+        is_247: form.value.is_247,
+        emergency_price: form.value.is_247 ? form.value.emergency_price || '' : '',
+        logo_url: form.value.logo_url || '',
+        created_at: new Date().toISOString(),
+        verified: false,
+      })
+    }
     step.value = 7
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
