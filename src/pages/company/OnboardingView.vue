@@ -103,7 +103,10 @@
           type="number"
           name="price"
           label="Preis (ab)"
+          validation="required|min:0"
           min="0"
+          step="0.01"
+          placeholder="z. B. 49"
           :classes="{ label: 'label', input: 'input' }"
         />
 
@@ -111,6 +114,8 @@
           type="textarea"
           name="description"
           label="Beschreibung"
+          validation="required"
+          placeholder="Kurzbeschreibung deines Angebots"
           :classes="{ label: 'label', input: 'textarea' }"
         />
 
