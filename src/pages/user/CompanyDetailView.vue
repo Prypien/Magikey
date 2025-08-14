@@ -45,16 +45,16 @@
           <p class="text-gray-700">{{ company.description || 'Keine Beschreibung' }}</p>
         </div>
 
-        <div v-if="lockTypeIcons.length" class="mt-6">
+        <div v-if="lockTypes.length" class="mt-6">
           <h2 class="font-semibold mb-2 text-black">Kompatible Schlösser</h2>
           <div class="flex flex-wrap gap-2">
             <span
-              v-for="(icon, idx) in lockTypeIcons"
+              v-for="(lt, idx) in lockTypes"
               :key="idx"
-              class="bg-gray-100 text-gray-800 text-xl px-2 py-1 rounded-full"
-              :title="lockTypeLabels[idx]"
+              class="bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded-full flex items-center gap-1"
             >
-              {{ icon }}
+              <span class="text-xl">{{ lt.icon }}</span>
+              <span>{{ lt.label }}</span>
             </span>
           </div>
         </div>
@@ -165,11 +165,10 @@ function formatTimeRange(range) {
   return `${range.open} – ${range.close}`
 }
 
-const lockTypeLabels = computed(() =>
-  (company.value.lock_types || []).map((t) => LOCK_TYPE_LABELS[t] || t)
-)
-
-const lockTypeIcons = computed(() =>
-  (company.value.lock_types || []).map((t) => LOCK_TYPE_ICONS[t] || '')
+const lockTypes = computed(() =>
+  (company.value.lock_types || []).map((t) => ({
+    icon: LOCK_TYPE_ICONS[t] || '',
+    label: LOCK_TYPE_LABELS[t] || t
+  }))
 )
 </script>
