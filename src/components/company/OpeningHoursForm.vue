@@ -52,9 +52,20 @@ watch(
     if (!val) return
     const keys = Object.keys(val)
     if (keys.length) {
-      selectedDays.value = keys
-      open.value = val[keys[0]]?.open || ''
-      close.value = val[keys[0]]?.close || ''
+      // only update selected days if they actually changed
+      if (
+        keys.length !== selectedDays.value.length ||
+        keys.some((k, i) => k !== selectedDays.value[i])
+      ) {
+        selectedDays.value = keys
+      }
+      const first = val[keys[0]] || {}
+      if (open.value !== first.open) {
+        open.value = first.open || ''
+      }
+      if (close.value !== first.close) {
+        close.value = first.close || ''
+      }
     }
   },
   { immediate: true }
