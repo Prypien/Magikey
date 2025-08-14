@@ -28,23 +28,20 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { DAYS, DAY_LABELS } from '@/constants/days'
 
 const props = defineProps({
   modelValue: { type: Object, default: () => ({}) }
 })
 const emit = defineEmits(['update:modelValue'])
 
-const days = [
-  { key: 'monday', short: 'Mo' },
-  { key: 'tuesday', short: 'Di' },
-  { key: 'wednesday', short: 'Mi' },
-  { key: 'thursday', short: 'Do' },
-  { key: 'friday', short: 'Fr' },
-  { key: 'saturday', short: 'Sa' },
-  { key: 'sunday', short: 'So' }
-]
+const days = DAYS.map(key => ({ key, short: DAY_LABELS[key] }))
 
-const selectedDays = ref(Object.keys(props.modelValue).length ? Object.keys(props.modelValue) : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])
+const selectedDays = ref(
+  Object.keys(props.modelValue).length
+    ? Object.keys(props.modelValue)
+    : DAYS.slice(0, 5)
+)
 const open = ref('')
 const close = ref('')
 

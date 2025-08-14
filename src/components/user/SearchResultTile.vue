@@ -42,6 +42,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
+import { DAYS } from '@/constants/days'
 
 const props = defineProps({
   company: {
@@ -55,8 +56,7 @@ const router = useRouter()
 const isOpen = computed(() => {
   const now = new Date()
   const dayIndex = now.getDay() - 1
-  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-  const today = days[dayIndex < 0 ? 6 : dayIndex]
+  const today = DAYS[dayIndex < 0 ? 6 : dayIndex]
   const hours = props.company?.opening_hours?.[today]
 
   if (!hours || !hours.open || !hours.close) return false

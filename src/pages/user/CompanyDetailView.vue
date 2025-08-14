@@ -91,11 +91,12 @@ import { useRoute } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
+import { DAYS, DAY_LABELS } from '@/constants/days'
 
 const route = useRoute()
 const companyId = route.params.id
 const company = ref({})
-const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+const days = DAYS
 
 onMounted(async () => {
   if (companyId) {
@@ -149,15 +150,7 @@ function dayStatus(day) {
 }
 
 function dayLabel(day) {
-  return {
-    monday: 'Mo',
-    tuesday: 'Di',
-    wednesday: 'Mi',
-    thursday: 'Do',
-    friday: 'Fr',
-    saturday: 'Sa',
-    sunday: 'So'
-  }[day] || day
+  return DAY_LABELS[day] || day
 }
 
 function formatTimeRange(range) {
