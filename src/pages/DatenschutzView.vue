@@ -15,55 +15,103 @@
 
     <h1 class="text-2xl font-bold mb-4">Datenschutzerklärung</h1>
 
+    <h2 class="text-xl font-semibold mt-6 mb-2">1. Allgemeine Hinweise</h2>
     <p class="mb-4">
-      Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie
-      diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können.
+      Der Schutz Ihrer persönlichen Daten ist mir, Jen Preißer, wichtig. Ich behandle Ihre personenbezogenen Daten vertraulich und
+      entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.
     </p>
 
-    <h2 class="text-xl font-semibold mt-6 mb-2">Verantwortlicher</h2>
+    <h2 class="text-xl font-semibold mt-6 mb-2">2. Verantwortliche Stelle</h2>
     <p class="mb-4">
-      Magikey GmbH<br />
-      Musterstraße 1<br />
-      12345 Musterstadt<br />
-      E-Mail: info@magikey.de
+      Jen Preißer<br />
+      Schellingstraße 18/1<br />
+      72622 Nürtingen<br />
+      E-Mail:
+      <a href="mailto:jen@preisser.de" class="underline">jen@preisser.de</a>
     </p>
 
-    <h2 class="text-xl font-semibold mt-6 mb-2">Erhebung und Speicherung personenbezogener Daten</h2>
+    <h2 class="text-xl font-semibold mt-6 mb-2">
+      3. Erhebung und Verarbeitung personenbezogener Daten
+    </h2>
     <p class="mb-4">
-      Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen. Hierbei kann es sich z. B. um Daten handeln, die Sie
-      in ein Kontaktformular eingeben. Andere Daten werden automatisch beim Besuch der Website durch unsere IT-Systeme erfasst.
-      Das sind vor allem technische Daten (z. B. Internetbrowser, Betriebssystem oder Uhrzeit des Seitenaufrufs).
+      Diese Website kann ohne Angabe personenbezogener Daten genutzt werden. Es werden jedoch automatisch Daten durch den Webhost
+      (Firebase) gespeichert, z. B.:
+    </p>
+    <ul class="list-disc pl-6 mb-4">
+      <li>IP-Adresse</li>
+      <li>Browsertyp und Version</li>
+      <li>Datum und Uhrzeit des Zugriffs</li>
+      <li>aufgerufene Seiten</li>
+    </ul>
+    <p class="mb-4">
+      Diese Daten dienen der technischen Bereitstellung der Seite und werden nicht dauerhaft gespeichert oder ausgewertet.
     </p>
 
-    <h2 class="text-xl font-semibold mt-6 mb-2">Google Maps</h2>
+    <h2 class="text-xl font-semibold mt-6 mb-2">4. Standortfunktion (optional)</h2>
     <p class="mb-4">
-      Diese Seite nutzt über eine API den Kartendienst Google Maps. Anbieter ist die Google Ireland Limited ("Google"), Gordon House,
-      Barrow Street, Dublin 4, Irland. Zur Nutzung der Funktionen von Google Maps ist es notwendig, Ihre IP-Adresse zu speichern. Diese
-      Informationen werden in der Regel an einen Server von Google in den USA übertragen. Der Anbieter dieser Seite hat keinen
-      Einfluss auf diese Datenübertragung.
-    </p>
-    <p class="mb-4">
-      Die Nutzung von Google Maps erfolgt im Interesse einer ansprechenden Darstellung unserer Online-Angebote und an einer leichten
-      Auffindbarkeit der von uns auf der Website angegebenen Orte. Dies stellt ein berechtigtes Interesse im Sinne von Art. 6 Abs. 1
-      lit. f DSGVO dar. Sofern eine entsprechende Einwilligung abgefragt wurde, erfolgt die Verarbeitung ausschließlich auf Grundlage
-      von Art. 6 Abs. 1 lit. a DSGVO; die Einwilligung ist jederzeit widerrufbar.
-    </p>
-    <p class="mb-4">
-      Mehr Informationen zum Umgang mit Nutzerdaten finden Sie in der Datenschutzerklärung von Google:
-      <a href="https://policies.google.com/privacy" class="underline" target="_blank" rel="noopener">https://policies.google.com/privacy</a>.
+      Wenn Sie zustimmen, kann die Website auf Ihren Standort zugreifen, um Schlüsseldienste in Ihrer Nähe anzuzeigen. Diese Daten
+      werden <strong>nicht gespeichert</strong> und nur temporär genutzt.
     </p>
 
-    <h2 class="text-xl font-semibold mt-6 mb-2">Rechte der betroffenen Personen</h2>
+    <h2 class="text-xl font-semibold mt-6 mb-2">5. Hosting & Infrastruktur</h2>
+    <p class="mb-4">Die Website wird technisch bereitgestellt über:</p>
+    <ul class="list-disc pl-6 mb-4">
+      <li>
+        <strong>Firebase Hosting</strong> (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA)
+      </li>
+      <li>
+        <strong>Domainverwaltung via Squarespace Domains</strong> (Squarespace Inc., 225 Varick Street, 12th Floor, New York, NY
+        10014, USA)
+      </li>
+    </ul>
+    <p class="mb-4">Weitere Informationen finden Sie hier:</p>
+    <ul class="list-disc pl-6 mb-4">
+      <li>
+        <a
+          href="https://firebase.google.com/support/privacy"
+          class="underline"
+          target="_blank"
+          rel="noopener"
+          >https://firebase.google.com/support/privacy</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://www.squarespace.com/privacy"
+          class="underline"
+          target="_blank"
+          rel="noopener"
+          >https://www.squarespace.com/privacy</a
+        >
+      </li>
+    </ul>
+
+    <h2 class="text-xl font-semibold mt-6 mb-2">6. Ihre Rechte</h2>
+    <p class="mb-4">Sie haben das Recht auf:</p>
+    <ul class="list-disc pl-6 mb-4">
+      <li>Auskunft über gespeicherte Daten</li>
+      <li>Berichtigung unrichtiger Daten</li>
+      <li>Löschung („Recht auf Vergessenwerden“)</li>
+      <li>Einschränkung der Verarbeitung</li>
+      <li>Widerspruch</li>
+    </ul>
     <p class="mb-4">
-      Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen
-      Daten. Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen sowie die Einschränkung der
-      Verarbeitung zu verlangen. Hierzu sowie zu weiteren Fragen zum Thema Datenschutz können Sie sich jederzeit an uns wenden.
+      Anfragen richten Sie bitte formlos per E-Mail an:
+      <a href="mailto:jen@preisser.de" class="underline">jen@preisser.de</a>
     </p>
 
-    <p class="text-sm text-gray-600">
-      Diese Datenschutzerklärung dient als Beispiel und ersetzt keine rechtliche Beratung. Bitte lassen Sie den Text durch eine
-      fachkundige Stelle prüfen.
+    <h2 class="text-xl font-semibold mt-6 mb-2">7. Cookies & Tracking</h2>
+    <p class="mb-4">
+      Diese Website verwendet <strong>keine</strong> Cookies, Analyse- oder Werbetracker.
     </p>
+
+    <h2 class="text-xl font-semibold mt-6 mb-2">8. Änderungen</h2>
+    <p class="mb-4">
+      Ich behalte mir vor, diese Datenschutzerklärung jederzeit anzupassen. Die aktuelle Version ist immer auf dieser Seite
+      einsehbar.
+    </p>
+
+    <p class="text-sm text-gray-600 mt-6">Stand: August 2025</p>
   </div>
 </template>
 

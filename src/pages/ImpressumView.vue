@@ -15,45 +15,32 @@
 
     <h1 class="text-2xl font-bold mb-4">Impressum</h1>
 
-    <p class="mb-4">Angaben gemäß § 5 TMG</p>
+    <h2 class="text-xl font-semibold mb-2">Angaben gemäß § 5 TMG</h2>
+    <address class="not-italic mb-4">
+      Jen Preißer<br />
+      Schellingstraße 18/1<br />
+      72622 Nürtingen<br />
+      Deutschland
+    </address>
+
+    <h2 class="text-xl font-semibold mb-2">Kontakt</h2>
     <p class="mb-4">
-      Magikey GmbH<br />
-      Musterstraße 1<br />
-      12345 Musterstadt
+      E-Mail:
+      <a href="mailto:jen@preisser.de" class="underline">jen@preisser.de</a>
     </p>
 
-    <p class="mb-4"><strong>Vertreten durch:</strong> Max Mustermann</p>
+    <h2 class="text-xl font-semibold mb-2">
+      Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
+    </h2>
+    <address class="not-italic mb-4">
+      Jen Preißer<br />
+      Schellingstraße 18/1<br />
+      72622 Nürtingen
+    </address>
 
-    <p class="mb-4">
-      <strong>Kontakt:</strong><br />
-      Telefon: +49 (0)123 456789<br />
-      E-Mail: info@magikey.de
-    </p>
-
-    <p class="mb-4"><strong>Umsatzsteuer-ID:</strong> DE123456789</p>
-
-    <p class="mb-4">
-      <strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</strong><br />
-      Max Mustermann<br />
-      Musterstraße 1<br />
-      12345 Musterstadt
-    </p>
-
-    <p class="mb-4">
-      <strong>Streitschlichtung</strong><br />
-      Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-      <a href="https://ec.europa.eu/consumers/odr" class="underline" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.
-      Unsere E-Mail-Adresse finden Sie oben im Impressum.
-    </p>
-
-    <p class="mb-4">
-      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-      Verbraucherschlichtungsstelle teilzunehmen.
-    </p>
-
-    <p class="text-sm text-gray-600">
-      Hinweis: Die oben genannten Angaben dienen nur als Beispiel und müssen durch die tatsächlichen
-      Unternehmensdaten ersetzt werden.
+    <p class="mt-6">
+      Hinweis: Diese Website wird als privates, nicht-kommerzielles Projekt betrieben. Eine
+      Haftung für Inhalte Dritter wird ausgeschlossen.
     </p>
   </div>
 </template>
