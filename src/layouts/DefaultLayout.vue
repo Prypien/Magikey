@@ -5,7 +5,7 @@
       Seite im Aufbau – Impressum folgt
     </div>
     <Header @update-height="headerHeight = $event" />
-    <main class="flex-1 flex justify-center items-start" :style="{ paddingTop: headerHeight + 'px' }">
+    <main class="flex-1 flex justify-center items-start pb-24" :style="{ paddingTop: headerHeight + 'px' }">
       <div class="w-full max-w-4xl px-6 py-8">
         <!-- Hier werden die Seiteninhalte eingeblendet -->
         <router-view />
