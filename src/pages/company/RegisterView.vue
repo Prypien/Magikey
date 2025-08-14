@@ -132,7 +132,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
@@ -153,22 +153,26 @@ const register = async (form) => {
       form.email,
       form.password
     )
-    await setDoc(doc(db, 'companies', user.uid), {
-      company_name: form.company_name,
-      email: form.email,
-      phone: form.phone,
-      address: form.address || '',
-      city: form.city || '',
-      postal_code: form.postal_code || '',
-      price: form.price || '',
-      description: form.description || '',
-      lock_types: lockTypes.value,
-      opening_hours: openingHours.value,
-      is_247: form.is_247 || false,
-      emergency_price: form.is_247 ? form.emergency_price || '' : '',
-      created_at: new Date().toISOString(),
-      verified: false,
-    })
+    const companyRef = doc(db, 'companies', user.uid)
+    const existing = await getDoc(companyRef)
+    if (!existing.exists()) {
+      await setDoc(companyRef, {
+        company_name: form.company_name,
+        email: form.email,
+        phone: form.phone,
+        address: form.address || '',
+        city: form.city || '',
+        postal_code: form.postal_code || '',
+        price: form.price || '',
+        description: form.description || '',
+        lock_types: lockTypes.value,
+        opening_hours: openingHours.value,
+        is_247: form.is_247 || false,
+        emergency_price: form.is_247 ? form.emergency_price || '' : '',
+        created_at: new Date().toISOString(),
+        verified: false,
+      })
+    }
     await sendVerificationEmail(user)
     router.push({
       name: 'success',
