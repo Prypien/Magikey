@@ -58,16 +58,16 @@
         />
         <FormKit
           type="text"
-          name="city"
-          label="Ort"
-          v-model="company.city"
+          name="postal_code"
+          label="Postleitzahl"
+          v-model="company.postal_code"
           :classes="{ label: 'label', input: 'input' }"
         />
         <FormKit
           type="text"
-          name="postal_code"
-          label="Postleitzahl"
-          v-model="company.postal_code"
+          name="city"
+          label="Ort"
+          v-model="company.city"
           :classes="{ label: 'label', input: 'input' }"
         />
         <FormKit

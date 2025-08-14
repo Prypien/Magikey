@@ -63,15 +63,15 @@
 
         <FormKit
           type="text"
-          name="city"
-          label="Ort"
+          name="postal_code"
+          label="Postleitzahl"
           :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
           type="text"
-          name="postal_code"
-          label="Postleitzahl"
+          name="city"
+          label="Ort"
           :classes="{ label: 'label', input: 'input' }"
         />
 

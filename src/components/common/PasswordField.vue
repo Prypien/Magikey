@@ -4,11 +4,12 @@
       type="password"
       :name="name"
       :label="label"
-      validation="required|min:6"
+      validation="required|min:6|matches:/^(?=.*[A-Za-z])(?=.*\d).*$/"
       :placeholder="placeholder"
       :help="help"
       :classes="inputClasses"
       :autocomplete="autocomplete"
+      inputmode="text"
       v-model="innerValue"
     />
     <div v-if="innerValue" class="mt-1">
