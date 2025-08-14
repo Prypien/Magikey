@@ -29,17 +29,11 @@
         </span>
       </p>
       <p
-        v-if="lockTypeIcons.length"
+        v-if="lockTypes.length"
         class="text-xs text-gray-500 flex items-center gap-1"
       >
         <span>Kompatibel mit:</span>
-        <span
-          v-for="(icon, idx) in lockTypeIcons"
-          :key="idx"
-          :title="lockTypeLabels[idx]"
-        >
-          {{ icon }}
-        </span>
+        <span>{{ lockTypeDisplay }}</span>
       </p>
     </div>
   </li>
@@ -95,12 +89,15 @@ const borderColor = computed(() =>
   isOpen.value ? 'border-green-500' : props.company.is_247 ? 'border-red-500' : 'border-gray-300'
 )
 
-const lockTypeLabels = computed(() =>
-  (props.company.lock_types || []).map((t) => LOCK_TYPE_LABELS[t] || t)
+const lockTypes = computed(() =>
+  (props.company.lock_types || []).map((t) => ({
+    icon: LOCK_TYPE_ICONS[t] || '',
+    label: LOCK_TYPE_LABELS[t] || t
+  }))
 )
 
-const lockTypeIcons = computed(() =>
-  (props.company.lock_types || []).map((t) => LOCK_TYPE_ICONS[t] || '')
+const lockTypeDisplay = computed(() =>
+  lockTypes.value.map((lt) => `${lt.icon} ${lt.label}`).join(', ')
 )
 
 function navigateToDetails() {
