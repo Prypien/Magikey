@@ -33,14 +33,7 @@
           :classes="{ label: 'label', input: 'input' }"
         />
 
-        <FormKit
-          type="password"
-          name="password"
-          label="Passwort"
-          validation="required|min:6"
-          placeholder="Mind. 6 Zeichen"
-          :classes="{ label: 'label', input: 'input' }"
-        />
+        <PasswordField />
 
         <FormKit
           type="password"
@@ -49,6 +42,7 @@
           validation="required|confirm:password"
           placeholder="Nochmals eingeben"
           :classes="{ label: 'label', input: 'input' }"
+          autocomplete="new-password"
         />
 
         <FormKit
@@ -140,6 +134,7 @@ import { auth, db } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
+import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
 
