@@ -22,4 +22,17 @@ export default defineConfig({
       'lucide-vue-next': path.resolve(__dirname, './src/components/icons'),
     },
   },
+  build: {
+    // Split heavy dependencies into separate chunks to keep the main bundle small
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+          formkit: ['@formkit/vue', '@formkit/core', '@formkit/themes'],
+        },
+      },
+    },
+    // Increase the limit to avoid warnings when chunks are still large
+    chunkSizeWarningLimit: 1000,
+  },
 })
