@@ -64,15 +64,15 @@
 
         <FormKit
           type="text"
-          name="city"
-          label="Ort"
+          name="postal_code"
+          label="Postleitzahl"
           :classes="{ label: 'label', input: 'input' }"
         />
 
         <FormKit
           type="text"
-          name="postal_code"
-          label="Postleitzahl"
+          name="city"
+          label="Ort"
           :classes="{ label: 'label', input: 'input' }"
         />
 
@@ -91,7 +91,7 @@
       </div>
     </div>
 
-    <!-- Schritt 3: Preis & Beschreibung -->
+    <!-- Schritt 3: Preis -->
     <div v-else-if="step === 3">
       <FormKit
         type="form"
@@ -109,7 +109,21 @@
           placeholder="z. B. 49"
           :classes="{ label: 'label', input: 'input' }"
         />
+        <div class="flex justify-between">
+          <Button type="button" class="btn-outline" @click="step--">Zurück</Button>
+          <Button>Weiter</Button>
+        </div>
+      </FormKit>
+    </div>
 
+    <!-- Schritt 4: Beschreibung & Notdienst -->
+    <div v-else-if="step === 4">
+      <FormKit
+        type="form"
+        :actions="false"
+        @submit="handleStep4"
+        class="space-y-6"
+      >
         <FormKit
           type="textarea"
           name="description"
@@ -144,12 +158,12 @@
       </FormKit>
     </div>
 
-    <!-- Schritt 4: Welche Schlösser kannst du knacken? -->
-    <div v-else-if="step === 4">
+    <!-- Schritt 5: Welche Schlösser kannst du knacken? -->
+    <div v-else-if="step === 5">
       <FormKit
         type="form"
         :actions="false"
-        @submit="handleStep4"
+        @submit="handleStep5"
         class="space-y-6"
       >
         <div>
@@ -177,8 +191,8 @@
       </FormKit>
     </div>
 
-    <!-- Schritt 5: Vorschau & Bestätigung -->
-    <div v-else-if="step === 5" class="space-y-4">
+    <!-- Schritt 6: Vorschau & Bestätigung -->
+    <div v-else-if="step === 6" class="space-y-4">
       <h2 class="text-xl font-semibold mb-4">Vorschau</h2>
       <div class="text-sm space-y-1">
         <p><strong>Firma:</strong> {{ form.company_name }}</p>
@@ -199,8 +213,8 @@
       </div>
     </div>
 
-    <!-- Schritt 6: Bild & Verifizierung -->
-    <div v-else-if="step === 6" class="space-y-6">
+    <!-- Schritt 7: Bild & Verifizierung -->
+    <div v-else-if="step === 7" class="space-y-6">
       <h2 class="text-xl font-semibold mb-4">Profilbild & Verifizierung</h2>
       <CompanyImageUpload @uploaded="updateLogo" />
       <p class="text-sm text-gray-600">
@@ -261,13 +275,17 @@ function handleStep1(data) {
 
 function handleStep3(data) {
   form.value.price = data.price
-  form.value.description = data.description
-  form.value.emergency_price = data.emergency_price
   step.value = 4
 }
 
-function handleStep4() {
+function handleStep4(data) {
+  form.value.description = data.description
+  form.value.emergency_price = data.emergency_price
   step.value = 5
+}
+
+function handleStep5() {
+  step.value = 6
 }
 
 async function register() {
@@ -298,7 +316,7 @@ async function register() {
       created_at: new Date().toISOString(),
       verified: false,
     })
-    step.value = 6
+    step.value = 7
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)
   }
