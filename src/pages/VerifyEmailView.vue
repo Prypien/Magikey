@@ -41,7 +41,9 @@ onMounted(async () => {
   try {
     const info = await checkActionCode(auth, code)
     await applyActionCode(auth, code)
+    // Reload the current user so emailVerified is updated locally
     if (auth.currentUser) {
+      await auth.currentUser.reload()
       await updateDoc(doc(db, 'companies', auth.currentUser.uid), { verified: true })
     } else if (info?.data?.email) {
       const q = query(collection(db, 'companies'), where('email', '==', info.data.email))
