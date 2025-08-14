@@ -32,7 +32,6 @@
         v-if="lockTypes.length"
         class="text-xs text-gray-500 flex items-center gap-1"
       >
-        <span>Kompatibel mit:</span>
         <span>{{ lockTypeDisplay }}</span>
       </p>
     </div>
@@ -97,7 +96,7 @@ const lockTypes = computed(() =>
 )
 
 const lockTypeDisplay = computed(() =>
-  lockTypes.value.map((lt) => `${lt.icon} ${lt.label}`).join(', ')
+  lockTypes.value.map((lt) => lt.icon).join(' ')
 )
 
 function navigateToDetails() {
