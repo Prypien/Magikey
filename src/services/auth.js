@@ -25,8 +25,11 @@ export async function register(email, password) {
 
 export async function sendVerificationEmail(user = auth.currentUser) {
   if (!user) throw new Error('No user')
+  const baseUrl =
+    import.meta.env.VITE_PUBLIC_URL ||
+    (typeof window !== 'undefined' ? window.location.origin : '')
   const actionCodeSettings = {
-    url: (typeof window !== 'undefined' ? window.location.origin : '') + '/verify-email',
+    url: baseUrl + '/verify',
     handleCodeInApp: true,
   }
   return sendEmailVerification(user, actionCodeSettings)
