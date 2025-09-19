@@ -1,3 +1,4 @@
+<!-- Diese Datei verarbeitet den Bestätigungslink aus der E-Mail. -->
 <template>
   <div class="flex flex-col items-center justify-center text-center min-h-[60vh] px-4">
     <template v-if="loading">

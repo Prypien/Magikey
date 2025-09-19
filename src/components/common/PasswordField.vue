@@ -1,3 +1,4 @@
+<!-- Diese Datei baut ein Passwortfeld mit Stärkeanzeige auf. -->
 <template>
   <div>
     <FormKit

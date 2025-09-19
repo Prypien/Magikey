@@ -1,3 +1,4 @@
+<!-- Diese Datei listet alle gefundenen Firmen untereinander auf. -->
 <template>
   <div>
     <p v-if="companies.length === 0" class="text-center text-gray-500">

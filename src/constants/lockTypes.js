@@ -1,3 +1,4 @@
+// Diese Datei listet alle unterstützten Schlosstypen samt Icons.
 export const LOCK_TYPE_OPTIONS = [
   { value: 'house', label: 'Haustür / Wohnungstür', icon: '🏠' },
   { value: 'car_mechanical', label: 'Auto (mechanisch)', icon: '🚗' },

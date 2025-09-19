@@ -1,3 +1,4 @@
+<!-- Diese Datei beschreibt einen anklickbaren Filter-Chip mit Icon. -->
 <template>
   <button
     class="flex items-center gap-1 px-4 py-2 rounded-2xl font-medium transition shadow border select-none"

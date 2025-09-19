@@ -1,3 +1,4 @@
+<!-- Diese Datei steuert die kompakte Filteransicht für Smartphones. -->
 <template>
   <div ref="root" class="sticky top-2 z-30 flex justify-center px-2 sm:hidden">
     <div class="relative">

@@ -1,3 +1,4 @@
+<!-- Diese Datei beschreibt den festen Fußbereich mit Links. -->
 <template>
   <footer class="fixed bottom-0 left-0 w-full bg-black text-white py-4 px-6 text-sm text-center z-50">
     <div class="flex justify-center items-center gap-4 text-white/70">

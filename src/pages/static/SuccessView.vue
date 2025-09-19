@@ -1,3 +1,4 @@
+<!-- Diese Datei präsentiert eine Erfolgsmeldung nach Aktionen. -->
 <template>
   <div class="flex flex-col items-center justify-center text-center min-h-[60vh] px-4">
     <lottie-player

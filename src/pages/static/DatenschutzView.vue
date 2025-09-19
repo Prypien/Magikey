@@ -1,3 +1,4 @@
+<!-- Diese Datei zeigt die Datenschutzerklärung an. -->
 <template>
   <div class="max-w-3xl mx-auto p-6">
     <nav class="mb-6 flex gap-4">

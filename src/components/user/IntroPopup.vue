@@ -1,3 +1,4 @@
+<!-- Diese Datei blendet die Begrüßungsbox mit kurzer Erklärung ein. -->
 <template>
   <section
     class="relative w-full max-w-md overflow-hidden rounded-xl bg-white p-6 shadow-lg sm:p-8"

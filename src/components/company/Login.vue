@@ -1,3 +1,4 @@
+<!-- Diese Datei enthält das Login-Formular für Unternehmen. -->
 <template>
   <FormKit
     type="form"

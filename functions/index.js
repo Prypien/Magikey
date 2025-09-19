@@ -1,3 +1,4 @@
+// Diese Datei stellt eine Cloud Function bereit, um aus Koordinaten die Postleitzahl zu holen.
 /* eslint-env node */
 /* global fetch */
 const functions = require('firebase-functions')

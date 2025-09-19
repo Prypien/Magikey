@@ -1,3 +1,4 @@
+<!-- Diese Datei enthält ein Formular für Benachrichtigungs-E-Mails. -->
 <template>
   <form @submit.prevent="submit" class="mt-2 flex gap-2">
     <input

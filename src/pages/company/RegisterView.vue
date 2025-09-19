@@ -1,3 +1,4 @@
+<!-- Diese Datei enthält das Registrierungsformular für Firmen. -->
 <template>
   <div class="max-w-xl mx-auto mt-10 p-8 bg-white rounded-xl shadow">
     <h1 class="text-3xl font-semibold mb-8 text-center text-black">
