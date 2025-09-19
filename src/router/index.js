@@ -21,11 +21,15 @@ const routes = [
       { path: 'login', name: 'login', component: () => import('@/pages/company/LoginView.vue') },
       { path: 'register', name: 'register', component: () => import('@/pages/company/RegisterView.vue') },
       { path: 'onboarding', name: 'onboarding', component: () => import('@/pages/company/OnboardingView.vue') },
-      { path: 'reset-password', name: 'reset-password', component: () => import('@/pages/ResetPasswordView.vue') },
+      {
+        path: 'reset-password',
+        name: 'reset-password',
+        component: () => import('@/pages/auth/ResetPasswordView.vue'),
+      },
       {
         path: 'reset-password/confirm',
         name: 'reset-password-confirm',
-        component: () => import('@/pages/ResetPasswordConfirmView.vue'),
+        component: () => import('@/pages/auth/ResetPasswordConfirmView.vue'),
       },
       {
         path: 'dashboard',
@@ -45,15 +49,27 @@ const routes = [
         component: () => import('@/pages/user/CompanyDetailView.vue'),
         props: true,
       },
-      { path: 'impressum', name: 'impressum', component: () => import('@/pages/ImpressumView.vue') },
-      { path: 'datenschutz', name: 'datenschutz', component: () => import('@/pages/DatenschutzView.vue') },
-      { path: 'hilfe', name: 'help', component: () => import('@/pages/HelpCenterView.vue') },
-      { path: 'success', name: 'success', component: () => import('@/pages/SuccessView.vue') },
-      { path: 'verify', name: 'verify-email', component: () => import('@/pages/VerifyEmailView.vue') },
+      {
+        path: 'impressum',
+        name: 'impressum',
+        component: () => import('@/pages/static/ImpressumView.vue'),
+      },
+      {
+        path: 'datenschutz',
+        name: 'datenschutz',
+        component: () => import('@/pages/static/DatenschutzView.vue'),
+      },
+      { path: 'hilfe', name: 'help', component: () => import('@/pages/static/HelpCenterView.vue') },
+      { path: 'success', name: 'success', component: () => import('@/pages/static/SuccessView.vue') },
+      { path: 'verify', name: 'verify-email', component: () => import('@/pages/auth/VerifyEmailView.vue') },
       { path: 'verify-email', redirect: '/verify' },
     ],
   },
-  { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/pages/NotFoundView.vue') },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('@/pages/static/NotFoundView.vue'),
+  },
 ]
 
 // Router erstellen
