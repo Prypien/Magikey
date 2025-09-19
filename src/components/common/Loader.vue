@@ -1,3 +1,4 @@
+<!-- Diese Datei zeigt die Lottie-Animation als Ladeanzeige. -->
 <template>
   <lottie-player
     src="/lotties/loader.json"

@@ -1,3 +1,4 @@
+<!-- Diese Datei zeigt ein Overlay, um den Preisbereich einzustellen. -->
 <template>
   <teleport to="body">
     <transition name="fade">

@@ -1,3 +1,4 @@
+<!-- Diese Datei liefert die Hilfeseite mit kurzen Antworten. -->
 <template>
   <div class="prose mx-auto space-y-6">
     <section>

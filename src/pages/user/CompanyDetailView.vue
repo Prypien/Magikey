@@ -1,3 +1,4 @@
+<!-- Diese Datei zeigt alle Details zu einer ausgewählten Firma. -->
 <template>
   <div class="max-w-5xl mx-auto p-6">
     <button @click="$router.back()" class="text-gold font-semibold mb-4 flex items-center gap-1">

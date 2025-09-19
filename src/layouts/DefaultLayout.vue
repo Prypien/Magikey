@@ -1,3 +1,4 @@
+<!-- Diese Datei legt das Grundlayout mit Kopfbereich und Footer fest. -->
 <template>
   <!-- Allgemeines Seitenlayout mit Header und optionalem Footer -->
   <div class="flex flex-col min-h-screen text-black">

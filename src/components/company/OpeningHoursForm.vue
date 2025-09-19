@@ -1,3 +1,4 @@
+<!-- Diese Datei sammelt die Öffnungszeiten für mehrere Wochentage ein. -->
 <template>
   <div class="form-section">
     <label class="block font-semibold mb-2">Wochentage</label>

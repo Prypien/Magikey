@@ -1,3 +1,4 @@
+<!-- Diese Datei baut die große Filterleiste für die Desktop-Ansicht auf. -->
 <template>
   <div ref="root" class="sticky top-2 z-30 flex justify-center px-2 min-w-0" @click.self="activeField = null">
     <div

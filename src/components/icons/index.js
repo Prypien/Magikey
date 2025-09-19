@@ -1,3 +1,4 @@
+// Diese Datei bündelt alle Icon-Komponenten zum Import.
 export { default as Clock } from './Clock.vue'
 export { default as Euro } from './Euro.vue'
 export { default as MapPin } from './MapPin.vue'

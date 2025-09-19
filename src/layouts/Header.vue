@@ -1,3 +1,4 @@
+<!-- Diese Datei baut den Kopfbereich mit Logo, Filter und Menü. -->
 <template>
   <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
   <header

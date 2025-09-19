@@ -1,3 +1,4 @@
+// Diese Datei lädt Firmendaten aus Firestore.
 import { db } from '@/firebase'
 import { collection, getDocs, getDoc, doc, query, where } from 'firebase/firestore'
 

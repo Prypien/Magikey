@@ -1,3 +1,4 @@
+// Diese Datei verwaltet die Firmenliste und die Filterung.
 import { ref, computed } from 'vue'
 import { getCompanies } from '@/services/company'
 import { filters } from './filters'

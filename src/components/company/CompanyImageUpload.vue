@@ -1,3 +1,4 @@
+<!-- Diese Datei kümmert sich um das Hochladen eines Firmenlogos. -->
 <template>
   <div class="flex flex-col items-center">
     <div class="relative">

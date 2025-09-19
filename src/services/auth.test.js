@@ -1,3 +1,4 @@
+// Diese Datei überprüft die Authentifizierungsfunktionen mit Tests.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/firebase', () => ({

@@ -1,3 +1,4 @@
+<!-- Diese Datei stellt die einfache Filterbox mit Abstand und Sortierung bereit. -->
 <template>
   <div
     :class="[

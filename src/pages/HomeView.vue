@@ -1,3 +1,4 @@
+<!-- Diese Datei stellt die Startseite mit Firmenliste und Intro dar. -->
 <template>
   <!-- Startseite mit Filterleiste und Firmenliste -->
   <div class="mx-auto max-w-4xl min-h-screen bg-white px-4 py-6 sm:px-6">

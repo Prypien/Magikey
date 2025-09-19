@@ -1,3 +1,4 @@
+<!-- Diese Datei beschreibt einen wiederverwendbaren Button mit wählbarer Größe. -->
 <template>
   <button
     class="btn"

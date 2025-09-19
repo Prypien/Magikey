@@ -1,3 +1,4 @@
+<!-- Diese Datei zeigt eine einzelne Firma in der Ergebnisliste. -->
 <template>
   <li
     class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-lg transition min-h-28"

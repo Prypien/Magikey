@@ -1,3 +1,4 @@
+<!-- Diese Datei öffnet ein Overlay zur Auswahl der Schlosstypen. -->
 <template>
   <teleport to="body">
     <transition name="fade">

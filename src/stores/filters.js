@@ -1,3 +1,4 @@
+// Diese Datei hält die aktuellen Filterwerte bereit.
 import { reactive } from 'vue'
 
 export const filters = reactive({

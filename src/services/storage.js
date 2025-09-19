@@ -1,3 +1,4 @@
+// Diese Datei lädt Logos in den Firebase-Speicher hoch.
 import { storage, auth } from '@/firebase'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 

@@ -1,3 +1,4 @@
+<!-- Diese Datei zeigt die 404-Fehlerseite. -->
 <template>
   <div class="max-w-2xl mx-auto p-6 text-center">
     <h1 class="text-2xl font-bold mb-4">404 - Seite nicht gefunden</h1>
