@@ -9,6 +9,7 @@ import HomeView from '@/pages/HomeView.vue'
 
 // Firebase-Auth-Instanz zum Prüfen von Login-Status
 import { auth } from '@/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 // Definierte Routen
 const routes = [
@@ -61,8 +62,38 @@ const router = createRouter({
   routes,
 })
 
+let authReady = false
+
+function waitForAuthInit() {
+  if (authReady) {
+    return Promise.resolve()
+  }
+
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      () => {
+        authReady = true
+        unsubscribe()
+        resolve()
+      },
+      () => {
+        authReady = true
+        unsubscribe()
+        resolve()
+      }
+    )
+  })
+}
+
 // Navigation Guard für geschützte Routen
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  try {
+    await waitForAuthInit()
+  } catch (error) {
+    console.error('Fehler beim Initialisieren der Authentifizierung', error)
+  }
+
   const user = auth.currentUser
   const requiresAuth = to.meta.requiresAuth
   const isLoginRoute = to.name === 'login'

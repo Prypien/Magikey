@@ -62,7 +62,12 @@ async function useLocation() {
   if (!navigator.geolocation) return
   navigator.geolocation.getCurrentPosition(async (pos) => {
     try {
-      const { postalCode } = await getPostalFromCoords(pos.coords.latitude, pos.coords.longitude)
+      const { latitude, longitude } = pos.coords || {}
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        console.warn('Ungültige Geokoordinaten erhalten')
+        return
+      }
+      const { postalCode } = await getPostalFromCoords(latitude, longitude)
       if (postalCode) filters.location = postalCode
     } catch (err) {
       console.error('Geolocation fehlgeschlagen', err)
