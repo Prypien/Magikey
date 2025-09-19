@@ -1,7 +1,7 @@
 <!-- Diese Datei zeigt eine einzelne Firma in der Ergebnisliste. -->
 <template>
   <li
-    class="p-4 bg-white rounded-xl border flex gap-4 cursor-pointer hover:shadow-lg transition min-h-28"
+    class="result-tile flex min-h-28 gap-4 cursor-pointer rounded-2xl bg-white/80 p-4 sm:p-5 transition-all duration-300 ring-1 ring-transparent"
     :class="borderColor"
     @click="navigateToDetails"
   >
@@ -86,7 +86,11 @@ const statusClass = computed(() =>
 )
 
 const borderColor = computed(() =>
-  isOpen.value ? 'border-green-500' : props.company.is_247 ? 'border-red-500' : 'border-gray-300'
+  isOpen.value
+    ? 'ring-green-300/80 shadow-lg'
+    : props.company.is_247
+      ? 'ring-red-300/70 shadow-md'
+      : 'ring-gray-200/80 shadow-md'
 )
 
 const lockTypes = computed(() =>
@@ -96,11 +100,43 @@ const lockTypes = computed(() =>
   }))
 )
 
-const lockTypeDisplay = computed(() =>
-  lockTypes.value.map((lt) => lt.icon).join(' ')
-)
+const lockTypeDisplay = computed(() => lockTypes.value.map((lt) => lt.icon).join(' '))
 
 function navigateToDetails() {
   router.push({ name: 'details', params: { id: props.company.id } })
 }
 </script>
+
+<style scoped>
+.result-tile {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.96), rgba(249, 248, 248, 0.88));
+  backdrop-filter: blur(8px);
+}
+
+.result-tile::before {
+  content: '';
+  position: absolute;
+  width: 160%;
+  height: 160%;
+  top: -45%;
+  right: -25%;
+  background: radial-gradient(circle at 35% 35%, rgba(217, 169, 8, 0.18), transparent 65%);
+  transform: scale(0);
+  transition: transform 0.6s ease;
+}
+
+.result-tile:hover::before {
+  transform: scale(1);
+}
+
+.result-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.18);
+}
+
+.result-tile img {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+}
+</style>

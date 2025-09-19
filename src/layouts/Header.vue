@@ -67,8 +67,8 @@
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 // Firebase-Dienste
-import { auth } from '@/firebase'
-import { doc, getDoc, getFirestore } from 'firebase/firestore'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 // Overlay-Menü-Komponente
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
@@ -77,7 +77,6 @@ import MobileFilterBar from '@/components/user/MobileFilterBar.vue'
 
 const emit = defineEmits(['update-height'])
 
-const db = getFirestore()
 const router = useRouter()
 const route = useRoute()
 
@@ -95,6 +94,7 @@ const headerRef = ref(null)
 // zeigt an, ob die Suchleiste aktiv ist
 const searchActive = ref(false)
 let resizeObserver = null
+let unsubscribeAuth = null
 // zeigt, ob die Ansicht mobil ist
 // Menü ein- oder ausblenden
 function toggleOverlay() {
@@ -126,8 +126,21 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   window.addEventListener('resize', updateMobile)
   updateMobile()
-  fetchCompanyData(auth.currentUser)
-  onAuthStateChanged(auth, fetchCompanyData)
+  if (isFirebaseConfigured) {
+    fetchCompanyData(auth.currentUser)
+    try {
+      unsubscribeAuth = onAuthStateChanged(
+        auth,
+        fetchCompanyData,
+        (error) => {
+          console.error('Fehler bei der Authentifizierungserkennung:', error)
+          companyData.value = null
+        }
+      )
+    } catch (error) {
+      console.error('Konnte Authentifizierungs-Listener nicht registrieren:', error)
+    }
+  }
   if (headerRef.value) {
     emit('update-height', headerRef.value.offsetHeight)
     resizeObserver = new window.ResizeObserver((entries) => {
@@ -144,25 +157,34 @@ onBeforeUnmount(() => {
   if (resizeObserver) {
     resizeObserver.disconnect()
   }
+  if (typeof unsubscribeAuth === 'function') {
+    unsubscribeAuth()
+  }
 })
 
 // Lädt die Unternehmensdaten des eingeloggten Users
 async function fetchCompanyData(user) {
-  if (!user) {
+  if (!isFirebaseConfigured || !user) {
     companyData.value = null
     return
   }
-  const docRef = doc(db, 'companies', user.uid)
-  const docSnap = await getDoc(docRef)
-  if (docSnap.exists()) {
-    companyData.value = docSnap.data()
-  } else {
+  try {
+    const docRef = doc(db, 'companies', user.uid)
+    const docSnap = await getDoc(docRef)
+    if (docSnap.exists()) {
+      companyData.value = docSnap.data()
+    } else {
+      companyData.value = null
+    }
+  } catch (error) {
+    console.error('Fehler beim Laden der Firmendaten:', error)
     companyData.value = null
   }
 }
 
 // Ausloggen des Users und Redirect
 async function logout() {
+  if (!isFirebaseConfigured) return
   await signOut(auth)
   router.push('/')
 }

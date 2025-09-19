@@ -23,7 +23,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { auth, db } from '@/firebase'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { applyActionCode, checkActionCode } from 'firebase/auth'
 import { updateDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import Loader from '@/components/common/Loader.vue'
@@ -34,6 +34,10 @@ const loading = ref(true)
 const success = ref(false)
 
 onMounted(async () => {
+  if (!isFirebaseConfigured || !auth || !db) {
+    loading.value = false
+    return
+  }
   const code = route.query.oobCode
   if (!code) {
     loading.value = false

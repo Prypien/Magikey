@@ -21,7 +21,8 @@
     font-family: 'Montserrat', sans-serif;
   }
   body {
-    @apply bg-white text-black;
+    @apply text-black;
+    background: linear-gradient(180deg, #f8f6f4 0%, #ffffff 55%, #f3f6fb 100%);
   }
 }
 
