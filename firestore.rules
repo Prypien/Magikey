@@ -5,7 +5,13 @@ service cloud.firestore {
       // Owners can manage their own company profile
       allow create: if request.auth != null && request.auth.uid == companyId;
       allow read: if resource.data.verified == true || (request.auth != null && request.auth.uid == companyId);
-      allow update: if request.auth != null && request.auth.uid == companyId && request.resource.data.verified == resource.data.verified;
+      allow update: if
+        request.auth != null &&
+        request.auth.uid == companyId &&
+        (
+          request.resource.data.verified == resource.data.verified ||
+          (resource.data.verified == false && request.resource.data.verified == true)
+        );
       allow delete: if request.auth != null && request.auth.uid == companyId;
     }
 

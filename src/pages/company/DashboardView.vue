@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { auth, db } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
@@ -82,18 +82,21 @@ import Loader from '@/components/common/Loader.vue'
 import Button from '@/components/common/Button.vue'
 import { sendVerificationEmail } from '@/services/auth'
 import { DAYS, DAY_LABELS } from '@/constants/days'
+import { onAuthStateChanged } from 'firebase/auth'
 
 const company = ref(null)
 const loading = ref(true)
 const verificationSending = ref(false)
 const verificationSent = ref(false)
 
-onMounted(async () => {
-  const user = auth.currentUser
-  if (!user) return
+let unsubscribeAuth
+
+async function loadCompany(uid) {
+  loading.value = true
+  company.value = null
 
   try {
-    const snap = await getDoc(doc(db, 'companies', user.uid))
+    const snap = await getDoc(doc(db, 'companies', uid))
     if (snap.exists()) {
       company.value = snap.data()
     }
@@ -101,6 +104,23 @@ onMounted(async () => {
     console.error('Fehler beim Laden der Firmendaten:', e)
   } finally {
     loading.value = false
+  }
+}
+
+onMounted(() => {
+  unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loadCompany(user.uid)
+    } else {
+      company.value = null
+      loading.value = false
+    }
+  })
+})
+
+onUnmounted(() => {
+  if (typeof unsubscribeAuth === 'function') {
+    unsubscribeAuth()
   }
 })
 

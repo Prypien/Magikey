@@ -133,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
@@ -142,16 +142,17 @@ import Button from '@/components/common/Button.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import { sendVerificationEmail } from '@/services/auth'
 import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
+import { onAuthStateChanged } from 'firebase/auth'
 
 const router = useRouter()
-const user = auth.currentUser
-
 const logoUploading = ref(false)
 const saving = ref(false)
 const verificationSending = ref(false)
 const verificationSent = ref(false)
 
-const company = ref({
+const currentUser = ref(null)
+
+const defaultCompany = () => ({
   company_name: '',
   phone: '',
   address: '',
@@ -164,19 +165,47 @@ const company = ref({
   emergency_price: '',
   opening_hours: {},
   lock_types: [],
+  verified: false,
 })
 
-onMounted(async () => {
-  if (!user) return
-  const docSnap = await getDoc(doc(db, 'companies', user.uid))
-  if (docSnap.exists()) {
-    company.value = { ...company.value, ...docSnap.data() }
+const company = ref(defaultCompany())
+
+async function loadCompany(uid) {
+  try {
+    const docSnap = await getDoc(doc(db, 'companies', uid))
+    if (docSnap.exists()) {
+      company.value = { ...defaultCompany(), ...docSnap.data() }
+    } else {
+      company.value = defaultCompany()
+    }
+  } catch (error) {
+    console.error('Fehler beim Laden der Firmendaten:', error)
+  }
+}
+
+let unsubscribeAuth
+
+onMounted(() => {
+  unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+    currentUser.value = user
+    if (user) {
+      loadCompany(user.uid)
+    } else {
+      company.value = defaultCompany()
+    }
+  })
+})
+
+onUnmounted(() => {
+  if (typeof unsubscribeAuth === 'function') {
+    unsubscribeAuth()
   }
 })
 
 const lockTypeOptions = LOCK_TYPE_OPTIONS
 
 const saveChanges = async () => {
+  const user = currentUser.value
   if (!user || logoUploading.value) {
     if (logoUploading.value) {
       window.alert('Bild wird noch hochgeladen. Bitte warten...')
@@ -194,6 +223,7 @@ const saveChanges = async () => {
 
 const confirmDelete = async () => {
   const confirmed = window.confirm('Bist du sicher, dass du dein Konto löschen willst?')
+  const user = currentUser.value
   if (!confirmed || !user) return
   await deleteDoc(doc(db, 'companies', user.uid))
   await user.delete()
@@ -202,6 +232,7 @@ const confirmDelete = async () => {
 }
 
 const verifyProfile = async () => {
+  const user = currentUser.value
   if (!user || verificationSending.value) return
   verificationSending.value = true
   try {

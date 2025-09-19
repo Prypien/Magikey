@@ -1,5 +1,9 @@
 /* global fetch */
 export async function getPostalFromCoords(lat, lng) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    throw new Error('Invalid coordinates')
+  }
+
   const url =
     import.meta.env.VITE_FUNCTION_URL ||
     `https://us-central1-${import.meta.env.VITE_FIREBASE_PROJECT_ID}.cloudfunctions.net/postalCodeFromCoords`
