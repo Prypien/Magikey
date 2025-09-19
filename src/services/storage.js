@@ -1,9 +1,12 @@
 // Diese Datei lädt Logos in den Firebase-Speicher hoch.
-import { storage, auth } from '@/firebase'
+import { storage, auth, isFirebaseConfigured } from '@/firebase'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 // Speichert das Logo einer Firma im Cloud-Speicher und liefert die URL zurück.
 export async function uploadCompanyLogo(file) {
+  if (!isFirebaseConfigured || !auth || !storage) {
+    throw new Error('Dateiupload ist derzeit nicht verfügbar.')
+  }
   if (!auth.currentUser) {
     // Für das Hochladen muss der Nutzer eingeloggt sein.
     throw new Error('Nicht angemeldet')

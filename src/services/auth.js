@@ -3,7 +3,7 @@
 // bereitgestellten Firebase-Befehle, damit der Ablauf leicht
 // nachvollzogen werden kann.
 
-import { auth } from '@/firebase'
+import { auth, isFirebaseConfigured } from '@/firebase'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -13,13 +13,21 @@ import {
 } from 'firebase/auth'
 
 // Meldet einen Benutzer mit E-Mail und Passwort an.
+function ensureAuthAvailable() {
+  if (!isFirebaseConfigured || !auth) {
+    throw new Error('Authentifizierung ist derzeit nicht verfügbar.')
+  }
+}
+
 export async function login(email, password) {
+  ensureAuthAvailable()
   // Firebase übernimmt den eigentlichen Login-Prozess.
   return signInWithEmailAndPassword(auth, email, password)
 }
 
 // Versendet eine E-Mail, um das Passwort zurückzusetzen.
 export async function resetPassword(email) {
+  ensureAuthAvailable()
   const actionCodeSettings = {
     // Link, den der Nutzer nach dem Klick in der E-Mail öffnet.
     url: 'https://magikey.de/reset-password/confirm',
@@ -32,17 +40,20 @@ export async function resetPassword(email) {
 
 // Meldet den aktuell angemeldeten Benutzer ab.
 export async function logout() {
+  ensureAuthAvailable()
   return signOut(auth)
 }
 
 // Legt einen neuen Benutzer mit E-Mail und Passwort an.
 export async function register(email, password) {
+  ensureAuthAvailable()
   return createUserWithEmailAndPassword(auth, email, password)
 }
 
 // Sendet eine Verifizierungs-E-Mail an den Nutzer.
 // Wird kein Benutzer übergeben, verwenden wir den aktuell angemeldeten.
 export async function sendVerificationEmail(user = auth.currentUser) {
+  ensureAuthAvailable()
   if (!user) throw new Error('No user')
   const actionCodeSettings = {
     url: 'https://magikey.de/verify',

@@ -131,7 +131,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, db } from '@/firebase'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
@@ -148,6 +148,10 @@ const lockTypeOptions = LOCK_TYPE_OPTIONS
 
 
 const register = async (form) => {
+  if (!isFirebaseConfigured || !auth || !db) {
+    alert('Registrierung ist derzeit nicht verfügbar.')
+    return
+  }
   try {
     const { user } = await createUserWithEmailAndPassword(
       auth,

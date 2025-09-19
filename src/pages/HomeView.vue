@@ -1,8 +1,8 @@
 <!-- Diese Datei stellt die Startseite mit Firmenliste und Intro dar. -->
 <template>
   <!-- Startseite mit Filterleiste und Firmenliste -->
-  <div class="mx-auto max-w-4xl min-h-screen bg-white px-4 py-6 sm:px-6">
-    <h1 class="mb-6 text-2xl font-semibold">{{ title }}</h1>
+  <div class="mx-auto max-w-5xl min-h-[70vh] rounded-3xl bg-white/80 px-4 py-10 shadow-xl backdrop-blur-sm sm:px-8">
+    <h1 class="mb-8 text-3xl font-semibold text-gray-900 sm:text-4xl">{{ title }}</h1>
 
     <div>
       <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
@@ -37,7 +37,7 @@ import IntroPopup from '@/components/user/IntroPopup.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
 import { filters } from '@/stores/filters'
 import { useCompanyStore } from '@/stores/company'
-import { auth } from '@/firebase'
+import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 
@@ -78,9 +78,23 @@ async function useLocation() {
 
 // Daten initial laden
 onMounted(async () => {
-  onAuthStateChanged(auth, (user) => {
-    if (!user && !window.sessionStorage.getItem(INTRO_KEY)) showIntro.value = true
-  })
+  if (isFirebaseConfigured) {
+    try {
+      onAuthStateChanged(
+        auth,
+        (user) => {
+          if (!user && !window.sessionStorage.getItem(INTRO_KEY)) showIntro.value = true
+        },
+        (error) => {
+          console.warn('Auth konnte nicht initialisiert werden:', error)
+        }
+      )
+    } catch (error) {
+      console.warn('Registrieren des Auth-Listeners fehlgeschlagen:', error)
+    }
+  } else if (!window.sessionStorage.getItem(INTRO_KEY)) {
+    showIntro.value = true
+  }
   useLocation()
   await fetchCompanies()
 })

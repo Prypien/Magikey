@@ -47,7 +47,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { auth } from '@/firebase'
+import { auth, isFirebaseConfigured } from '@/firebase'
 import { verifyPasswordResetCode, confirmPasswordReset } from 'firebase/auth'
 import Button from '@/components/common/Button.vue'
 import Loader from '@/components/common/Loader.vue'
@@ -62,6 +62,10 @@ const newPassword = ref('')
 const error = ref('')
 
 onMounted(async () => {
+  if (!isFirebaseConfigured || !auth) {
+    loading.value = false
+    return
+  }
   const code = route.query.oobCode
   if (!code) {
     loading.value = false
@@ -81,6 +85,11 @@ async function updatePassword() {
   if (submitting.value) return
   submitting.value = true
   error.value = ''
+  if (!isFirebaseConfigured || !auth) {
+    error.value = 'Passwortänderung ist momentan nicht verfügbar.'
+    submitting.value = false
+    return
+  }
   try {
     const code = route.query.oobCode
     await confirmPasswordReset(auth, code, newPassword.value)

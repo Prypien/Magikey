@@ -14,12 +14,17 @@
 
 <script setup>
 import { ref } from 'vue'
-import { db } from '@/firebase'
+import { db, isFirebaseConfigured } from '@/firebase'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 
 const email = ref('')
 
 async function submit() {
+  if (!isFirebaseConfigured || !db) {
+    email.value = ''
+    alert('Danke! Wir melden uns bei dir, sobald der Service live ist.')
+    return
+  }
   await addDoc(collection(db, 'notify_me'), {
     email: email.value,
     created_at: serverTimestamp(),

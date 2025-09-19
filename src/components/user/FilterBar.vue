@@ -64,8 +64,14 @@
         <ChevronDown v-else class="h-4 w-4" />
       </button>
       <div class="flex flex-shrink-0 justify-end py-3 pl-4 pr-4 sm:py-0">
-        <button class="rounded-full bg-gold p-2 text-white hover:bg-gold/90" aria-label="Suchen">
-          <Search class="h-4 w-4" />
+        <button
+          class="group relative overflow-hidden rounded-full bg-gold p-2 text-white shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gold/60"
+          aria-label="Suchen"
+        >
+          <span class="relative z-10">
+            <Search class="h-4 w-4" />
+          </span>
+          <span class="absolute inset-0 scale-0 rounded-full bg-white/40 transition-transform duration-500 ease-out group-hover:scale-125 group-active:scale-150"></span>
         </button>
       </div>
     </div>

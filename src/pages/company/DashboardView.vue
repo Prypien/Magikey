@@ -76,7 +76,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { auth, db } from '@/firebase'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
@@ -93,6 +93,11 @@ const verificationSent = ref(false)
 let unsubscribeAuth
 
 async function loadCompany(uid) {
+  if (!isFirebaseConfigured) {
+    company.value = null
+    loading.value = false
+    return
+  }
   loading.value = true
   company.value = null
 
@@ -109,14 +114,31 @@ async function loadCompany(uid) {
 }
 
 onMounted(() => {
-  unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      loadCompany(user.uid)
-    } else {
-      company.value = null
-      loading.value = false
-    }
-  })
+  if (!isFirebaseConfigured) {
+    loading.value = false
+    return
+  }
+  try {
+    unsubscribeAuth = onAuthStateChanged(
+      auth,
+      (user) => {
+        if (user) {
+          loadCompany(user.uid)
+        } else {
+          company.value = null
+          loading.value = false
+        }
+      },
+      (error) => {
+        console.error('Auth-Listener konnte nicht gestartet werden:', error)
+        company.value = null
+        loading.value = false
+      }
+    )
+  } catch (error) {
+    console.error('Registrierung des Auth-Listeners fehlgeschlagen:', error)
+    loading.value = false
+  }
 })
 
 onUnmounted(() => {
@@ -139,6 +161,7 @@ function dayStatus(day) {
 }
 
 async function verifyProfile() {
+  if (!isFirebaseConfigured) return
   const user = auth.currentUser
   if (!user || verificationSending.value) return
   verificationSending.value = true

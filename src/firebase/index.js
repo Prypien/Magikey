@@ -18,16 +18,20 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-// Mit diesen Daten starten wir die Verbindung zu Firebase.
-const app = initializeApp(firebaseConfig)
+const isFirebaseConfigured = Object.values(firebaseConfig).every(Boolean)
 
-// Aus der gestarteten App holen wir uns die einzelnen Dienste:
-// - auth: Benutzer anmelden und verwalten
-// - db:   Datenbank für strukturierte Daten
-// - storage: Dateien (z.B. Bilder) ablegen
-const auth = getAuth(app)
-const db = getFirestore(app)
-const storage = getStorage(app)
+let app = null
+let auth = null
+let db = null
+let storage = null
 
-// Andere Module können diese Dienste importieren und nutzen.
-export { app, auth, db, storage }
+if (isFirebaseConfigured) {
+  app = initializeApp(firebaseConfig)
+  auth = getAuth(app)
+  db = getFirestore(app)
+  storage = getStorage(app)
+} else {
+  console.warn('Firebase-Konfiguration fehlt oder ist unvollständig. Firebase-Funktionen werden deaktiviert.')
+}
+
+export { app, auth, db, storage, isFirebaseConfigured }

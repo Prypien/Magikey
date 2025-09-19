@@ -136,7 +136,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, db } from '@/firebase'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/components/company/CompanyImageUpload.vue'
 import Button from '@/components/common/Button.vue'
@@ -172,6 +172,10 @@ const defaultCompany = () => ({
 const company = ref(defaultCompany())
 
 async function loadCompany(uid) {
+  if (!isFirebaseConfigured) {
+    company.value = defaultCompany()
+    return
+  }
   try {
     const docSnap = await getDoc(doc(db, 'companies', uid))
     if (docSnap.exists()) {
@@ -187,14 +191,31 @@ async function loadCompany(uid) {
 let unsubscribeAuth
 
 onMounted(() => {
-  unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-    currentUser.value = user
-    if (user) {
-      loadCompany(user.uid)
-    } else {
-      company.value = defaultCompany()
-    }
-  })
+  if (!isFirebaseConfigured) {
+    currentUser.value = null
+    return
+  }
+  try {
+    unsubscribeAuth = onAuthStateChanged(
+      auth,
+      (user) => {
+        currentUser.value = user
+        if (user) {
+          loadCompany(user.uid)
+        } else {
+          company.value = defaultCompany()
+        }
+      },
+      (error) => {
+        console.error('Auth-Listener konnte nicht gestartet werden:', error)
+        currentUser.value = null
+        company.value = defaultCompany()
+      }
+    )
+  } catch (error) {
+    console.error('Registrierung des Auth-Listeners fehlgeschlagen:', error)
+    currentUser.value = null
+  }
 })
 
 onUnmounted(() => {
@@ -207,7 +228,7 @@ const lockTypeOptions = LOCK_TYPE_OPTIONS
 
 const saveChanges = async () => {
   const user = currentUser.value
-  if (!user || logoUploading.value) {
+  if (!isFirebaseConfigured || !user || logoUploading.value) {
     if (logoUploading.value) {
       window.alert('Bild wird noch hochgeladen. Bitte warten...')
     }
@@ -225,7 +246,7 @@ const saveChanges = async () => {
 const confirmDelete = async () => {
   const confirmed = window.confirm('Bist du sicher, dass du dein Konto löschen willst?')
   const user = currentUser.value
-  if (!confirmed || !user) return
+  if (!confirmed || !isFirebaseConfigured || !user) return
   await deleteDoc(doc(db, 'companies', user.uid))
   await user.delete()
   window.alert('Konto gelöscht')
@@ -234,7 +255,7 @@ const confirmDelete = async () => {
 
 const verifyProfile = async () => {
   const user = currentUser.value
-  if (!user || verificationSending.value) return
+  if (!isFirebaseConfigured || !user || verificationSending.value) return
   verificationSending.value = true
   try {
     await sendVerificationEmail(user)

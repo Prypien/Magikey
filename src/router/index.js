@@ -8,7 +8,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import HomeView from '@/pages/HomeView.vue'
 
 // Firebase-Auth-Instanz zum Prüfen von Login-Status
-import { auth } from '@/firebase'
+import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 
 // Definierte Routen
@@ -81,7 +81,7 @@ const router = createRouter({
 let authReady = false
 
 function waitForAuthInit() {
-  if (authReady) {
+  if (!isFirebaseConfigured || authReady) {
     return Promise.resolve()
   }
 
@@ -110,8 +110,8 @@ router.beforeEach(async (to, from, next) => {
     console.error('Fehler beim Initialisieren der Authentifizierung', error)
   }
 
-  const user = auth.currentUser
-  const requiresAuth = to.meta.requiresAuth
+  const user = isFirebaseConfigured ? auth.currentUser : null
+  const requiresAuth = isFirebaseConfigured && to.meta.requiresAuth
   const isLoginRoute = to.name === 'login'
 
   if (requiresAuth && !user) {

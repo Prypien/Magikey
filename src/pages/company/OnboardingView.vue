@@ -235,7 +235,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, db } from '@/firebase'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
@@ -290,6 +290,10 @@ function handleStep5() {
 }
 
 async function register() {
+  if (!isFirebaseConfigured || !auth || !db) {
+    alert('Registrierung ist derzeit nicht verfügbar.')
+    return
+  }
   try {
     let user = auth.currentUser
     if (!user) {
@@ -329,12 +333,17 @@ async function register() {
 
 function updateLogo(url) {
   form.value.logo_url = url
+  if (!isFirebaseConfigured || !auth || !db) return
   if (auth.currentUser) {
     updateDoc(doc(db, 'companies', auth.currentUser.uid), { logo_url: url })
   }
 }
 
 async function sendVerification() {
+  if (!isFirebaseConfigured) {
+    alert('Verifizierung ist derzeit nicht verfügbar.')
+    return
+  }
   try {
     await sendVerificationEmail()
     router.push({
