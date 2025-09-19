@@ -43,9 +43,13 @@ Der Code ist in `src` organisiert. Wichtige Unterordner:
 - `components/common` – kleine UI-Bausteine (Button, DataRow)
 - `components/company` – Firmen-spezifische Widgets und Login
 - `components/user` – Komponenten für die Nutzersuche
-- `pages` – sämtliche Seiten der Anwendung
+- `pages` – Seitenansichten, unterteilt in
+  - `pages/auth` – Passwortrücksetzung und E-Mail-Bestätigung
+  - `pages/company` – Workflows für Dienstleister (Dashboard, Login, …)
+  - `pages/static` – rechtliche Inhalte, Hilfe und Fallback-Seiten
+  - `pages/user` – Such- und Ergebnisansichten für Endnutzer
 - `services` – Logik für Auth und Storage
-- `firebase` – Initialisierung von Firebase
+- `firebase` – Initialisierung (`index.js`) und Hilfsfunktionen für Cloud Functions
 - `theme` – globale Tailwind-Stile
 
 Der Alias `@` verweist auf den `src`-Ordner und erleichtert Importpfade.
