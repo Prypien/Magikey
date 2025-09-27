@@ -3,19 +3,28 @@
   <!-- Fester Seitenkopf mit Logo, Navigation und Menübutton -->
   <header
     ref="headerRef"
-    class="fixed top-0 left-0 w-full z-50 bg-gray-100/90 backdrop-blur border-b border-gray-200 text-gray-900 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-sm flex items-center justify-between relative transition-all duration-200"
+    class="header-shell"
     :class="{ 'py-6': searchActive }"
   >
     <router-link
       to="/"
-      class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-transparent hover:border-gold/50 hover:bg-gold/5 transition-colors"
+      class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-full border border-transparent bg-white/40 transition-all hover:-translate-y-[1px] hover:border-gold/40 hover:shadow-sm"
       v-show="!hideNavOnHomeMobile"
     >
       <img src="/logo.png" alt="Logo" class="h-8 sm:h-10 md:h-12 w-auto" />
       <span class="font-bold text-base sm:text-lg md:text-xl text-gold">Magikey</span>
     </router-link>
 
-    <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium"></nav>
+    <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-slate-600">
+      <router-link
+        v-for="link in navLinks"
+        :key="link.to"
+        :to="link.to"
+        class="rounded-full px-3 py-2 transition hover:text-slate-900 hover:bg-white/60"
+      >
+        {{ link.label }}
+      </router-link>
+    </nav>
 
     <div class="flex-1 min-w-0 flex justify-center px-2 sm:px-4" v-if="showFilterBar">
       <MobileFilterBar v-if="isMobile" />
@@ -47,7 +56,7 @@
       <!-- Button zum Öffnen des mobilen Overlays -->
       <button
         @click="toggleOverlay"
-        class="text-base sm:text-lg md:text-xl hover:text-gold transition-colors focus:outline-none"
+        class="flex h-10 w-10 items-center justify-center rounded-full border border-white/80 bg-white/60 text-base text-slate-700 transition-all hover:border-gold/60 hover:text-gold focus:outline-none"
         :class="{ 'rotate-90': showOverlay }"
         aria-label="Menü"
         ref="menuButton"
@@ -104,9 +113,10 @@ function toggleOverlay() {
 
 // schließt das Overlay, wenn außerhalb geklickt wird
 function handleClickOutside(event) {
-  if (showOverlay.value && !menuButton.value.contains(event.target)) {
-    showOverlay.value = false
-  }
+  if (!showOverlay.value) return
+  const menuEl = menuButton.value
+  if (menuEl && menuEl.contains(event.target)) return
+  showOverlay.value = false
 }
 
 // reduziert die Größe von Header und Suche beim Scrollen
@@ -191,6 +201,36 @@ async function logout() {
 </script>
 
 <style scoped>
+.header-shell {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  color: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+  transition: padding 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  .header-shell {
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-shell {
+    padding: 1.25rem 2.5rem;
+  }
+}
+
 .rotate-90 {
   transform: rotate(90deg);
   transition: transform 0.2s ease;
@@ -206,3 +246,9 @@ async function logout() {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 </style>
+const navLinks = [
+  { label: 'Suche', to: '/' },
+  { label: 'Registrieren', to: '/register' },
+  { label: 'Hilfe', to: '/hilfe' },
+]
+

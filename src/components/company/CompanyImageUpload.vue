@@ -1,19 +1,34 @@
 <!-- Diese Datei kümmert sich um das Hochladen eines Firmenlogos. -->
 <template>
-  <div class="flex flex-col items-center">
+  <div class="flex flex-col items-center gap-4 text-center">
     <div class="relative">
-      <img
-        :src="previewUrl || initialImageUrl || '/logo.png'"
-        class="w-24 h-24 rounded-full object-cover border"
-        alt="Logo"
-      />
+      <div
+        class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner"
+      >
+        <img
+          :src="previewUrl || initialImageUrl || '/logo.png'"
+          class="h-full w-full object-cover"
+          alt="Logo"
+        />
+      </div>
+      <div
+        v-if="isUploading"
+        class="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/70 backdrop-blur"
+      >
+        <i class="fa fa-spinner fa-spin text-gold"></i>
+      </div>
     </div>
-    <input
-      type="file"
-      accept="image/*"
-      class="mt-2 text-sm"
-      @change="uploadImage"
-    />
+    <label class="pill-checkbox cursor-pointer px-5 py-2">
+      <i class="fa fa-upload text-gold"></i>
+      <span>Logo hochladen</span>
+      <input
+        type="file"
+        accept="image/*"
+        class="sr-only"
+        @change="uploadImage"
+      />
+    </label>
+    <p class="text-xs text-slate-500">PNG oder JPG bis 3&nbsp;MB empfohlen.</p>
   </div>
 </template>
 

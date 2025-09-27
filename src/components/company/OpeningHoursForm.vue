@@ -1,28 +1,24 @@
 <!-- Diese Datei sammelt die Öffnungszeiten für mehrere Wochentage ein. -->
 <template>
-  <div class="form-section">
-    <label class="block font-semibold mb-2">Wochentage</label>
-    <div class="flex gap-2 mb-4">
+  <div class="space-y-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-inner">
+    <label class="font-semibold text-slate-700">Wochentage</label>
+    <div class="flex flex-wrap gap-2">
       <button
         v-for="day in days"
         :key="day.key"
-        :class="[
-          'w-10 py-1 rounded-2xl border text-sm font-medium',
-          selectedDays.includes(day.key)
-            ? 'bg-gold text-white border-gold shadow'
-            : 'bg-white text-gray-600 border-gray-300'
-        ]"
-        @click="toggleDay(day.key)"
         type="button"
+        class="pill-checkbox px-4 py-2 text-xs sm:text-sm"
+        :class="{ 'border-gold bg-gold/25 text-slate-900 shadow': selectedDays.includes(day.key) }"
+        @click="toggleDay(day.key)"
       >
         {{ day.short }}
       </button>
     </div>
-    <div class="flex items-center gap-3">
-      <label class="text-sm">Uhrzeit:</label>
-      <input type="time" v-model="open" class="input w-24" />
+    <div class="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+      <span class="font-medium">Uhrzeit</span>
+      <input type="time" v-model="open" class="water-input w-28 px-3 py-2 text-sm" />
       <span>–</span>
-      <input type="time" v-model="close" class="input w-24" />
+      <input type="time" v-model="close" class="water-input w-28 px-3 py-2 text-sm" />
     </div>
   </div>
 </template>
@@ -91,12 +87,7 @@ function toggleDay(key) {
 </script>
 
 <style scoped>
-.input {
-  @apply border rounded-xl px-2 py-1 w-24 text-sm focus:ring-2 focus:ring-gold focus:border-gold border-gray-300;
-}
-.bg-gold {
-  background-color: #d9a908 !important;
-  color: #fff !important;
-  border-color: #d9a908 !important;
+.pill-checkbox {
+  transition: all 0.2s ease;
 }
 </style>

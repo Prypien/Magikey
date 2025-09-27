@@ -1,89 +1,116 @@
 <!-- Diese Datei zeigt alle Details zu einer ausgewählten Firma. -->
 <template>
-  <div class="max-w-5xl mx-auto p-6">
-    <button @click="$router.back()" class="text-gold font-semibold mb-4 flex items-center gap-1">
-      <span class="text-lg">←</span>
-      <span>Zurück</span>
-    </button>
+  <section class="page-wrapper">
+    <div class="mx-auto max-w-6xl space-y-8">
+      <button @click="$router.back()" class="pill-checkbox text-sm">
+        <i class="fa fa-arrow-left"></i>
+        Zurück
+      </button>
 
-    <div class="bg-white shadow rounded-xl p-6 flex flex-col md:flex-row gap-8">
-      <div class="flex-1">
-        <div class="flex flex-col items-center text-center">
-          <img
-            :src="company.logo_url || '/logo.png'"
-            alt="Firmenlogo"
-            class="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
-          />
-          <h1 class="text-3xl font-bold mt-4 text-black flex items-center gap-2">
-            {{ company.company_name || 'Unbekannt' }}
-            <span v-if="!company.verified" class="text-sm text-red-600">Not verified</span>
-          </h1>
-          <p class="text-sm text-gray-500 mt-1">{{ fullAddress }}</p>
-        </div>
+      <div class="glass-card p-8 sm:p-10">
+        <div class="grid gap-10 lg:grid-cols-[1.15fr,0.85fr]">
+          <div class="space-y-6">
+            <div class="flex flex-col items-center gap-4 text-center">
+              <div class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
+                <img
+                  :src="company.logo_url || '/logo.png'"
+                  alt="Firmenlogo"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <div class="space-y-2">
+                <h1 class="section-heading text-3xl">{{ company.company_name || 'Unbekannt' }}</h1>
+                <p class="section-subtitle">{{ fullAddress }}</p>
+                <div class="flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+                  <span
+                    class="badge-neutral"
+                    :class="isOpen ? 'text-emerald-600 border-emerald-200' : 'text-slate-500'"
+                  >
+                    <i class="fa" :class="isOpen ? 'fa-door-open' : 'fa-clock'" />
+                    {{ openStatus }}
+                  </span>
+                  <span v-if="company.is_247" class="pill-checkbox border-gold bg-gold/20 text-slate-900">
+                    <i class="fa fa-moon"></i>
+                    24/7 Notdienst
+                  </span>
+                  <span v-if="company.verified" class="pill-checkbox border-emerald-200 bg-emerald-50 text-emerald-600">
+                    <i class="fa fa-check-circle"></i>
+                    Verifiziert
+                  </span>
+                </div>
+              </div>
+            </div>
 
-        <div class="space-y-1 mt-6">
-          <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
-          <DataRow label="Preis" :value="`ab ${company.price || '-'} €`" />
-        </div>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
+              <DataRow label="Preis" :value="company.price ? `ab ${company.price} €` : 'auf Anfrage'" />
+              <DataRow
+                v-if="company.is_247 && company.emergency_price"
+                label="Notdienstpreis"
+                :value="`${company.emergency_price} €`"
+              />
+            </div>
 
-        <div class="flex items-center gap-2 mt-4 font-semibold" :class="statusColor">
-          <span>{{ openStatus }}</span>
-          <span v-if="isOpen" class="text-gray-500">bis {{ closingTime }}</span>
-        </div>
+            <div class="space-y-4">
+              <h2 class="text-lg font-semibold text-slate-900">Öffnungszeiten</h2>
+              <div class="grid gap-2 rounded-3xl border border-white/70 bg-white/70 p-4 shadow-inner">
+                <div
+                  v-for="day in days"
+                  :key="day"
+                  class="flex items-center justify-between rounded-2xl border border-white/60 bg-white/60 px-4 py-2 text-sm"
+                  :class="dayStatus(day)"
+                >
+                  <span class="font-medium text-slate-700">{{ dayLabel(day) }}</span>
+                  <span class="text-slate-600">{{ formatTimeRange(company.opening_hours?.[day]) }}</span>
+                </div>
+              </div>
+            </div>
 
-        <div class="mt-6">
-          <h2 class="font-semibold mb-2 text-black">Öffnungszeiten</h2>
-          <div class="bg-gray-50 border rounded-lg p-4">
-            <div v-for="day in days" :key="day" class="text-sm" :class="dayStatus(day)">
-              <strong class="mr-1">{{ dayLabel(day) }}:</strong>
-              {{ formatTimeRange(company.opening_hours?.[day]) }}
+            <div class="space-y-3">
+              <h2 class="text-lg font-semibold text-slate-900">Beschreibung</h2>
+              <p class="text-sm text-slate-600">{{ company.description || 'Keine Beschreibung' }}</p>
+            </div>
+
+            <div v-if="lockTypes.length" class="space-y-3">
+              <h2 class="text-lg font-semibold text-slate-900">Kompatible Schlösser</h2>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  v-for="(lt, idx) in lockTypes"
+                  :key="idx"
+                  class="pill-checkbox"
+                >
+                  <span class="text-lg">{{ lt.icon }}</span>
+                  <span>{{ lt.label }}</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4">
+              <a
+                v-if="company.phone"
+                :href="`tel:${company.phone}`"
+                class="btn flex items-center gap-2"
+              >
+                <i class="fa fa-phone"></i>
+                Jetzt anrufen
+              </a>
             </div>
           </div>
-        </div>
 
-        <div class="mt-6">
-          <h2 class="font-semibold mb-2 text-black">Beschreibung</h2>
-          <p class="text-gray-700">{{ company.description || 'Keine Beschreibung' }}</p>
-        </div>
-
-        <div v-if="lockTypes.length" class="mt-6">
-          <h2 class="font-semibold mb-2 text-black">Kompatible Schlösser</h2>
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="(lt, idx) in lockTypes"
-              :key="idx"
-              class="bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded-full flex items-center gap-1"
-            >
-              <span class="text-xl">{{ lt.icon }}</span>
-              <span>{{ lt.label }}</span>
-            </span>
+          <div class="min-h-[18rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
+            <iframe
+              class="h-full w-full"
+              :src="mapUrl"
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
-
-        <div class="mt-8 flex gap-4 justify-center">
-          <a
-            v-if="company.phone"
-            :href="`tel:${company.phone}`"
-            class="bg-gold text-black font-semibold px-4 py-2 rounded-full flex items-center gap-2"
-          >
-            <i class="fa fa-phone"></i> Anrufen
-          </a>
-        </div>
-
-      </div>
-
-      <div class="md:w-1/2">
-        <iframe
-          class="w-full h-64 md:h-full rounded"
-          :src="mapUrl"
-          style="border:0;"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -112,7 +139,10 @@ onMounted(async () => {
   }
 })
 
-const fullAddress = computed(() => `${company.value.postal_code || ''} ${company.value.address || ''}`)
+const fullAddress = computed(() => {
+  const parts = [company.value.address, company.value.postal_code, company.value.city].filter(Boolean)
+  return parts.join(', ')
+})
 const mapUrl = computed(() => `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress.value)}&output=embed`)
 
 const now = new Date()
@@ -127,21 +157,10 @@ const isOpen = computed(() => {
   return currentMinutes >= toMin(hours.open) && currentMinutes <= toMin(hours.close)
 })
 
-const closingTime = computed(() => {
-  const day = days[now.getDay() - 1 < 0 ? 6 : now.getDay() - 1]
-  return company.value.opening_hours?.[day]?.close || ''
-})
-
 const openStatus = computed(() => {
   if (isOpen.value) return 'Jetzt geöffnet'
   if (company.value.is_247 && company.value.emergency_price) return `Notdienst verfügbar – ${company.value.emergency_price} €`
   return 'Derzeit geschlossen'
-})
-
-const statusColor = computed(() => {
-  if (isOpen.value) return 'text-green-600'
-  if (company.value.is_247) return 'text-red-600'
-  return 'text-gray-500'
 })
 
 function dayStatus(day) {
