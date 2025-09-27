@@ -34,7 +34,7 @@
                   v-if="filters.location"
                   type="button"
                   class="rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                  @click.stop="clearFilter('location')"
+                  @click.stop="clearFilter('location'); activeField = null"
                 >
                   <X class="h-3 w-3" />
                 </button>
@@ -42,48 +42,73 @@
             </div>
 
             <div
-              v-if="activeField === 'location' && (locationSuggestions.length || locationSuggestionsError || locationSuggestionsLoading || filters.location)"
+              v-if="activeField === 'location'"
               class="absolute left-0 right-0 top-full z-40 mt-2"
             >
-              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white/95 shadow-xl backdrop-blur">
-                <button
-                  type="button"
-                  class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-slate-600 transition hover:bg-gold/10"
-                  @click.stop="useGeoLocation"
-                >
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gold/15 text-gold">
-                    <i v-if="!geolocationPending" class="fa fa-location-crosshairs"></i>
-                    <span v-else class="h-4 w-4 animate-spin rounded-full border-2 border-gold/40 border-t-gold"></span>
-                  </span>
-                  <span>
-                    Aktuellen Standort verwenden
-                    <span class="block text-xs font-normal text-slate-400">Standardmäßig wird dein aktueller Standort genutzt.</span>
-                  </span>
-                </button>
-                <div v-if="locationSuggestionsLoading" class="px-4 py-3 text-sm text-slate-500">
-                  Vorschläge werden geladen…
+              <SearchPopoverPanel
+                title="Standort festlegen"
+                description="Tippe eine Adresse ein oder nutze deinen aktuellen Standort."
+              >
+                <div class="space-y-3">
+                  <button
+                    type="button"
+                    class="flex w-full items-center gap-3 rounded-xl border border-dashed border-gold/30 bg-gold/5 px-4 py-3 text-left text-sm font-medium text-gold transition hover:border-gold/60 hover:bg-gold/10"
+                    @click.stop="useGeoLocation"
+                  >
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-gold">
+                      <i v-if="!geolocationPending" class="fa fa-location-crosshairs"></i>
+                      <span v-else class="h-4 w-4 animate-spin rounded-full border-2 border-gold/40 border-t-gold"></span>
+                    </span>
+                    <span class="text-left">
+                      Aktuellen Standort verwenden
+                      <span class="block text-xs font-normal text-gold/70">Magikey findet passende Dienste in deiner Nähe.</span>
+                    </span>
+                  </button>
+                  <div class="rounded-xl border border-slate-200/70 bg-white/90">
+                    <div v-if="locationSuggestionsLoading" class="px-4 py-4 text-sm text-slate-500">
+                      Vorschläge werden geladen…
+                    </div>
+                    <ul
+                      v-else-if="locationSuggestions.length"
+                      class="max-h-64 divide-y divide-slate-100 overflow-y-auto"
+                    >
+                      <li v-for="suggestion in locationSuggestions" :key="suggestion.id">
+                        <button
+                          type="button"
+                          class="flex w-full items-center justify-between px-4 py-3 text-left text-sm transition hover:bg-gold/10"
+                          @click.stop="selectLocation(suggestion)"
+                        >
+                          <span class="font-medium text-slate-700">{{ suggestion.label }}</span>
+                          <span v-if="suggestion.city && suggestion.postalCode" class="text-xs text-slate-400">
+                            {{ suggestion.city }}
+                          </span>
+                        </button>
+                      </li>
+                    </ul>
+                    <div v-else-if="locationSuggestionsError" class="px-4 py-4 text-sm text-rose-500">
+                      {{ locationSuggestionsError }}
+                    </div>
+                    <div v-else class="px-4 py-4 text-sm text-slate-500">
+                      Gib mindestens zwei Zeichen ein, um Orte zu finden.
+                    </div>
+                  </div>
                 </div>
-                <ul v-else-if="locationSuggestions.length" class="max-h-64 overflow-y-auto py-2">
-                  <li v-for="suggestion in locationSuggestions" :key="suggestion.id">
+                <template #footer v-if="filters.location">
+                  <div class="flex items-center justify-between text-xs text-slate-500">
+                    <span class="truncate">
+                      Aktuell ausgewählt:
+                      <span class="font-semibold text-slate-700">{{ filters.location }}</span>
+                    </span>
                     <button
                       type="button"
-                      class="flex w-full items-center justify-between px-4 py-2 text-left text-sm transition hover:bg-gold/10"
-                      @click.stop="selectLocation(suggestion)"
+                      class="rounded-full px-3 py-1 text-xs font-semibold text-slate-500 transition hover:bg-rose-50 hover:text-rose-500"
+                      @click.stop="clearFilter('location'); activeField = null"
                     >
-                      <span class="font-medium text-slate-700">{{ suggestion.label }}</span>
-                      <span v-if="suggestion.city && suggestion.postalCode" class="text-xs text-slate-400">
-                        {{ suggestion.city }}
-                      </span>
+                      Zurücksetzen
                     </button>
-                  </li>
-                </ul>
-                <div v-else-if="locationSuggestionsError" class="px-4 py-3 text-sm text-rose-500">
-                  {{ locationSuggestionsError }}
-                </div>
-                <div v-else class="px-4 py-3 text-sm text-slate-500">
-                  Gib mindestens zwei Zeichen ein, um Orte zu finden.
-                </div>
-              </div>
+                  </div>
+                </template>
+              </SearchPopoverPanel>
             </div>
           </div>
 
@@ -94,7 +119,7 @@
             }"
             type="button"
             aria-pressed="filters.openNow"
-            @click.stop="toggleFilter('openNow'); activeField = 'openNow'"
+            @click.stop="handleOpenNowButtonClick"
           >
             <span class="flex items-center gap-2">
               <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gold/10 text-gold">
@@ -108,11 +133,61 @@
             <span
               v-if="filters.openNow"
               class="absolute right-3 top-2 cursor-pointer text-slate-400 transition hover:text-slate-600"
-              @click.stop="clearFilter('openNow')"
+              @click.stop="clearFilter('openNow'); activeField = null"
             >
               <X class="h-3 w-3" />
             </span>
           </button>
+
+          <div v-if="activeField === 'openNow'" class="absolute left-0 right-0 top-full z-40 mt-2">
+            <SearchPopoverPanel
+              title="Öffnungszeiten"
+              description="Zeige nur Anbieter, die zum jetzigen Zeitpunkt erreichbar sind."
+            >
+              <div class="space-y-3">
+                <div class="flex items-center justify-between rounded-xl border border-slate-200/70 bg-white/80 px-4 py-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-700">Jetzt geöffnet</p>
+                    <p class="text-xs text-slate-500">Aktiviere den Schalter, um 24/7-Notdienste zu priorisieren.</p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    :aria-checked="filters.openNow"
+                    class="relative inline-flex h-6 w-11 items-center rounded-full border border-slate-300 bg-slate-200 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
+                    :class="{ 'border-gold/60 bg-gold/60': filters.openNow }"
+                    @click.stop="toggleOpenNow()"
+                  >
+                    <span
+                      class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition"
+                      :class="{ 'translate-x-5': filters.openNow, 'translate-x-1': !filters.openNow }"
+                    ></span>
+                  </button>
+                </div>
+                <p class="text-xs text-slate-500">
+                  Wir gleichen die Öffnungszeiten mit den Angaben der Anbieter ab. Einige Betriebe bieten Rufbereitschaft an und werden trotzdem angezeigt.
+                </p>
+              </div>
+              <template #footer>
+                <div class="flex items-center justify-end gap-2 text-xs">
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                    @click.stop="clearFilter('openNow'); activeField = null"
+                  >
+                    Zurücksetzen
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-full bg-slate-900 px-3 py-1 font-semibold text-white transition hover:bg-slate-800"
+                    @click.stop="activeField = null"
+                  >
+                    Fertig
+                  </button>
+                </div>
+              </template>
+            </SearchPopoverPanel>
+          </div>
 
           <button
             class="group relative flex min-w-[150px] flex-1 items-center justify-between gap-2 rounded-2xl border border-transparent bg-white/70 px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:border-slate-200 hover:bg-white/95 sm:flex-none sm:flex-grow-0"
@@ -120,7 +195,7 @@
               'border-gold/40 bg-white text-gold shadow-sm ring-1 ring-gold/30': activeField === 'price' || priceActive,
             }"
             type="button"
-            @click.stop="openPrice"
+            @click.stop="togglePricePanel"
           >
             <span class="flex items-center gap-2">
               <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gold/10 text-gold">
@@ -139,11 +214,85 @@
             <span
               v-if="priceActive"
               class="absolute right-3 top-2 cursor-pointer text-slate-400 transition hover:text-slate-600"
-              @click.stop="clearFilter('price')"
+              @click.stop="clearFilter('price'); activeField = null"
             >
               <X class="h-3 w-3" />
             </span>
           </button>
+
+          <div v-if="activeField === 'price'" class="absolute left-0 right-0 top-full z-40 mt-2">
+            <SearchPopoverPanel
+              title="Preisrahmen"
+              description="Lege den gewünschten Kostenrahmen für den Einsatz fest."
+            >
+              <div class="space-y-4">
+                <div class="flex items-center justify-between text-sm font-medium text-slate-600">
+                  <span>Budget</span>
+                  <span>{{ priceDraft.min }}€ – {{ priceDraft.max }}€</span>
+                </div>
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex items-center justify-between text-[11px] uppercase tracking-wide text-slate-400">
+                      <span>Minimum</span>
+                      <span>{{ priceDraft.min }}€</span>
+                    </div>
+                    <input
+                      v-model.number="priceDraft.min"
+                      type="range"
+                      :min="PRICE_MIN"
+                      :max="PRICE_MAX"
+                      step="10"
+                      class="mt-2 w-full"
+                    />
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between text-[11px] uppercase tracking-wide text-slate-400">
+                      <span>Maximum</span>
+                      <span>{{ priceDraft.max }}€</span>
+                    </div>
+                    <input
+                      v-model.number="priceDraft.max"
+                      type="range"
+                      :min="PRICE_MIN"
+                      :max="PRICE_MAX"
+                      step="10"
+                      class="mt-2 w-full"
+                    />
+                  </div>
+                </div>
+                <p class="text-xs text-slate-500">
+                  Die Preise dienen als Orientierung für den Erstkontakt. Endpreise hängen vom Aufwand vor Ort ab.
+                </p>
+              </div>
+              <template #footer>
+                <div class="flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                    @click.stop="handleResetPrice"
+                  >
+                    Zurücksetzen
+                  </button>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="rounded-full px-3 py-1 font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                      @click.stop="activeField = null; syncPriceDraft()"
+                    >
+                      Abbrechen
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-full bg-slate-900 px-3 py-1 font-semibold text-white transition hover:bg-slate-800"
+                      @click.stop="applyPrice"
+                    >
+                      Übernehmen
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </SearchPopoverPanel>
+          </div>
 
           <button
             class="group relative flex min-w-[150px] flex-1 items-center justify-between gap-2 rounded-2xl border border-transparent bg-white/70 px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:border-slate-200 hover:bg-white/95 sm:flex-none sm:flex-grow-0"
@@ -151,7 +300,7 @@
               'border-gold/40 bg-white text-gold shadow-sm ring-1 ring-gold/30': activeField === 'lockTypes' || filters.lockTypes.length,
             }"
             type="button"
-            @click.stop="openLockTypes"
+            @click.stop="toggleLockTypesPanel"
           >
             <span class="flex items-center gap-2">
               <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gold/10 text-gold">
@@ -170,11 +319,67 @@
             <span
               v-if="filters.lockTypes.length"
               class="absolute right-3 top-2 cursor-pointer text-slate-400 transition hover:text-slate-600"
-              @click.stop="clearFilter('lockTypes')"
+              @click.stop="clearFilter('lockTypes'); activeField = null"
             >
               <X class="h-3 w-3" />
             </span>
           </button>
+
+          <div v-if="activeField === 'lockTypes'" class="absolute left-0 right-0 top-full z-40 mt-2">
+            <SearchPopoverPanel
+              title="Schlosstypen"
+              description="Wähle aus, für welche Schlossarten du Unterstützung benötigst."
+            >
+              <div class="max-h-64 space-y-2 overflow-y-auto pr-1">
+                <label
+                  v-for="option in lockTypeOptions"
+                  :key="option.value"
+                  class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200/60 bg-white/60 px-3 py-2 text-sm transition hover:border-gold/40 hover:bg-gold/5"
+                >
+                  <div class="flex items-center gap-3">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10 text-gold">
+                      <i class="fa fa-lock"></i>
+                    </span>
+                    <span class="font-medium text-slate-700">{{ option.label }}</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-slate-300 text-gold focus:ring-gold"
+                    :value="option.value"
+                    :checked="isLockTypeSelected(option.value)"
+                    @change.stop="toggleLockType(option.value)"
+                  />
+                </label>
+              </div>
+              <template #footer>
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                    @click.stop="handleResetLockTypes"
+                  >
+                    Zurücksetzen
+                  </button>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="rounded-full px-3 py-1 font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                      @click.stop="activeField = null; syncLockDraft()"
+                    >
+                      Abbrechen
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-full bg-slate-900 px-3 py-1 font-semibold text-white transition hover:bg-slate-800"
+                      @click.stop="applyLockTypes"
+                    >
+                      Übernehmen
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </SearchPopoverPanel>
+          </div>
 
           <div class="order-last ml-auto flex w-full justify-center pt-1 sm:order-none sm:ml-auto sm:w-auto sm:justify-end">
             <button
@@ -190,19 +395,16 @@
         </div>
       </div>
     </div>
-    <FilterPriceSheet v-model="filters.price" :visible="showPrice" @close="closePrice" />
-    <FilterLockTypeSheet v-model="filters.lockTypes" :visible="showLockTypes" @close="closeLockTypes" />
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
+import { ref, watch, computed, onMounted, onBeforeUnmount, reactive } from 'vue'
 import { MapPin, Clock, Euro, ChevronDown, Search, X, Lock } from '@/components/icons'
-import { filters, toggleFilter, clearFilter } from '@/stores/filters'
+import { filters, clearFilter } from '@/stores/filters'
 import { useLocationSearch } from '@/composables/useLocationSearch'
-
-const FilterPriceSheet = defineAsyncComponent(() => import('./FilterPriceSheet.vue'))
-const FilterLockTypeSheet = defineAsyncComponent(() => import('./FilterLockTypeSheet.vue'))
+import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
+import SearchPopoverPanel from './SearchPopoverPanel.vue'
 
 defineProps({
   expanded: {
@@ -214,8 +416,6 @@ defineProps({
 const emit = defineEmits(['focus', 'blur'])
 
 const root = ref(null)
-const showPrice = ref(false)
-const showLockTypes = ref(false)
 const activeField = ref(null)
 const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
 const hasFocus = computed(() => {
@@ -226,6 +426,24 @@ const hasFocus = computed(() => {
   if (filters.lockTypes.length) return true
   return false
 })
+
+const PRICE_MIN = 0
+const PRICE_MAX = 1000
+const priceDraft = reactive({
+  min: filters.price[0],
+  max: filters.price[1]
+})
+const lockTypeOptions = LOCK_TYPE_OPTIONS
+const selectedLockTypes = ref([...filters.lockTypes])
+
+function syncPriceDraft() {
+  priceDraft.min = filters.price[0]
+  priceDraft.max = filters.price[1]
+}
+
+function syncLockDraft() {
+  selectedLockTypes.value = [...filters.lockTypes]
+}
 
 const {
   query: locationQuery,
@@ -238,18 +456,29 @@ const {
   clearSuggestions: resetLocationSuggestions
 } = useLocationSearch()
 
-watch(activeField, (val) => {
+watch(activeField, (val, oldVal) => {
   if (val) {
     emit('focus')
   } else {
     emit('blur')
+  }
+
+  if (val !== 'location') {
+    resetLocationSuggestions()
+  }
+
+  if (val !== 'price' && oldVal === 'price') {
+    syncPriceDraft()
+  }
+
+  if (val !== 'lockTypes' && oldVal === 'lockTypes') {
+    syncLockDraft()
   }
 })
 
 function onClickOutside(e) {
   if (root.value && !root.value.contains(e.target)) {
     activeField.value = null
-    resetLocationSuggestions()
   }
 }
 
@@ -260,28 +489,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', onClickOutside)
 })
-
-function openPrice() {
-  showPrice.value = true
-  activeField.value = 'price'
-}
-
-function closePrice() {
-  showPrice.value = false
-  activeField.value = null
-}
-
-function openLockTypes() {
-  showLockTypes.value = true
-  activeField.value = 'lockTypes'
-}
-
-function closeLockTypes() {
-  showLockTypes.value = false
-  activeField.value = null
-}
-
-defineExpose({ openPrice })
 
 function selectLocation(option) {
   applyLocation(option)
@@ -295,9 +502,95 @@ async function useGeoLocation() {
   }
 }
 
-watch(activeField, (val) => {
-  if (val !== 'location') {
-    resetLocationSuggestions()
+watch(
+  () => filters.price.join(','),
+  () => {
+    syncPriceDraft()
   }
-})
+)
+
+watch(
+  () => filters.lockTypes.join(','),
+  () => {
+    syncLockDraft()
+  }
+)
+
+watch(
+  () => priceDraft.min,
+  (value) => {
+    if (value < PRICE_MIN) {
+      priceDraft.min = PRICE_MIN
+    } else if (value > priceDraft.max) {
+      priceDraft.min = priceDraft.max
+    }
+  }
+)
+
+watch(
+  () => priceDraft.max,
+  (value) => {
+    if (value > PRICE_MAX) {
+      priceDraft.max = PRICE_MAX
+    } else if (value < priceDraft.min) {
+      priceDraft.max = priceDraft.min
+    }
+  }
+)
+
+function handleOpenNowButtonClick() {
+  activeField.value = activeField.value === 'openNow' ? null : 'openNow'
+}
+
+function toggleOpenNow(forceValue) {
+  const next = typeof forceValue === 'boolean' ? forceValue : !filters.openNow
+  filters.openNow = next
+  if (!next) {
+    activeField.value = null
+  }
+}
+
+function togglePricePanel() {
+  activeField.value = activeField.value === 'price' ? null : 'price'
+}
+
+function applyPrice() {
+  filters.price = [priceDraft.min, priceDraft.max]
+  activeField.value = null
+}
+
+function handleResetPrice() {
+  clearFilter('price')
+  syncPriceDraft()
+  activeField.value = null
+}
+
+function toggleLockTypesPanel() {
+  activeField.value = activeField.value === 'lockTypes' ? null : 'lockTypes'
+}
+
+function toggleLockType(value) {
+  const current = new Set(selectedLockTypes.value)
+  if (current.has(value)) {
+    current.delete(value)
+  } else {
+    current.add(value)
+  }
+  selectedLockTypes.value = Array.from(current)
+}
+
+function isLockTypeSelected(value) {
+  return selectedLockTypes.value.includes(value)
+}
+
+function applyLockTypes() {
+  filters.lockTypes = [...selectedLockTypes.value]
+  activeField.value = null
+}
+
+function handleResetLockTypes() {
+  clearFilter('lockTypes')
+  syncLockDraft()
+  activeField.value = null
+}
 </script>
