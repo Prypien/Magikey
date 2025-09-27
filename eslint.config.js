@@ -20,6 +20,7 @@ export default [
         alert: 'readonly',
         confirm: 'readonly',
         navigator: 'readonly',
+        Intl: 'readonly',
       },
     },
     plugins: { vue },

@@ -22,8 +22,20 @@ export const filteredCompanies = computed(() => {
   const now = new Date()
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
+  const normalizedLocation = filters.location?.toString().trim()
+  const normalizedLocationDigits = normalizedLocation?.replace(/\s+/g, '')
+  const normalizedLocationLower = normalizedLocation?.toLowerCase()
+
   return companies.value.filter((company) => {
-    const matchesPLZ = company.postal_code?.includes(filters.location)
+    const postalCode = company.postal_code != null ? company.postal_code.toString().trim() : ''
+    const normalizedPostalCode = postalCode.replace(/\s+/g, '')
+    const matchesPLZ =
+      !normalizedLocationDigits ||
+      normalizedPostalCode.includes(normalizedLocationDigits)
+    const city = company.city != null ? company.city.toString().toLowerCase() : ''
+    const matchesCity = normalizedLocationLower
+      ? city.includes(normalizedLocationLower)
+      : false
 
     let isOpen = true
     if (filters.openNow) {
@@ -54,7 +66,7 @@ export const filteredCompanies = computed(() => {
       filters.lockTypes.length === 0 ||
       (company.lock_types || []).some((t) => filters.lockTypes.includes(t))
 
-    return matchesPLZ && matchesOpen && inPrice && matchesLock
+    return (matchesPLZ || matchesCity) && matchesOpen && inPrice && matchesLock
   })
 })
 
