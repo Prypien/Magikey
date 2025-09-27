@@ -128,12 +128,12 @@ import { onMounted, defineAsyncComponent, ref, computed } from 'vue'
 import SearchResults from '@/components/user/SearchResults.vue'
 import Loader from '@/components/common/Loader.vue'
 import IntroPopup from '@/components/user/IntroPopup.vue'
-import { getPostalFromCoords } from '@/firebase/functions'
 import { filters, clearFilter } from '@/stores/filters'
 import { useCompanyStore } from '@/stores/company'
 import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
+import { detectCurrentLocation } from '@/services/location'
 
 const NotifyForm = defineAsyncComponent(() => import('@/components/user/NotifyForm.vue'))
 
@@ -174,7 +174,7 @@ const activeBadges = computed(() => {
   if (filters.location) {
     badges.push({
       key: 'location',
-      label: `PLZ ${filters.location}`,
+      label: filters.locationMeta?.label || `PLZ ${filters.location}`,
       clear: () => clearFilter('location')
     })
   }
@@ -227,22 +227,18 @@ const lastUpdated = computed(() => {
   })
 })
 
-// Versucht, die Postleitzahl über Geolocation zu ermitteln
+// Versucht, den Standort automatisch zu setzen
 async function useLocation() {
-  if (!navigator.geolocation) return
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    try {
-      const { latitude, longitude } = pos.coords || {}
-      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-        console.warn('Ungültige Geokoordinaten erhalten')
-        return
-      }
-      const { postalCode } = await getPostalFromCoords(latitude, longitude)
-      if (postalCode) filters.location = postalCode
-    } catch (err) {
-      console.error('Geolocation fehlgeschlagen', err)
+  if (filters.location) return
+  try {
+    const location = await detectCurrentLocation({ enableHighAccuracy: true, timeout: 12000 })
+    if (location?.label) {
+      filters.location = location.label
+      filters.locationMeta = location
     }
-  })
+  } catch (err) {
+    console.error('Geolocation fehlgeschlagen', err)
+  }
 }
 
 // Daten initial laden

@@ -57,7 +57,16 @@ const emit = defineEmits(['close'])
 
 function applyPostal() {
   if (postal.value.trim()) {
-    filters.location = postal.value.trim()
+    const label = postal.value.trim()
+    filters.location = label
+    filters.locationMeta = {
+      label,
+      postalCode: label,
+      city: '',
+      lat: null,
+      lng: null,
+      source: 'intro'
+    }
     emit('close')
   }
 }

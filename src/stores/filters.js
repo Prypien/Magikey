@@ -5,6 +5,7 @@ export const filters = reactive({
   openNow: false,
   price: [0, 1000],
   location: '',
+  locationMeta: null,
   lockTypes: []
 })
 
@@ -17,6 +18,7 @@ export function clearFilter(key) {
     filters.price = [0, 1000]
   } else if (key === 'location') {
     filters.location = ''
+    filters.locationMeta = null
   } else if (key === 'lockTypes') {
     filters.lockTypes = []
   } else {
