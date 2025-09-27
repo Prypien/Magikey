@@ -16,9 +16,6 @@
             <h1 class="text-3xl font-semibold text-slate-900 sm:text-4xl">
               {{ headline }}
             </h1>
-            <span class="rounded-full bg-gold/15 px-3 py-1 text-xs font-medium text-gold">
-              Beta
-            </span>
           </div>
           <p class="max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
             Finde vertrauenswürdige Schlüsseldienste in deiner Nähe – transparent, schnell und mit
