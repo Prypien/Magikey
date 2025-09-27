@@ -1,22 +1,119 @@
 <!-- Diese Datei stellt die Startseite mit Firmenliste und Intro dar. -->
 <template>
   <!-- Startseite mit Filterleiste und Firmenliste -->
-  <div class="mx-auto max-w-5xl min-h-[70vh] rounded-3xl bg-white/80 px-4 py-10 shadow-xl backdrop-blur-sm sm:px-8">
-    <h1 class="mb-8 text-3xl font-semibold text-gray-900 sm:text-4xl">{{ title }}</h1>
+  <div class="space-y-12">
+    <section
+      class="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 px-6 py-10 shadow-xl backdrop-blur-sm sm:px-10"
+    >
+      <div class="absolute -top-24 right-[-20%] h-72 w-72 rounded-full bg-gold/30 blur-3xl"></div>
+      <div class="absolute left-[-15%] top-8 hidden h-56 w-56 rounded-full bg-gold/20 blur-3xl md:block"></div>
+      <div class="relative flex flex-col gap-8">
+        <header class="space-y-4">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/70">
+            Schlüsseldienst-Finder
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <h1 class="text-3xl font-semibold text-slate-900 sm:text-4xl">
+              {{ headline }}
+            </h1>
+            <span class="rounded-full bg-gold/15 px-3 py-1 text-xs font-medium text-gold">
+              Beta
+            </span>
+          </div>
+          <p class="max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
+            Finde vertrauenswürdige Schlüsseldienste in deiner Nähe – transparent, schnell und mit
+            Notdienstoptionen, wenn es eilig ist.
+          </p>
+        </header>
 
-    <div>
-      <div v-if="loading" class="flex flex-col items-center py-10 text-gray-500">
-        <Loader :size="80" />
-        <p class="mt-2">Firmen werden geladen...</p>
-      </div>
-      <template v-else>
-        <div v-if="filteredCompanies.length === 0" class="text-gray-500">
-          <p>Leider kein Anbieter gefunden. Trag dich ein, wir benachrichtigen dich!</p>
-          <NotifyForm />
+        <div v-if="activeBadges.length" class="flex flex-wrap gap-2">
+          <span
+            v-for="badge in activeBadges"
+            :key="badge.key"
+            class="group inline-flex items-center gap-2 rounded-full border border-gold/30 bg-white/80 px-3 py-1 text-xs font-medium text-gold shadow-sm backdrop-blur transition hover:border-gold/60"
+          >
+            <span>{{ badge.label }}</span>
+            <button
+              v-if="badge.clear"
+              type="button"
+              class="text-[11px] text-gold/70 transition group-hover:text-gold"
+              @click="badge.clear()"
+            >
+              <span class="sr-only">Filter entfernen</span>
+              ×
+            </button>
+          </span>
         </div>
-        <SearchResults v-else :companies="filteredCompanies" />
-      </template>
-    </div>
+
+        <dl v-if="!loading" class="grid gap-3 sm:grid-cols-3">
+          <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
+            <dt class="text-xs uppercase tracking-wide text-slate-500">Anbieter gefunden</dt>
+            <dd class="mt-2 text-2xl font-semibold text-slate-900">
+              {{ filteredCompanies.length }}
+            </dd>
+            <p class="mt-1 text-xs text-slate-500">passend zu deiner Auswahl</p>
+          </div>
+          <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
+            <dt class="text-xs uppercase tracking-wide text-slate-500">Filter aktiv</dt>
+            <dd class="mt-2 text-2xl font-semibold text-slate-900">
+              {{ activeBadges.length }}
+            </dd>
+            <p class="mt-1 text-xs text-slate-500">
+              {{ activeBadges.length ? 'angepasste Kriterien' : 'alle Anbieter im Überblick' }}
+            </p>
+          </div>
+          <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
+            <dt class="text-xs uppercase tracking-wide text-slate-500">Letzte Aktualisierung</dt>
+            <dd class="mt-2 text-2xl font-semibold text-slate-900">
+              {{ lastUpdated }}
+            </dd>
+            <p class="mt-1 text-xs text-slate-500">automatisch synchronisiert</p>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-semibold text-slate-900">Suchergebnisse</h2>
+          <p class="text-sm text-slate-500">
+            Live aktualisiert basierend auf deinen Filtern.
+          </p>
+        </div>
+        <span
+          v-if="!loading"
+          class="rounded-full border border-slate-200 bg-white px-4 py-1 text-xs font-medium text-slate-600 shadow-sm"
+        >
+          {{ filteredCompanies.length }} Anbieter
+        </span>
+      </div>
+
+      <div class="rounded-3xl border border-white/70 bg-white/80 p-4 shadow-xl backdrop-blur sm:p-6">
+        <div v-if="loading" class="flex flex-col items-center gap-3 py-10 text-slate-500">
+          <Loader :size="72" />
+          <p>Wir sammeln die besten Anbieter für dich…</p>
+        </div>
+        <template v-else>
+          <div
+            v-if="filteredCompanies.length === 0"
+            class="flex flex-col items-center gap-6 rounded-2xl border border-dashed border-slate-200 bg-white/90 p-8 text-center text-slate-500"
+          >
+            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gold/15 text-2xl text-gold">
+              <i class="fa fa-magic"></i>
+            </div>
+            <div class="space-y-2">
+              <p class="text-base font-semibold text-slate-700">Noch kein Treffer</p>
+              <p class="max-w-md text-sm text-slate-500">
+                Sag uns kurz Bescheid und wir informieren dich, sobald neue Schlüsseldienste verfügbar sind.
+              </p>
+            </div>
+            <NotifyForm class="w-full max-w-md text-left" />
+          </div>
+          <SearchResults v-else :companies="filteredCompanies" />
+        </template>
+      </div>
+    </section>
   </div>
   <transition name="modal">
     <div
@@ -35,7 +132,7 @@ import SearchResults from '@/components/user/SearchResults.vue'
 import Loader from '@/components/common/Loader.vue'
 import IntroPopup from '@/components/user/IntroPopup.vue'
 import { getPostalFromCoords } from '@/firebase/functions'
-import { filters } from '@/stores/filters'
+import { filters, clearFilter } from '@/stores/filters'
 import { useCompanyStore } from '@/stores/company'
 import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -46,16 +143,91 @@ const NotifyForm = defineAsyncComponent(() => import('@/components/user/NotifyFo
 const { loading, fetchCompanies, filteredCompanies } = useCompanyStore()
 const showIntro = ref(false)
 const INTRO_KEY = 'introShown'
-const title = computed(() => {
-  let text = 'Schlüsseldienste'
-  if (filters.location) text += ` in ${filters.location}`
-  if (filters.openNow) text += ' die jetzt geöffnet sind'
-  if (filters.lockTypes.length) {
-    const labels = filters.lockTypes.map((t) => LOCK_TYPE_LABELS[t]).join(', ')
-    text += ` für ${labels}`
+const euroFormatter = new Intl.NumberFormat('de-DE')
+const lastUpdatedAt = ref(null)
+
+const headline = computed(() => {
+  let text = 'Finde deinen Schlüsseldienst'
+
+  if (filters.location) {
+    text = `Schlüsseldienste in ${filters.location}`
+  } else if (filters.lockTypes.length) {
+    const labels = filters.lockTypes
+      .map((t) => LOCK_TYPE_LABELS[t] || t)
+      .slice(0, 2)
+      .join(', ')
+    text = `Expert:innen für ${labels}`
+    if (filters.lockTypes.length > 2) text += ' & mehr'
   }
-  if (filters.price[1] < 1000) text += ` bis ${filters.price[1]}€`
+
+  if (filters.openNow) {
+    text += filters.location ? ' – jetzt geöffnet' : ' – jetzt geöffnet'
+  }
+
+  if (filters.price[1] < 1000) {
+    text += ` bis ${euroFormatter.format(filters.price[1])} €`
+  }
+
   return text
+})
+
+const activeBadges = computed(() => {
+  const badges = []
+
+  if (filters.location) {
+    badges.push({
+      key: 'location',
+      label: `PLZ ${filters.location}`,
+      clear: () => clearFilter('location')
+    })
+  }
+
+  if (filters.openNow) {
+    badges.push({
+      key: 'openNow',
+      label: 'Jetzt geöffnet',
+      clear: () => clearFilter('openNow')
+    })
+  }
+
+  const priceActive = filters.price[0] !== 0 || filters.price[1] !== 1000
+  if (priceActive) {
+    badges.push({
+      key: 'price',
+      label: `Preis ${euroFormatter.format(filters.price[0])}€ – ${euroFormatter.format(filters.price[1])}€`,
+      clear: () => clearFilter('price')
+    })
+  }
+
+  if (filters.lockTypes.length) {
+    const labels = filters.lockTypes.map((t) => LOCK_TYPE_LABELS[t] || t)
+    const preview = labels.slice(0, 2).join(', ')
+    const remaining = labels.length - 2
+    const label = remaining > 0 ? `${preview} +${remaining}` : preview
+    badges.push({
+      key: 'lockTypes',
+      label,
+      clear: () => clearFilter('lockTypes')
+    })
+  }
+
+  return badges
+})
+
+const lastUpdated = computed(() => {
+  if (!lastUpdatedAt.value) return 'Gerade eben'
+
+  const diffMinutes = Math.floor((Date.now() - lastUpdatedAt.value.getTime()) / 60000)
+  if (diffMinutes <= 0) return 'Gerade eben'
+  if (diffMinutes < 60) return `${diffMinutes} Min`
+
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) return `${diffHours} Std`
+
+  return lastUpdatedAt.value.toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: '2-digit'
+  })
 })
 
 // Versucht, die Postleitzahl über Geolocation zu ermitteln
@@ -97,6 +269,7 @@ onMounted(async () => {
   }
   useLocation()
   await fetchCompanies()
+  lastUpdatedAt.value = new Date()
 })
 
 function closeIntro() {
