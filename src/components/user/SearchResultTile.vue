@@ -118,17 +118,19 @@ function navigateToDetails() {
 .result-tile::before {
   content: '';
   position: absolute;
-  width: 160%;
-  height: 160%;
-  top: -45%;
-  right: -25%;
-  background: radial-gradient(circle at 35% 35%, rgba(217, 169, 8, 0.18), transparent 65%);
-  transform: scale(0);
-  transition: transform 0.6s ease;
+  width: 130%;
+  height: 130%;
+  top: -40%;
+  right: -20%;
+  background: radial-gradient(circle at 35% 35%, rgba(217, 169, 8, 0.12), transparent 60%);
+  opacity: 0;
+  transform: scale(0.65);
+  transition: transform 0.45s ease, opacity 0.45s ease;
 }
 
 .result-tile:hover::before {
-  transform: scale(1);
+  opacity: 1;
+  transform: scale(0.95);
 }
 
 .result-tile:hover {
