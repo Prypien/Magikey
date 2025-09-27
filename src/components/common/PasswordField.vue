@@ -5,7 +5,7 @@
       type="password"
       :name="name"
       :label="label"
-      validation="required|min:6|matches:/^(?=.*[A-Za-z])(?=.*\d).*$/"
+      validation="required|min:6"
       :placeholder="placeholder"
       :help="help"
       :classes="inputClasses"
@@ -38,7 +38,7 @@ const props = defineProps({
   help: {
     type: String,
     default:
-      'Mindestens 6 Zeichen, Groß- und Kleinbuchstaben, Zahl und Sonderzeichen',
+      'Mindestens 6 Zeichen. Verwende nach Möglichkeit Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen.',
   },
   modelValue: { type: String, default: '' },
   autocomplete: { type: String, default: 'new-password' },
