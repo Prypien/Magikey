@@ -1,40 +1,88 @@
 <!-- Diese Datei zeigt eine einzelne Firma in der Ergebnisliste. -->
 <template>
   <li
-    class="result-tile flex min-h-28 gap-4 cursor-pointer rounded-2xl bg-white/80 p-4 sm:p-5 transition-all duration-300 ring-1 ring-transparent"
+    class="result-tile group relative flex h-full flex-col gap-5 rounded-3xl border border-slate-200/80 bg-white/80 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 hover:shadow-xl sm:p-6"
     :class="borderColor"
     @click="navigateToDetails"
   >
-    <img
-      class="w-16 h-16 rounded-md object-cover"
-      :src="company.logo_url || '/logo.png'"
-      alt="Logo"
-    />
-
-    <div class="flex-1 space-y-1">
-      <div class="flex justify-between items-start">
-        <h3 class="font-semibold text-lg">{{ company.company_name }}</h3>
-        <span v-if="!company.verified" class="text-xs text-red-500">Not verified</span>
-      </div>
-      <p class="text-sm text-gray-600">PLZ: {{ company.postal_code }}</p>
-      <p v-if="isOpen" class="text-sm">Preis: ab {{ company.price }} €</p>
-      <p v-else-if="company.emergency_price" class="text-sm text-red-600">
-        Notdienstpreis: {{ company.emergency_price }} €
-      </p>
-      <p>
+    <div class="flex flex-1 flex-col gap-4">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="flex items-start gap-4">
+          <div
+            class="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/80 transition group-hover:ring-gold/40"
+          >
+            <img
+              class="h-full w-full object-cover"
+              :src="company.logo_url || '/logo.png'"
+              :alt="company.company_name ? `Logo von ${company.company_name}` : 'Logo'"
+            />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-lg font-semibold text-slate-900">{{ company.company_name }}</h3>
+            <p class="text-sm text-slate-500">PLZ {{ company.postal_code }}</p>
+          </div>
+        </div>
         <span
-          class="px-2 py-1 rounded-full text-xs font-semibold"
+          class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold transition"
           :class="statusClass"
         >
+          <span class="inline-flex h-2 w-2 rounded-full bg-current opacity-60"></span>
           {{ openStatus }}
         </span>
-      </p>
-      <p
-        v-if="lockTypes.length"
-        class="text-xs text-gray-500 flex items-center gap-1"
-      >
-        <span>{{ lockTypeDisplay }}</span>
-      </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 sm:text-sm">
+        <span
+          class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700"
+        >
+          <i class="fa fa-euro-sign text-[0.8rem] text-gold/70"></i>
+          {{ basePrice }}
+        </span>
+        <span
+          v-if="emergencyPrice"
+          class="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1 font-medium text-red-600"
+        >
+          <i class="fa fa-bolt text-[0.8rem]"></i>
+          {{ emergencyPrice }}
+        </span>
+        <span
+          v-if="company.is_247"
+          class="inline-flex items-center gap-1 rounded-full border border-slate-900/20 bg-slate-900/90 px-3 py-1 font-medium text-white"
+        >
+          <i class="fa fa-moon"></i>
+          24/7 Notdienst
+        </span>
+        <span
+          v-if="company.verified"
+          class="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 font-medium text-emerald-600"
+        >
+          <i class="fa fa-check-circle"></i>
+          Verifiziert
+        </span>
+        <span
+          v-else
+          class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-400"
+        >
+          <i class="fa fa-shield-alt"></i>
+          Prüfung läuft
+        </span>
+      </div>
+
+      <div v-if="lockTypes.length" class="flex flex-wrap gap-2 text-xs text-slate-500">
+        <span
+          v-for="lock in lockTypes"
+          :key="lock.label"
+          class="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white px-3 py-1 font-medium text-slate-600"
+        >
+          <span>{{ lock.icon }}</span>
+          <span>{{ lock.label }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 text-sm font-medium text-gold/80 opacity-0 transition group-hover:opacity-100">
+      <span>Details ansehen</span>
+      <i class="fa fa-arrow-right"></i>
     </div>
   </li>
 </template>
@@ -53,6 +101,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const euroFormatter = new Intl.NumberFormat('de-DE')
 
 const isOpen = computed(() => {
   const now = new Date()
@@ -73,24 +122,24 @@ const isOpen = computed(() => {
 
 const openStatus = computed(() => {
   if (isOpen.value) return 'Jetzt geöffnet'
-  if (props.company.is_247) return 'Geschlossen – Notdienst verfügbar'
+  if (props.company.is_247) return 'Notdienst erreichbar'
   return 'Derzeit geschlossen'
 })
 
 const statusClass = computed(() =>
   isOpen.value
-    ? 'bg-green-100 text-green-800'
+    ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200/60'
     : props.company.is_247
-      ? 'bg-red-100 text-red-800'
-      : 'bg-gray-100 text-gray-600'
+      ? 'bg-red-50 text-red-600 ring-1 ring-red-200/60'
+      : 'bg-slate-100 text-slate-600 ring-1 ring-slate-200/60'
 )
 
 const borderColor = computed(() =>
   isOpen.value
-    ? 'ring-green-300/80 shadow-lg'
+    ? 'border-emerald-200/70 shadow-lg'
     : props.company.is_247
-      ? 'ring-red-300/70 shadow-md'
-      : 'ring-gray-200/80 shadow-md'
+      ? 'border-red-200/70 shadow-md'
+      : 'border-slate-200/70 shadow-sm'
 )
 
 const lockTypes = computed(() =>
@@ -100,7 +149,17 @@ const lockTypes = computed(() =>
   }))
 )
 
-const lockTypeDisplay = computed(() => lockTypes.value.map((lt) => lt.icon).join(' '))
+const basePrice = computed(() => {
+  const value = Number.parseInt(props.company.price, 10)
+  if (Number.isFinite(value) && value > 0) return `ab ${euroFormatter.format(value)} €`
+  return 'Preis auf Anfrage'
+})
+
+const emergencyPrice = computed(() => {
+  const value = Number.parseInt(props.company.emergency_price, 10)
+  if (Number.isFinite(value) && value > 0) return `Notdienst ${euroFormatter.format(value)} €`
+  return ''
+})
 
 function navigateToDetails() {
   router.push({ name: 'details', params: { id: props.company.id } })
@@ -111,34 +170,19 @@ function navigateToDetails() {
 .result-tile {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(140deg, rgba(255, 255, 255, 0.96), rgba(249, 248, 248, 0.88));
-  backdrop-filter: blur(8px);
 }
 
 .result-tile::before {
   content: '';
   position: absolute;
-  width: 130%;
-  height: 130%;
-  top: -40%;
-  right: -20%;
-  background: radial-gradient(circle at 35% 35%, rgba(217, 169, 8, 0.12), transparent 60%);
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 85% 20%, rgba(217, 169, 8, 0.12), transparent 55%);
   opacity: 0;
-  transform: scale(0.65);
-  transition: transform 0.45s ease, opacity 0.45s ease;
+  transition: opacity 0.4s ease;
 }
 
 .result-tile:hover::before {
   opacity: 1;
-  transform: scale(0.95);
-}
-
-.result-tile:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.18);
-}
-
-.result-tile img {
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
 }
 </style>

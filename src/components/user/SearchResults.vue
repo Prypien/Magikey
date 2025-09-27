@@ -9,7 +9,7 @@
       v-else
       name="slide"
       tag="ul"
-      class="grid grid-cols-1 gap-4 auto-rows-fr"
+      class="grid auto-rows-fr grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-2"
     >
       <SearchResultTile
         v-for="company in companies"
