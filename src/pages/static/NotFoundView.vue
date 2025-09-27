@@ -1,8 +1,22 @@
 <!-- Diese Datei zeigt die 404-Fehlerseite. -->
 <template>
-  <div class="max-w-2xl mx-auto p-6 text-center">
-    <h1 class="text-2xl font-bold mb-4">404 - Seite nicht gefunden</h1>
-    <router-link to="/" class="text-gold hover:underline">Zur Startseite</router-link>
-  </div>
+  <section class="page-wrapper">
+    <div class="mx-auto max-w-2xl">
+      <div class="glass-card p-8 sm:p-10 text-center">
+        <div class="space-y-4">
+          <div class="flex items-center justify-center">
+            <span class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gold/25 text-3xl text-gold">
+              <i class="fa fa-compass"></i>
+            </span>
+          </div>
+          <h1 class="section-heading">404 – Seite nicht gefunden</h1>
+          <p class="section-subtitle">
+            Der gewünschte Inhalt existiert nicht mehr oder wurde verschoben. Kehre zur Startseite zurück und beginne eine neue Suche.
+          </p>
+          <router-link to="/" class="btn">Zur Startseite</router-link>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 

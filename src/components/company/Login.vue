@@ -5,6 +5,7 @@
     :actions="false"
     @submit="login"
     :config="{ validationVisibility: 'live' }"
+    :classes="{ form: 'space-y-5 text-left' }"
   >
     <FormKit
       type="email"
@@ -12,7 +13,11 @@
       label="E-Mail"
       validation="required|email"
       v-model="email"
-      :classes="{ label: 'label', input: 'input' }"
+      :classes="{
+        outer: 'space-y-2',
+        label: 'label text-slate-700',
+        input: 'water-input'
+      }"
     />
 
     <FormKit
@@ -21,29 +26,38 @@
       label="Passwort"
       validation="required|min:6"
       v-model="password"
-      :classes="{ label: 'label', input: 'input' }"
+      :classes="{
+        outer: 'space-y-2',
+        label: 'label text-slate-700',
+        input: 'water-input'
+      }"
     />
 
-    <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
+    <p
+      v-if="error"
+      class="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600"
+    >
+      {{ error }}
+    </p>
 
-    <Button :disabled="loading" class="w-full mt-4">
+    <Button :disabled="loading" class="mt-2 w-full">
       <template v-if="loading">
         <Loader :size="20" />
       </template>
       <span v-else>Einloggen</span>
     </Button>
 
-    <div class="flex flex-col gap-2 mt-4">
+    <div class="mt-6 flex flex-col gap-2 text-center text-sm">
       <button
         type="button"
-        class="w-full text-sm text-gold hover:underline"
+        class="font-medium text-slate-600 transition hover:text-gold"
         @click="goToRegister"
       >
         Noch kein Konto? Jetzt registrieren
       </button>
       <button
         type="button"
-        class="w-full text-sm text-gold hover:underline"
+        class="font-medium text-slate-600 transition hover:text-gold"
         @click="resetPassword"
       >
         Passwort vergessen?
@@ -51,7 +65,7 @@
       <button
         v-if="showCancel"
         type="button"
-        class="w-full text-sm text-gray-600 hover:underline"
+        class="font-medium text-slate-500 transition hover:text-gold"
         @click="emit('cancel')"
       >
         Abbrechen

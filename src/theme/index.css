@@ -27,12 +27,93 @@
 }
 
 @layer components {
+  .page-wrapper {
+    @apply relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-10;
+  }
+
+  .page-wrapper::before,
+  .page-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: auto;
+    pointer-events: none;
+    border-radius: 999px;
+    filter: blur(0px);
+    opacity: 0.35;
+    z-index: -1;
+  }
+
+  .page-wrapper::before {
+    top: 2rem;
+    right: -10rem;
+    width: clamp(18rem, 35vw, 28rem);
+    height: clamp(18rem, 35vw, 28rem);
+    background: radial-gradient(circle at center, rgba(217, 169, 8, 0.25), transparent 65%);
+  }
+
+  .page-wrapper::after {
+    bottom: -6rem;
+    left: -12rem;
+    width: clamp(20rem, 40vw, 32rem);
+    height: clamp(20rem, 40vw, 32rem);
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.12), transparent 65%);
+  }
+
+  .glass-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12);
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(217, 169, 8, 0.14), transparent 45%),
+      radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.12), transparent 60%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .glass-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-heading {
+    @apply text-2xl font-semibold text-slate-900 sm:text-3xl;
+  }
+
+  .section-subtitle {
+    @apply text-sm text-slate-500 sm:text-base;
+  }
+
+  .badge-neutral {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1 text-xs font-medium text-slate-600;
+  }
+
+  .muted-panel {
+    @apply rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-inner;
+  }
+
   .input {
     @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold;
   }
 
   .water-input {
     @apply w-full px-4 py-3 bg-white/70 backdrop-blur-md border border-gold/50 rounded-full text-sm placeholder-gray-500 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold transition-colors duration-200;
+  }
+
+  .water-textarea {
+    @apply w-full rounded-3xl border border-gold/40 bg-white/70 px-4 py-4 text-sm text-slate-700 placeholder-gray-500 shadow-inner backdrop-blur-md transition focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold;
+  }
+
+  .pill-checkbox {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/70 bg-white/70 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-gold/50 hover:text-slate-900;
   }
 
   .dropdown {

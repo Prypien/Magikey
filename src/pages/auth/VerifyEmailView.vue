@@ -1,23 +1,34 @@
 <!-- Diese Datei verarbeitet den Bestätigungslink aus der E-Mail. -->
 <template>
-  <div class="flex flex-col items-center justify-center text-center min-h-[60vh] px-4">
-    <template v-if="loading">
-      <Loader :size="80" />
-      <p class="mt-2">Überprüfe Link...</p>
-    </template>
-    <template v-else-if="success">
-      <lottie-player
-        src="/lotties/haken.json"
-        background="transparent"
-        speed="1"
-        style="width: 200px; height: 200px;"
-        autoplay
-      ></lottie-player>
-      <h1 class="text-2xl font-semibold text-black mt-4">E-Mail bestätigt</h1>
-      <button class="btn mt-6" @click="gotoLogin">Weiter zum Login</button>
-    </template>
-    <p v-else class="text-red-600">Link ist ungültig oder abgelaufen.</p>
-  </div>
+  <section class="page-wrapper">
+    <div class="mx-auto max-w-2xl">
+      <div class="glass-card p-8 sm:p-10 text-center">
+        <template v-if="loading">
+          <div class="flex flex-col items-center gap-3 text-slate-500">
+            <Loader :size="80" />
+            <p>Überprüfe Link…</p>
+          </div>
+        </template>
+        <template v-else-if="success">
+          <div class="flex flex-col items-center gap-4">
+            <lottie-player
+              src="/lotties/haken.json"
+              background="transparent"
+              speed="1"
+              style="width: 200px; height: 200px;"
+              autoplay
+            ></lottie-player>
+            <h1 class="section-heading">E-Mail bestätigt</h1>
+            <p class="section-subtitle">
+              Vielen Dank! Deine Angaben erscheinen nun als verifiziertes Profil. Du kannst dich direkt anmelden.
+            </p>
+            <button class="btn" @click="gotoLogin">Weiter zum Login</button>
+          </div>
+        </template>
+        <p v-else class="text-red-600">Link ist ungültig oder abgelaufen.</p>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>

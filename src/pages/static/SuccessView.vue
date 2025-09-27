@@ -1,16 +1,23 @@
 <!-- Diese Datei präsentiert eine Erfolgsmeldung nach Aktionen. -->
 <template>
-  <div class="flex flex-col items-center justify-center text-center min-h-[60vh] px-4">
-    <lottie-player
-      src="/lotties/haken.json"
-      background="transparent"
-      speed="1"
-      style="width: 200px; height: 200px;"
-      autoplay
-    ></lottie-player>
-    <h1 class="text-2xl font-semibold text-black mt-4">{{ message }}</h1>
-    <button class="btn mt-6" @click="goNext">Weiter</button>
-  </div>
+  <section class="page-wrapper">
+    <div class="mx-auto max-w-2xl">
+      <div class="glass-card p-8 sm:p-10 text-center">
+        <div class="flex flex-col items-center gap-4">
+          <lottie-player
+            src="/lotties/haken.json"
+            background="transparent"
+            speed="1"
+            style="width: 200px; height: 200px;"
+            autoplay
+          ></lottie-player>
+          <h1 class="section-heading">{{ message }}</h1>
+          <p class="section-subtitle">Alles erledigt – du kannst mit dem nächsten Schritt fortfahren.</p>
+          <button class="btn" @click="goNext">Weiter</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>

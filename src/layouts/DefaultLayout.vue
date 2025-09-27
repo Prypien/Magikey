@@ -1,16 +1,28 @@
 <!-- Diese Datei legt das Grundlayout mit Kopfbereich und Footer fest. -->
 <template>
   <!-- Allgemeines Seitenlayout mit Header und optionalem Footer -->
-  <div class="flex flex-col min-h-screen text-black">
+  <div class="relative flex min-h-screen flex-col text-black">
+    <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div
+        class="absolute left-[-18rem] top-[-10rem] h-[28rem] w-[28rem] rounded-full bg-gold/25 blur-3xl sm:left-[-12rem] sm:top-[-12rem]"
+      ></div>
+      <div
+        class="absolute right-[-10rem] top-[30%] h-[26rem] w-[26rem] rounded-full bg-sky-200/40 blur-3xl sm:right-[-6rem]"
+      ></div>
+      <div
+        class="absolute bottom-[-14rem] left-[15%] h-[32rem] w-[32rem] rounded-full bg-slate-200/45 blur-3xl"
+      ></div>
+    </div>
+
     <div
       v-if="showNotice"
-      class="bg-yellow-100 py-2 text-center text-sm text-gray-800"
+      class="bg-yellow-100/90 py-2 text-center text-sm text-gray-800 backdrop-blur"
     >
       Seite im Aufbau – Impressum folgt
     </div>
     <Header @update-height="headerHeight = $event" />
     <main
-      class="relative flex-1 px-4 pb-16 sm:px-6 lg:px-10 lg:pb-24"
+      class="relative flex-1 px-4 pb-24 sm:px-6 lg:px-10"
       :style="{ paddingTop: contentPaddingTop }"
     >
       <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 flex justify-center">

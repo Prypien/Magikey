@@ -1,131 +1,175 @@
 <!-- Diese Datei enthält das Registrierungsformular für Firmen. -->
 <template>
-  <div class="max-w-xl mx-auto mt-10 p-8 bg-white rounded-xl shadow">
-    <h1 class="text-3xl font-semibold mb-8 text-center text-black">
-      <p class="text-center text-gold font-medium mb-4">
-        <i class="fa fa-key mr-2 animate-bounce"></i> Werde Problemsolver:in
-      </p>
-      Registrieren
-    </h1>
-
-    <Transition name="fade">
-      <FormKit
-        type="form"
-        :actions="false"
-        @submit="register"
-        :config="{ validationVisibility: 'blur' }"
-        class="space-y-6"
-      >
-        <FormKit
-          type="text"
-          name="company_name"
-          label="Firmenname"
-          validation="required"
-          placeholder="z. B. Schlüsseldienst Müller"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <FormKit
-          type="email"
-          name="email"
-          label="E-Mail"
-          validation="required|email"
-          placeholder="beispiel@firma.de"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <PasswordField />
-
-        <FormKit
-          type="password"
-          name="confirm_password"
-          label="Passwort wiederholen"
-          validation="required|confirm:password"
-          placeholder="Nochmals eingeben"
-          :classes="{ label: 'label', input: 'input' }"
-          autocomplete="new-password"
-        />
-
-        <FormKit
-          type="tel"
-          name="phone"
-          label="Telefonnummer"
-          validation="required"
-          placeholder="z. B. 0151 12345678"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <FormKit
-          type="text"
-          name="address"
-          label="Straße und Hausnummer"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <FormKit
-          type="text"
-          name="postal_code"
-          label="Postleitzahl"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <FormKit
-          type="text"
-          name="city"
-          label="Ort"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <FormKit
-          type="number"
-          name="price"
-          label="Preis (ab)"
-          min="0"
-          :classes="{ label: 'label', input: 'input' }"
-        />
-
-        <FormKit
-          type="textarea"
-          name="description"
-          label="Beschreibung"
-          :classes="{ label: 'label', input: 'textarea' }"
-        />
-
-        <div>
-          <label class="label">Schlosstypen</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label v-for="opt in lockTypeOptions" :key="opt.value" class="flex items-center gap-2 text-sm">
-              <input type="checkbox" :value="opt.value" v-model="lockTypes" class="accent-gold" />
-              <span>{{ opt.label }}</span>
-            </label>
+  <section class="page-wrapper">
+    <div class="grid gap-10 xl:grid-cols-[0.9fr,1.1fr]">
+      <div class="glass-card p-8 sm:p-10">
+        <div class="space-y-6">
+          <p class="badge-neutral">
+            <i class="fa fa-key"></i>
+            Werde Problemsolver:in
+          </p>
+          <h1 class="section-heading">Präsentiere deinen Schlüsseldienst auf Magikey</h1>
+          <p class="section-subtitle">
+            Registriere dich kostenfrei, verifiziere dein Unternehmen und erscheine in der Suchergebnisliste der Plattform.
+          </p>
+          <div class="muted-panel space-y-3 text-sm text-slate-600">
+            <p class="font-semibold text-slate-700">Deine Vorteile:</p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fa fa-check text-gold mt-1"></i>
+                <span>Zeige transparente Preise & Leistungen, inklusive Notdienst-Informationen.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa fa-check text-gold mt-1"></i>
+                <span>Erreiche Kund:innen, die gezielt nach vertrauenswürdigen Betrieben suchen.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa fa-check text-gold mt-1"></i>
+                <span>Verwalte Öffnungszeiten, Bilder und Beschreibungen zentral im Dashboard.</span>
+              </li>
+            </ul>
           </div>
         </div>
+      </div>
 
-        <OpeningHoursForm v-model="openingHours" />
+      <div class="glass-card p-8 sm:p-10">
+        <Transition name="fade">
+          <FormKit
+            type="form"
+            :actions="false"
+            @submit="register"
+            :config="{ validationVisibility: 'blur' }"
+            :classes="{ form: 'space-y-6' }"
+          >
+            <div class="grid gap-6 lg:grid-cols-2">
+              <FormKit
+                type="text"
+                name="company_name"
+                label="Firmenname"
+                validation="required"
+                placeholder="z. B. Schlüsseldienst Müller"
+                :classes="inputClasses"
+              />
 
+              <FormKit
+                type="email"
+                name="email"
+                label="E-Mail"
+                validation="required|email"
+                placeholder="beispiel@firma.de"
+                :classes="inputClasses"
+              />
 
-        <FormKit
-          type="checkbox"
-          name="is_247"
-          label="24/7 Notdienst"
-          v-model="is247"
-          :classes="{ label: 'label' }"
-        />
+              <PasswordField :classes="inputClasses" />
 
-        <FormKit
-          v-if="is247"
-          type="number"
-          name="emergency_price"
-          label="Notdienstpreis"
-          validation="required"
-          min="0"
-          :classes="{ label: 'label', input: 'input' }"
-        />
+              <FormKit
+                type="password"
+                name="confirm_password"
+                label="Passwort wiederholen"
+                validation="required|confirm:password"
+                placeholder="Nochmals eingeben"
+                :classes="inputClasses"
+                autocomplete="new-password"
+              />
 
-        <Button class="w-full mt-2">Registrieren</Button>
-      </FormKit>
-    </Transition>
-  </div>
+              <FormKit
+                type="tel"
+                name="phone"
+                label="Telefonnummer"
+                validation="required"
+                placeholder="z. B. 0151 12345678"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="number"
+                name="price"
+                label="Preis (ab)"
+                min="0"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="text"
+                name="address"
+                label="Straße und Hausnummer"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="text"
+                name="postal_code"
+                label="Postleitzahl"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="text"
+                name="city"
+                label="Ort"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="textarea"
+                name="description"
+                label="Beschreibung"
+                placeholder="Beschreibe dein Angebot in ein paar Sätzen"
+                :classes="textareaClasses"
+              />
+            </div>
+
+            <div class="space-y-4">
+              <label class="label text-slate-700">Schlosstypen</label>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="opt in lockTypeOptions"
+                  :key="opt.value"
+                  type="button"
+                  class="pill-checkbox"
+                  :class="{ 'border-gold bg-gold/20 text-slate-900': lockTypes.includes(opt.value) }"
+                  @click="toggleLockType(opt.value)"
+                >
+                  <span>{{ opt.label }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="font-semibold text-slate-800">Öffnungszeiten</h3>
+              <OpeningHoursForm v-model="openingHours" />
+            </div>
+
+            <div class="space-y-4 rounded-3xl border border-white/70 bg-white/60 p-6 shadow-inner">
+              <FormKit
+                type="checkbox"
+                name="is_247"
+                label="24/7 Notdienst"
+                v-model="is247"
+                :classes="{
+                  outer: 'flex items-center gap-3',
+                  input: 'h-4 w-4 rounded border-slate-300 text-gold focus:ring-gold',
+                  label: 'text-sm font-medium text-slate-600'
+                }"
+              />
+
+              <FormKit
+                v-if="is247"
+                type="number"
+                name="emergency_price"
+                label="Notdienstpreis"
+                validation="required"
+                min="0"
+                :classes="inputClasses"
+              />
+            </div>
+
+            <Button class="w-full">Registrieren</Button>
+          </FormKit>
+        </Transition>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
@@ -145,6 +189,28 @@ const is247 = ref(false)
 const openingHours = ref({})
 const lockTypes = ref([])
 const lockTypeOptions = LOCK_TYPE_OPTIONS
+
+const inputClasses = {
+  outer: 'space-y-2',
+  label: 'label text-slate-700',
+  input: 'water-input',
+  help: 'text-xs text-slate-500',
+}
+
+const textareaClasses = {
+  outer: 'space-y-2 lg:col-span-2',
+  label: 'label text-slate-700',
+  input: 'water-textarea min-h-[120px]',
+  help: 'text-xs text-slate-500',
+}
+
+function toggleLockType(value) {
+  if (lockTypes.value.includes(value)) {
+    lockTypes.value = lockTypes.value.filter((item) => item !== value)
+  } else {
+    lockTypes.value = [...lockTypes.value, value]
+  }
+}
 
 
 const register = async (form) => {

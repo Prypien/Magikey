@@ -1,25 +1,51 @@
 <!-- Diese Datei liefert die Hilfeseite mit kurzen Antworten. -->
 <template>
-  <div class="prose mx-auto space-y-6">
-    <section>
-      <h1>Hilfe</h1>
-    </section>
-    <section>
-      <h2>So funktioniert's</h2>
-      <p>Magikey hilft dir, schnell einen passenden Schlüsseldienst in deiner Nähe zu finden. Gib einfach deine Postleitzahl ein oder nutze deinen aktuellen Standort.</p>
-    </section>
-    <section>
-      <h2>Preise & Leistungen</h2>
-      <p>Hier findest du eine Übersicht der typischen Preise und Leistungen unserer Partnerbetriebe.</p>
-    </section>
-    <section>
-      <h2>Für Unternehmen</h2>
-      <p>Sie möchten Ihren Schlüsseldienst auf Magikey präsentieren? Registrieren Sie sich kostenlos und verwalten Sie Ihre Daten bequem online.</p>
-    </section>
-    <section>
-      <h2>Kontakt</h2>
-      <p>Bei Fragen stehen wir dir gerne per E-Mail unter <a href="mailto:info@magikey.de">info@magikey.de</a> zur Verfügung.</p>
-    </section>
-  </div>
+  <section class="page-wrapper">
+    <div class="glass-card p-8 sm:p-12">
+      <div class="space-y-8">
+        <header class="space-y-3 text-center">
+          <h1 class="section-heading">Hilfe & Support</h1>
+          <p class="section-subtitle">
+            Antworten auf die häufigsten Fragen rund um Magikey – für Suchende und Partnerbetriebe.
+          </p>
+        </header>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <article class="muted-panel space-y-3">
+            <h2 class="text-lg font-semibold text-slate-900">So funktioniert&apos;s</h2>
+            <p class="text-sm text-slate-600">
+              Magikey hilft dir, schnell einen passenden Schlüsseldienst in deiner Nähe zu finden. Nutze die Filter, um Notdienst,
+              Preisrahmen oder spezielle Leistungen auszuwählen.
+            </p>
+          </article>
+
+          <article class="muted-panel space-y-3">
+            <h2 class="text-lg font-semibold text-slate-900">Preise & Leistungen</h2>
+            <p class="text-sm text-slate-600">
+              In jedem Profil findest du transparente Basispreise und optionale Notdienstaufschläge – direkt von den Betrieben
+              gepflegt.
+            </p>
+          </article>
+
+          <article class="muted-panel space-y-3">
+            <h2 class="text-lg font-semibold text-slate-900">Für Unternehmen</h2>
+            <p class="text-sm text-slate-600">
+              Du möchtest deinen Schlüsseldienst präsentieren? Registriere dich kostenlos und verwalte Öffnungszeiten, Preise
+              und Beschreibungen zentral im Dashboard.
+            </p>
+          </article>
+
+          <article class="muted-panel space-y-3">
+            <h2 class="text-lg font-semibold text-slate-900">Kontakt</h2>
+            <p class="text-sm text-slate-600">
+              Du hast weitere Fragen? Schreibe uns an
+              <a href="mailto:info@magikey.de" class="text-gold underline-offset-4 hover:underline">info@magikey.de</a> – wir
+              melden uns so schnell wie möglich.
+            </p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 

@@ -43,6 +43,10 @@ const props = defineProps({
   },
   modelValue: { type: String, default: '' },
   autocomplete: { type: String, default: 'new-password' },
+  classes: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -50,10 +54,14 @@ const emit = defineEmits(['update:modelValue'])
 const innerValue = ref(props.modelValue)
 watch(innerValue, (val) => emit('update:modelValue', val))
 
-const inputClasses = {
-  label: 'block text-sm font-medium mb-1',
-  input: 'w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-gold focus:border-gold',
+const baseClasses = {
+  outer: 'space-y-2',
+  label: 'label text-slate-700',
+  input: 'water-input',
+  help: 'text-xs text-slate-500',
 }
+
+const inputClasses = computed(() => ({ ...baseClasses, ...props.classes }))
 
 const strength = computed(() => evaluatePasswordStrength(innerValue.value))
 
