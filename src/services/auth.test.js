@@ -2,7 +2,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/firebase', () => ({
-  auth: 'auth-instance'
+  auth: 'auth-instance',
+  isFirebaseConfigured: true,
 }))
 
 vi.mock('firebase/auth', () => ({
