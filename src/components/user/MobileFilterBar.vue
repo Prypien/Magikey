@@ -24,8 +24,8 @@
           <div class="flex items-center gap-2">
             <MapPin class="h-5 w-5 text-gold" />
             <input
-              v-model="filters.location"
-              placeholder="PLZ"
+              v-model="locationQuery"
+              placeholder="Standort oder PLZ"
               class="flex-1 rounded border px-2 py-1 text-sm focus:outline-none"
             />
             <button
@@ -36,6 +36,36 @@
               <X class="h-3 w-3" />
             </button>
           </div>
+          <button
+            type="button"
+            class="mt-2 flex items-center gap-2 text-sm font-medium text-gold hover:underline"
+            @click="useGeoLocation"
+          >
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gold/15 text-gold">
+              <i v-if="!geolocationPending" class="fa fa-location-crosshairs"></i>
+              <span v-else class="h-4 w-4 animate-spin rounded-full border-2 border-gold/40 border-t-gold"></span>
+            </span>
+            Standort ermitteln
+          </button>
+          <div class="rounded-lg border bg-white/90" v-if="locationSuggestionsLoading">
+            <p class="px-3 py-2 text-xs text-slate-500">Suche nach Orten…</p>
+          </div>
+          <ul v-else-if="locationSuggestions.length" class="max-h-40 overflow-y-auto rounded-lg border bg-white/90">
+            <li v-for="suggestion in locationSuggestions" :key="suggestion.id">
+              <button
+                type="button"
+                class="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-gold/10"
+                @click="selectMobileLocation(suggestion)"
+              >
+                <span class="font-medium text-slate-700">{{ suggestion.label }}</span>
+                <span v-if="suggestion.city" class="text-xs text-slate-400">{{ suggestion.city }}</span>
+              </button>
+            </li>
+          </ul>
+          <p v-else-if="locationSuggestionsError" class="rounded-lg border border-rose-100 bg-rose-50 px-3 py-2 text-xs text-rose-600">
+            {{ locationSuggestionsError }}
+          </p>
+          <p v-else class="text-xs text-slate-400">Mindestens zwei Zeichen eingeben, um Vorschläge zu sehen.</p>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <Clock class="h-5 w-5 text-gold" />
@@ -78,9 +108,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed, defineAsyncComponent } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, defineAsyncComponent } from 'vue'
 import { Search, MapPin, Clock, Euro, ChevronDown, X, Lock } from '@/components/icons'
 import { filters, clearFilter } from '@/stores/filters'
+import { useLocationSearch } from '@/composables/useLocationSearch'
 
 const FilterPriceSheet = defineAsyncComponent(() => import('./FilterPriceSheet.vue'))
 const FilterLockTypeSheet = defineAsyncComponent(() => import('./FilterLockTypeSheet.vue'))
@@ -92,9 +123,21 @@ const root = ref(null)
 
 const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
 
+const {
+  query: locationQuery,
+  suggestions: locationSuggestions,
+  loadingSuggestions: locationSuggestionsLoading,
+  suggestionsError: locationSuggestionsError,
+  geolocationPending,
+  applyLocation,
+  useCurrentLocation,
+  clearSuggestions: resetLocationSuggestions
+} = useLocationSearch()
+
 function handleClickOutside(e) {
   if (root.value && !root.value.contains(e.target)) {
     expanded.value = false
+    resetLocationSuggestions()
   }
 }
 
@@ -121,6 +164,24 @@ function openLockTypes() {
 function closeLockTypes() {
   showLockTypes.value = false
 }
+
+function selectMobileLocation(option) {
+  applyLocation(option)
+  expanded.value = false
+}
+
+async function useGeoLocation() {
+  const location = await useCurrentLocation()
+  if (location?.label) {
+    expanded.value = false
+  }
+}
+
+watch(expanded, (open) => {
+  if (!open) {
+    resetLocationSuggestions()
+  }
+})
 </script>
 
 <style scoped>

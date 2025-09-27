@@ -21,11 +21,12 @@
       >
         <MapPin class="h-5 w-5 text-gold" />
         <input
-          v-model="filters.location"
+          v-model="locationQuery"
           placeholder="Wo?"
           class="flex-1 min-w-0 border-none bg-transparent text-base placeholder:text-slate-400 focus:ring-0 sm:text-sm"
           autocomplete="postal-code"
           @focus="activeField = 'location'"
+          @keydown.enter.prevent="locationSuggestions.length ? selectLocation(locationSuggestions[0]) : (activeField = null)"
         />
         <button
           v-if="filters.location"
@@ -34,6 +35,50 @@
         >
           <X class="h-3 w-3" />
         </button>
+        <div
+          v-if="activeField === 'location' && (locationSuggestions.length || locationSuggestionsError || locationSuggestionsLoading || filters.location)"
+          class="absolute left-0 right-0 top-full z-40 mt-3"
+        >
+          <div class="overflow-hidden rounded-2xl border border-white/70 bg-white/95 shadow-xl backdrop-blur">
+            <button
+              type="button"
+              class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-slate-600 transition hover:bg-gold/10"
+              @click.stop="useGeoLocation"
+            >
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gold/15 text-gold">
+                <i v-if="!geolocationPending" class="fa fa-location-crosshairs"></i>
+                <span v-else class="h-4 w-4 animate-spin rounded-full border-2 border-gold/40 border-t-gold"></span>
+              </span>
+              <span>
+                Aktuellen Standort verwenden
+                <span class="block text-xs font-normal text-slate-400">Standardmäßig wird dein aktueller Standort genutzt.</span>
+              </span>
+            </button>
+            <div v-if="locationSuggestionsLoading" class="px-4 py-3 text-sm text-slate-500">
+              Vorschläge werden geladen…
+            </div>
+            <ul v-else-if="locationSuggestions.length" class="max-h-64 overflow-y-auto py-2">
+              <li v-for="suggestion in locationSuggestions" :key="suggestion.id">
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-between px-4 py-2 text-left text-sm transition hover:bg-gold/10"
+                  @click.stop="selectLocation(suggestion)"
+                >
+                  <span class="font-medium text-slate-700">{{ suggestion.label }}</span>
+                  <span v-if="suggestion.city && suggestion.postalCode" class="text-xs text-slate-400">
+                    {{ suggestion.city }}
+                  </span>
+                </button>
+              </li>
+            </ul>
+            <div v-else-if="locationSuggestionsError" class="px-4 py-3 text-sm text-rose-500">
+              {{ locationSuggestionsError }}
+            </div>
+            <div v-else class="px-4 py-3 text-sm text-slate-500">
+              Gib mindestens zwei Zeichen ein, um Orte zu finden.
+            </div>
+          </div>
+        </div>
       </div>
       <div class="hidden h-9 w-px bg-white/60 sm:block"></div>
 
@@ -97,6 +142,7 @@
 import { ref, watch, computed, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { MapPin, Clock, Euro, ChevronDown, Search, X, Lock } from '@/components/icons'
 import { filters, toggleFilter, clearFilter } from '@/stores/filters'
+import { useLocationSearch } from '@/composables/useLocationSearch'
 
 const FilterPriceSheet = defineAsyncComponent(() => import('./FilterPriceSheet.vue'))
 const FilterLockTypeSheet = defineAsyncComponent(() => import('./FilterLockTypeSheet.vue'))
@@ -124,6 +170,17 @@ const hasFocus = computed(() => {
   return false
 })
 
+const {
+  query: locationQuery,
+  suggestions: locationSuggestions,
+  loadingSuggestions: locationSuggestionsLoading,
+  suggestionsError: locationSuggestionsError,
+  geolocationPending,
+  applyLocation,
+  useCurrentLocation,
+  clearSuggestions: resetLocationSuggestions
+} = useLocationSearch()
+
 watch(activeField, (val) => {
   if (val) {
     emit('focus')
@@ -135,6 +192,7 @@ watch(activeField, (val) => {
 function onClickOutside(e) {
   if (root.value && !root.value.contains(e.target)) {
     activeField.value = null
+    resetLocationSuggestions()
   }
 }
 
@@ -167,4 +225,22 @@ function closeLockTypes() {
 }
 
 defineExpose({ openPrice })
+
+function selectLocation(option) {
+  applyLocation(option)
+  activeField.value = null
+}
+
+async function useGeoLocation() {
+  const location = await useCurrentLocation()
+  if (location?.label) {
+    activeField.value = null
+  }
+}
+
+watch(activeField, (val) => {
+  if (val !== 'location') {
+    resetLocationSuggestions()
+  }
+})
 </script>
