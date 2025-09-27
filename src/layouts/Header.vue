@@ -38,7 +38,7 @@
       </router-link>
 
       <template v-if="!companyData">
-        <router-link to="/onboarding" class="btn-outline hidden md:inline-flex items-center" v-show="!hideNavOnHomeMobile">
+        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center" v-show="!hideNavOnHomeMobile">
           <i class="fa fa-key mr-2 animate-bounce"></i>
           Werde Problemsolver:in
         </router-link>

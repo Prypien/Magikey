@@ -1,7 +1,11 @@
 /* global File */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const firebaseMock = vi.hoisted(() => ({ auth: { currentUser: { uid: 'uid123' } }, storage: 'storage-instance' }))
+const firebaseMock = vi.hoisted(() => ({
+  auth: { currentUser: { uid: 'uid123' } },
+  storage: 'storage-instance',
+  isFirebaseConfigured: true,
+}))
 const storageRefMock = vi.hoisted(() => vi.fn(() => 'ref'))
 const uploadBytesMock = vi.hoisted(() => vi.fn(() => Promise.resolve()))
 const getDownloadURLMock = vi.hoisted(() => vi.fn(() => Promise.resolve('https://download/url')))

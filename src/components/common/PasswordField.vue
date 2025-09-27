@@ -30,6 +30,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { evaluatePasswordStrength } from '@/utils/passwordStrength'
 
 const props = defineProps({
   name: { type: String, default: 'password' },
@@ -54,38 +55,14 @@ const inputClasses = {
   input: 'w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-gold focus:border-gold',
 }
 
-const strength = computed(() => {
-  const v = innerValue.value || ''
-  let score = 0
-  if (v.length >= 6) score++
-  if (/[A-Z]/.test(v)) score++
-  if (/[a-z]/.test(v)) score++
-  if (/[0-9]/.test(v)) score++
-  if (/[^A-Za-z0-9]/.test(v)) score++
-  return score
-})
+const strength = computed(() => evaluatePasswordStrength(innerValue.value))
 
-const strengthPercent = computed(() => (strength.value / 5) * 100)
+const strengthPercent = computed(() => strength.value.percent)
 
-const strengthText = computed(() => {
-  const s = strength.value
-  if (s <= 2) return 'Schwach'
-  if (s <= 4) return 'Mittel'
-  return 'Stark'
-})
+const strengthText = computed(() => strength.value.label)
 
-const strengthClass = computed(() => {
-  const s = strength.value
-  if (s <= 2) return 'text-red-500'
-  if (s <= 4) return 'text-yellow-500'
-  return 'text-green-500'
-})
+const strengthClass = computed(() => strength.value.textClass)
 
-const barClass = computed(() => {
-  const s = strength.value
-  if (s <= 2) return 'bg-red-500'
-  if (s <= 4) return 'bg-yellow-500'
-  return 'bg-green-500'
-})
+const barClass = computed(() => strength.value.barClass)
 </script>
 

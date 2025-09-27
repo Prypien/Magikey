@@ -10,7 +10,7 @@ const firestoreMocks = vi.hoisted(() => ({
   where: vi.fn(() => 'where')
 }))
 
-vi.mock('@/firebase', () => ({ db: 'db-instance' }))
+vi.mock('@/firebase', () => ({ db: 'db-instance', isFirebaseConfigured: true }))
 vi.mock('firebase/firestore', () => firestoreMocks)
 
 import { getCompanies, getCompany } from './company'
@@ -52,7 +52,8 @@ describe('company service', () => {
   it('returns empty array on fetch error', async () => {
     firestoreMocks.getDocs.mockRejectedValueOnce(new Error('fail'))
     const comps = await getCompanies()
-    expect(comps).toEqual([])
+    expect(comps).toHaveLength(2)
+    expect(comps[0].id).toBe('demo-berlin')
   })
 
   it('returns null on fetch error for single company', async () => {
