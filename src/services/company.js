@@ -9,6 +9,8 @@ const FALLBACK_COMPANIES = [
     verified: true,
     logo_url:
       'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=160&h=160&q=80',
+    phone: '+49 30 1234567',
+    whatsapp: '+49 151 2345678',
     postal_code: '10115',
     city: 'Berlin',
     address: 'Invalidenstraße 12',
@@ -32,6 +34,8 @@ const FALLBACK_COMPANIES = [
     verified: true,
     logo_url:
       'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=160&h=160&q=80',
+    phone: '+49 40 9876543',
+    whatsapp: '+49 160 9876543',
     postal_code: '20095',
     city: 'Hamburg',
     address: 'Spitalerstraße 7',

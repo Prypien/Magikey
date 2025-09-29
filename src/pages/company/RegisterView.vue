@@ -82,6 +82,15 @@
               />
 
               <FormKit
+                type="tel"
+                name="whatsapp"
+                label="WhatsApp-Nummer (optional)"
+                placeholder="z. B. +49 151 12345678"
+                :classes="inputClasses"
+                help="Falls du eine separate Nummer für WhatsApp nutzt."
+              />
+
+              <FormKit
                 type="number"
                 name="price"
                 label="Preis (ab)"
@@ -231,6 +240,7 @@ const register = async (form) => {
         company_name: form.company_name,
         email: form.email,
         phone: form.phone,
+        whatsapp: form.whatsapp || '',
         address: form.address || '',
         city: form.city || '',
         postal_code: form.postal_code || '',
