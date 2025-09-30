@@ -35,19 +35,46 @@
             <Transition name="fade">
               <div
                 v-if="!company.verified"
-                class="flex flex-col items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50/80 px-5 py-4 text-sm text-amber-700"
+                class="flex w-full flex-col gap-4 rounded-3xl border border-amber-200 bg-amber-50/80 px-5 py-5 text-sm text-amber-700"
               >
-                <p>Dein Profil ist noch nicht verifiziert.</p>
-                <Button
-                  size="sm"
-                  type="button"
-                  @click="verifyProfile"
-                  :disabled="verificationSending"
-                >
-                  <template v-if="verificationSending">Senden…</template>
-                  <template v-else>Verifizierungsmail senden</template>
-                </Button>
-                <p v-if="verificationSent" class="text-emerald-600">E-Mail wurde gesendet.</p>
+                <div class="flex items-center gap-3 text-amber-800">
+                  <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-lg text-amber-500">
+                    <i class="fa fa-shield-check"></i>
+                  </span>
+                  <p class="font-semibold">Dein Profil befindet sich in unserer Sicherheitsprüfung.</p>
+                </div>
+                <p class="text-center text-sm text-amber-700">
+                  Unser Trust &amp; Safety Team gleicht deine Angaben mit offiziellen Quellen ab. Sobald alles bestätigt
+                  ist, schalten wir dein Profil frei und du erhältst eine Bestätigung per E-Mail.
+                </p>
+                <div class="flex flex-col gap-2 text-xs text-amber-700 sm:flex-row sm:items-center sm:justify-center">
+                  <router-link
+                    to="/on-hold"
+                    class="inline-flex items-center justify-center gap-2 rounded-full border border-amber-400 bg-white px-4 py-2 font-semibold text-amber-700"
+                  >
+                    <i class="fa fa-eye"></i>
+                    Prüfstatus ansehen
+                  </router-link>
+                  <a
+                    class="inline-flex items-center justify-center gap-2 rounded-full border border-transparent bg-amber-200/60 px-4 py-2 font-semibold text-amber-700"
+                    href="mailto:partner@magikey.de"
+                  >
+                    <i class="fa fa-envelope"></i>
+                    Trust-Team kontaktieren
+                  </a>
+                </div>
+                <div class="rounded-2xl border border-amber-200/60 bg-white/70 px-4 py-3 text-xs text-amber-700">
+                  <p class="flex items-center gap-2 font-semibold text-amber-800">
+                    <span class="inline-flex h-2.5 w-2.5 animate-pulse rounded-full bg-amber-400"></span>
+                    {{ verificationStatusLabel }}
+                  </p>
+                  <p v-if="company.verification?.assigned_admin" class="mt-2">
+                    Ansprechpartner: {{ company.verification.assigned_admin }}
+                  </p>
+                  <p v-if="company.verification?.association_member" class="mt-2">
+                    Verband geprüft und hinterlegt.
+                  </p>
+                </div>
               </div>
               <div
                 v-else
@@ -85,8 +112,17 @@
           </div>
 
           <div class="space-y-6">
-            <div class="glass-card p-6 sm:p-8 space-y-4">
-              <h3 class="text-lg font-semibold text-slate-900">Öffnungszeiten</h3>
+            <div class="glass-card space-y-4 p-6 sm:p-8">
+              <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">Öffnungszeiten</h3>
+                <span
+                  v-if="company.verification?.status === 'verified'"
+                  class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-600"
+                >
+                  <i class="fa fa-lock"></i>
+                  Verifiziert durch Trust-Team
+                </span>
+              </div>
               <div class="space-y-2 text-sm">
                 <div
                   v-for="day in days"
@@ -187,12 +223,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
-import Button from '@/components/common/Button.vue'
-import { sendVerificationEmail } from '@/services/auth'
 import { DAYS, DAY_LABELS } from '@/constants/days'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useTrackingStore } from '@/stores/tracking'
@@ -200,8 +235,8 @@ import { formatDuration, formatEta } from '@/utils/time'
 
 const company = ref(null)
 const loading = ref(true)
-const verificationSending = ref(false)
-const verificationSent = ref(false)
+
+const router = useRouter()
 
 let unsubscribeAuth
 
@@ -218,6 +253,9 @@ async function loadCompany(uid) {
     const snap = await getDoc(doc(db, 'companies', uid))
     if (snap.exists()) {
       company.value = { id: snap.id, ...snap.data() }
+      if (!company.value.verified && company.value.verification?.status !== 'verified') {
+        router.replace({ name: 'verification-hold' })
+      }
     }
   } catch (e) {
     console.error('Fehler beim Laden der Firmendaten:', e)
@@ -293,20 +331,13 @@ function dayStatus(day) {
   return 'text-black'
 }
 
-async function verifyProfile() {
-  if (!isFirebaseConfigured) return
-  const user = auth.currentUser
-  if (!user || verificationSending.value) return
-  verificationSending.value = true
-  try {
-    await sendVerificationEmail(user)
-    verificationSent.value = true
-  } catch (e) {
-    window.alert('Fehler beim Senden der Verifizierungsmail: ' + e.message)
-  } finally {
-    verificationSending.value = false
-  }
-}
+const verificationStatusLabel = computed(() => {
+  const status = company.value?.verification?.status
+  if (status === 'verified') return 'Prüfung abgeschlossen'
+  if (status === 'rejected') return 'Profil benötigt Anpassungen'
+  if (status === 'in_review') return 'Profil in Bearbeitung'
+  return 'Profil in Prüfung'
+})
 </script>
 
 <style scoped>
