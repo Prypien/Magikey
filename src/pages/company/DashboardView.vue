@@ -66,6 +66,7 @@
             <div class="grid gap-3 sm:grid-cols-2">
               <DataRow label="E-Mail" :value="company.email || '–'" />
               <DataRow label="Telefon" :value="company.phone || '–'" />
+              <DataRow label="WhatsApp" :value="company.whatsapp || '–'" />
               <DataRow label="Adresse" :value="company.address || '–'" />
               <DataRow label="Ort" :value="company.city || '–'" />
               <DataRow label="PLZ" :value="company.postal_code || '–'" />

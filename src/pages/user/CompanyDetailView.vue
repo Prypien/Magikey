@@ -43,6 +43,7 @@
 
             <div class="grid gap-3 sm:grid-cols-2">
               <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
+              <DataRow label="WhatsApp" :value="company.whatsapp || 'Keine Nummer'" />
               <DataRow label="Preis" :value="company.price ? `ab ${company.price} €` : 'auf Anfrage'" />
               <DataRow
                 v-if="company.is_247 && company.emergency_price"
@@ -93,6 +94,16 @@
               >
                 <i class="fa fa-phone"></i>
                 Jetzt anrufen
+              </a>
+              <a
+                v-if="whatsappLink"
+                :href="whatsappLink"
+                class="btn flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600"
+                target="_blank"
+                rel="noopener"
+              >
+                <i class="fa fa-whatsapp"></i>
+                Über WhatsApp schreiben
               </a>
             </div>
           </div>
@@ -161,6 +172,13 @@ const openStatus = computed(() => {
   if (isOpen.value) return 'Jetzt geöffnet'
   if (company.value.is_247 && company.value.emergency_price) return `Notdienst verfügbar – ${company.value.emergency_price} €`
   return 'Derzeit geschlossen'
+})
+
+const whatsappLink = computed(() => {
+  const raw = company.value.whatsapp
+  if (!raw) return ''
+  const normalized = raw.toString().replace(/[^0-9]/g, '')
+  return normalized ? `https://wa.me/${normalized}` : ''
 })
 
 function dayStatus(day) {

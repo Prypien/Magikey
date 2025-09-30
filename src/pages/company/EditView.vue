@@ -67,6 +67,14 @@
               :classes="inputClasses"
             />
             <FormKit
+              type="tel"
+              name="whatsapp"
+              label="WhatsApp-Nummer"
+              v-model="company.whatsapp"
+              :classes="inputClasses"
+              help="Optional: Nummer, unter der du per WhatsApp erreichbar bist."
+            />
+            <FormKit
               type="number"
               name="price"
               label="Preis (ab)"
@@ -189,6 +197,7 @@ const currentUser = ref(null)
 const defaultCompany = () => ({
   company_name: '',
   phone: '',
+  whatsapp: '',
   address: '',
   city: '',
   postal_code: '',
