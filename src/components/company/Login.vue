@@ -24,7 +24,7 @@
       type="password"
       name="password"
       label="Passwort"
-      validation="required|min:6"
+      validation="required|length:6,255"
       v-model="password"
       :classes="{
         outer: 'space-y-2',
