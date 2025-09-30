@@ -79,15 +79,27 @@
                 validation="required"
                 placeholder="z. B. 0151 12345678"
                 :classes="inputClasses"
+                help="Diese Nummer nutzen wir für Anrufe und – sofern nicht anders angegeben – auch für WhatsApp."
               />
 
               <FormKit
+                type="checkbox"
+                name="has_separate_whatsapp"
+                label="Ich nutze eine andere Nummer für WhatsApp"
+                v-model="hasSeparateWhatsapp"
+                :classes="whatsappToggleClasses"
+                help="Wenn aktiviert, kannst du unten eine abweichende WhatsApp-Nummer eintragen."
+              />
+
+              <FormKit
+                v-if="hasSeparateWhatsapp"
                 type="tel"
                 name="whatsapp"
-                label="WhatsApp-Nummer (optional)"
+                label="Eigene WhatsApp-Nummer"
+                validation="required"
                 placeholder="z. B. +49 151 12345678"
                 :classes="inputClasses"
-                help="Falls du eine separate Nummer für WhatsApp nutzt."
+                help="Diese Nummer wird ausschließlich für WhatsApp genutzt."
               />
 
               <FormKit
@@ -195,6 +207,7 @@ import { sendVerificationEmail } from '@/services/auth'
 
 const router = useRouter()
 const is247 = ref(false)
+const hasSeparateWhatsapp = ref(false)
 const openingHours = ref({})
 const lockTypes = ref([])
 const lockTypeOptions = LOCK_TYPE_OPTIONS
@@ -203,6 +216,14 @@ const inputClasses = {
   outer: 'space-y-2',
   label: 'label text-slate-700',
   input: 'water-input',
+  help: 'text-xs text-slate-500',
+}
+
+const whatsappToggleClasses = {
+  outer: 'lg:col-span-2 space-y-2',
+  wrapper: 'flex items-center gap-3',
+  input: 'h-4 w-4 rounded border-slate-300 text-gold focus:ring-gold',
+  label: 'text-sm font-medium text-slate-600',
   help: 'text-xs text-slate-500',
 }
 
@@ -233,6 +254,7 @@ const register = async (form) => {
       form.email,
       form.password
     )
+    const whatsappNumber = hasSeparateWhatsapp.value ? form.whatsapp || '' : form.phone
     const companyRef = doc(db, 'companies', user.uid)
     const existing = await getDoc(companyRef)
     if (!existing.exists()) {
@@ -240,7 +262,7 @@ const register = async (form) => {
         company_name: form.company_name,
         email: form.email,
         phone: form.phone,
-        whatsapp: form.whatsapp || '',
+        whatsapp: whatsappNumber || '',
         address: form.address || '',
         city: form.city || '',
         postal_code: form.postal_code || '',

@@ -65,14 +65,25 @@
               label="Telefonnummer"
               v-model="company.phone"
               :classes="inputClasses"
+              help="Diese Nummer wird für Anrufe und – sofern nicht anders angegeben – für WhatsApp genutzt."
             />
             <FormKit
+              type="checkbox"
+              name="has_separate_whatsapp"
+              label="Ich nutze eine andere Nummer für WhatsApp"
+              v-model="hasSeparateWhatsapp"
+              :classes="whatsappToggleClasses"
+              help="Aktiviere die Option, wenn deine WhatsApp-Nummer von der Telefon-Nummer abweicht."
+            />
+            <FormKit
+              v-if="hasSeparateWhatsapp"
               type="tel"
               name="whatsapp"
-              label="WhatsApp-Nummer"
+              label="Eigene WhatsApp-Nummer"
+              validation="required"
               v-model="company.whatsapp"
               :classes="inputClasses"
-              help="Optional: Nummer, unter der du per WhatsApp erreichbar bist."
+              help="Diese Nummer wird ausschließlich für WhatsApp genutzt."
             />
             <FormKit
               type="number"
@@ -175,7 +186,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
@@ -212,6 +223,7 @@ const defaultCompany = () => ({
 })
 
 const company = ref(defaultCompany())
+const hasSeparateWhatsapp = ref(false)
 
 async function loadCompany(uid) {
   if (!isFirebaseConfigured) {
@@ -222,8 +234,10 @@ async function loadCompany(uid) {
     const docSnap = await getDoc(doc(db, 'companies', uid))
     if (docSnap.exists()) {
       company.value = { ...defaultCompany(), ...docSnap.data() }
+      syncWhatsappState()
     } else {
       company.value = defaultCompany()
+      syncWhatsappState()
     }
   } catch (error) {
     console.error('Fehler beim Laden der Firmendaten:', error)
@@ -246,6 +260,7 @@ onMounted(() => {
           loadCompany(user.uid)
         } else {
           company.value = defaultCompany()
+          syncWhatsappState()
         }
       },
       (error) => {
@@ -275,11 +290,51 @@ const inputClasses = {
   help: 'text-xs text-slate-500',
 }
 
+const whatsappToggleClasses = {
+  outer: 'lg:col-span-2 space-y-2',
+  wrapper: 'flex items-center gap-3',
+  input: 'h-4 w-4 rounded border-slate-300 text-gold focus:ring-gold',
+  label: 'text-sm font-medium text-slate-600',
+  help: 'text-xs text-slate-500',
+}
+
 const textareaClasses = {
   outer: 'space-y-2 lg:col-span-2',
   label: 'label text-slate-700',
   input: 'water-textarea min-h-[140px]',
   help: 'text-xs text-slate-500',
+}
+
+watch(
+  () => company.value.phone,
+  (phone) => {
+    if (!hasSeparateWhatsapp.value) {
+      company.value.whatsapp = phone || ''
+    }
+  }
+)
+
+watch(
+  hasSeparateWhatsapp,
+  (value, previous) => {
+    if (value === previous) return
+    if (value) {
+      if (company.value.whatsapp === company.value.phone) {
+        company.value.whatsapp = ''
+      }
+    } else {
+      company.value.whatsapp = company.value.phone || ''
+    }
+  }
+)
+
+function syncWhatsappState() {
+  hasSeparateWhatsapp.value =
+    !!company.value.whatsapp && company.value.whatsapp !== company.value.phone
+
+  if (!hasSeparateWhatsapp.value) {
+    company.value.whatsapp = company.value.phone || ''
+  }
 }
 
 function toggleLockType(value) {
@@ -299,7 +354,15 @@ const saveChanges = async () => {
     return
   }
   saving.value = true
-  await updateDoc(doc(db, 'companies', user.uid), company.value)
+  const payload = {
+    ...company.value,
+    whatsapp: hasSeparateWhatsapp.value
+      ? company.value.whatsapp
+      : company.value.phone || '',
+  }
+  await updateDoc(doc(db, 'companies', user.uid), payload)
+  company.value = { ...company.value, ...payload }
+  syncWhatsappState()
   saving.value = false
   router.push({
     name: 'success',

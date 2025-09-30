@@ -101,15 +101,6 @@
                 Jetzt anrufen
               </button>
               <button
-                v-if="company.contact_email"
-                type="button"
-                class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
-                @click="openReview('message')"
-              >
-                <i class="fa fa-envelope"></i>
-                Jetzt anschreiben
-              </button>
-              <button
                 v-if="whatsappLink"
                 type="button"
                 class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
@@ -188,12 +179,6 @@ const activeTracking = computed(() =>
   requests.value.find((request) => request.companyId === company.value?.id) || null
 )
 
-const contactEmailLink = computed(() => {
-  if (!company.value.contact_email) return ''
-  const subject = encodeURIComponent('Anfrage über Magikey')
-  return `mailto:${company.value.contact_email}?subject=${subject}`
-})
-
 const mapUrl = computed(() => {
   const tracking = activeTracking.value
   const companyLat = tracking?.companyLocation?.lat ?? company.value?.coordinates?.lat ?? company.value?.latitude
@@ -253,8 +238,6 @@ function handleReviewSubmitted() {
     window.location.href = `tel:${company.value.phone}`
   } else if (action === 'whatsapp' && whatsappLink.value) {
     window.open(whatsappLink.value, '_blank', 'noopener')
-  } else if (action === 'message' && contactEmailLink.value) {
-    window.location.href = contactEmailLink.value
   }
 }
 
