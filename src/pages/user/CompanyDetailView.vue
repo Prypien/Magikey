@@ -85,6 +85,10 @@
               </div>
             </div>
 
+            <div class="rounded-3xl border border-white/70 bg-white/70 p-5 shadow-inner">
+              <TrackingRequestPanel :company="company" />
+            </div>
+
             <div class="flex flex-wrap justify-center gap-4">
               <a
                 v-if="company.phone"
@@ -120,6 +124,8 @@ import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
 import { DAYS, DAY_LABELS } from '@/constants/days'
+import TrackingRequestPanel from '@/components/tracking/TrackingRequestPanel.vue'
+import { useTrackingStore } from '@/stores/tracking'
 
 const route = useRoute()
 const companyId = route.params.id
@@ -143,7 +149,29 @@ const fullAddress = computed(() => {
   const parts = [company.value.address, company.value.postal_code, company.value.city].filter(Boolean)
   return parts.join(', ')
 })
-const mapUrl = computed(() => `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress.value)}&output=embed`)
+const { requests } = useTrackingStore()
+
+const activeTracking = computed(() =>
+  requests.value.find((request) => request.companyId === company.value?.id) || null
+)
+
+const mapUrl = computed(() => {
+  const tracking = activeTracking.value
+  const companyLat = tracking?.companyLocation?.lat ?? company.value?.coordinates?.lat ?? company.value?.latitude
+  const companyLng = tracking?.companyLocation?.lng ?? company.value?.coordinates?.lng ?? company.value?.longitude
+
+  if (
+    tracking &&
+    Number.isFinite(companyLat) &&
+    Number.isFinite(companyLng) &&
+    Number.isFinite(tracking.userLocation?.lat) &&
+    Number.isFinite(tracking.userLocation?.lng)
+  ) {
+    return `https://maps.google.com/maps?saddr=${companyLat},${companyLng}&daddr=${tracking.userLocation.lat},${tracking.userLocation.lng}&output=embed`
+  }
+
+  return `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress.value)}&output=embed`
+})
 
 const now = new Date()
 const currentMinutes = now.getHours() * 60 + now.getMinutes()
