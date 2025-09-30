@@ -10,6 +10,7 @@ import HomeView from '@/pages/HomeView.vue'
 // Firebase-Auth-Instanz zum Prüfen von Login-Status
 import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
+import { isAdminUser } from '@/constants/admin'
 
 // Definierte Routen
 const routes = [
@@ -62,6 +63,18 @@ const routes = [
       { path: 'success', name: 'success', component: () => import('@/pages/static/SuccessView.vue') },
       { path: 'verify', name: 'verify-email', component: () => import('@/pages/auth/VerifyEmailView.vue') },
       { path: 'verify-email', redirect: '/verify' },
+      {
+        path: 'on-hold',
+        name: 'verification-hold',
+        component: () => import('@/pages/company/VerificationHoldView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'admin',
+        name: 'admin-dashboard',
+        component: () => import('@/pages/admin/AdminDashboardView.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true },
+      },
     ],
   },
   {
@@ -111,12 +124,16 @@ router.beforeEach(async (to, from, next) => {
 
   const user = isFirebaseConfigured ? auth.currentUser : null
   const requiresAuth = isFirebaseConfigured && to.meta.requiresAuth
+  const requiresAdmin = isFirebaseConfigured && to.meta.requiresAdmin
   const isLoginRoute = to.name === 'login'
+  const userIsAdmin = isAdminUser(user)
 
   if (requiresAuth && !user) {
     next({ name: 'login' })
-  } else if (user && isLoginRoute) {
+  } else if (requiresAdmin && !userIsAdmin) {
     next({ name: 'dashboard' })
+  } else if (user && isLoginRoute) {
+    next({ name: userIsAdmin ? 'admin-dashboard' : 'dashboard' })
   } else {
     next()
   }

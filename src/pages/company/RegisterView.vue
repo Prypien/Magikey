@@ -186,7 +186,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
 import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
@@ -250,14 +250,25 @@ const register = async (form) => {
         opening_hours: openingHours.value,
         is_247: form.is_247 || false,
         emergency_price: form.is_247 ? form.emergency_price || '' : '',
-        created_at: new Date().toISOString(),
+        created_at: serverTimestamp(),
         verified: false,
+        verification: {
+          status: 'pending',
+          google_place_url: '',
+          google_reviews_url: '',
+          website_url: '',
+          price_statement: '',
+          association_member: false,
+          register_number: '',
+          assigned_admin: '',
+          last_update: serverTimestamp(),
+        },
       })
     }
     await sendVerificationEmail(user)
     router.push({
       name: 'success',
-      query: { msg: 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.', next: '/dashboard' }
+      query: { msg: 'Registrierung erfolgreich! Wir prüfen jetzt dein Profil.', next: '/on-hold' }
     })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)

@@ -28,6 +28,17 @@ const FALLBACK_COMPANIES = [
       saturday: { open: '09:00', close: '18:00' },
       sunday: { open: '10:00', close: '16:00' },
     },
+    verification: {
+      status: 'verified',
+      google_place_url: 'https://maps.google.com/?cid=123',
+      google_reviews_url: 'https://maps.google.com/?cid=123#reviews',
+      website_url: 'https://schluesselservice-berlin.de',
+      price_statement: 'Festpreise telefonisch bestätigt',
+      association_member: true,
+      register_number: 'HRB 12345',
+      assigned_admin: 'Trust Team',
+    },
+    contact_email: 'kontakt@schluesselservice-berlin.de',
   },
   {
     id: 'demo-hamburg',
@@ -54,6 +65,17 @@ const FALLBACK_COMPANIES = [
       saturday: { open: '09:00', close: '17:00' },
       sunday: { open: '00:00', close: '00:00' },
     },
+    verification: {
+      status: 'verified',
+      google_place_url: 'https://maps.google.com/?cid=456',
+      google_reviews_url: 'https://maps.google.com/?cid=456#reviews',
+      website_url: 'https://hansestadt-schluessel.de',
+      price_statement: 'Preise per Zertifikat bestätigt',
+      association_member: true,
+      register_number: 'HRB 67890',
+      assigned_admin: 'Trust Team',
+    },
+    contact_email: 'service@hansestadt-schluessel.de',
   },
 ]
 

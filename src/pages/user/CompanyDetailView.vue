@@ -90,25 +90,34 @@
               <TrackingRequestPanel :company="company" />
             </div>
 
-            <div class="flex flex-wrap justify-center gap-4">
-              <a
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
+              <button
                 v-if="company.phone"
-                :href="`tel:${company.phone}`"
-                class="btn flex items-center gap-2"
+                type="button"
+                class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
+                @click="openReview('call')"
               >
                 <i class="fa fa-phone"></i>
                 Jetzt anrufen
-              </a>
-              <a
+              </button>
+              <button
+                v-if="company.email"
+                type="button"
+                class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
+                @click="openReview('message')"
+              >
+                <i class="fa fa-envelope"></i>
+                Jetzt anschreiben
+              </button>
+              <button
                 v-if="whatsappLink"
-                :href="whatsappLink"
-                class="btn flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600"
-                target="_blank"
-                rel="noopener"
+                type="button"
+                class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
+                @click="openReview('whatsapp')"
               >
                 <i class="fa fa-whatsapp"></i>
                 Über WhatsApp schreiben
-              </a>
+              </button>
             </div>
           </div>
 
@@ -126,6 +135,16 @@
       </div>
     </div>
   </section>
+
+  <ReviewRequestModal
+    v-if="company"
+    :open="showReviewModal"
+    :company-id="company.id || companyId"
+    :company-name="company.company_name || ''"
+    :action="pendingAction"
+    @close="closeReviewModal"
+    @submitted="handleReviewSubmitted"
+  />
 </template>
 
 <script setup>
@@ -137,11 +156,14 @@ import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
 import { DAYS, DAY_LABELS } from '@/constants/days'
 import TrackingRequestPanel from '@/components/tracking/TrackingRequestPanel.vue'
 import { useTrackingStore } from '@/stores/tracking'
+import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
 
 const route = useRoute()
 const companyId = route.params.id
 const company = ref({})
 const days = DAYS
+const showReviewModal = ref(false)
+const pendingAction = ref('call')
 
 onMounted(async () => {
   if (companyId) {
@@ -165,6 +187,12 @@ const { requests } = useTrackingStore()
 const activeTracking = computed(() =>
   requests.value.find((request) => request.companyId === company.value?.id) || null
 )
+
+const contactEmailLink = computed(() => {
+  if (!company.value.email) return ''
+  const subject = encodeURIComponent('Anfrage über Magikey')
+  return `mailto:${company.value.email}?subject=${subject}`
+})
 
 const mapUrl = computed(() => {
   const tracking = activeTracking.value
@@ -208,6 +236,27 @@ const whatsappLink = computed(() => {
   const normalized = raw.toString().replace(/[^0-9]/g, '')
   return normalized ? `https://wa.me/${normalized}` : ''
 })
+
+function openReview(action) {
+  pendingAction.value = action
+  showReviewModal.value = true
+}
+
+function closeReviewModal() {
+  showReviewModal.value = false
+}
+
+function handleReviewSubmitted() {
+  const action = pendingAction.value
+  showReviewModal.value = false
+  if (action === 'call' && company.value.phone) {
+    window.location.href = `tel:${company.value.phone}`
+  } else if (action === 'whatsapp' && whatsappLink.value) {
+    window.open(whatsappLink.value, '_blank', 'noopener')
+  } else if (action === 'message' && contactEmailLink.value) {
+    window.location.href = contactEmailLink.value
+  }
+}
 
 function dayStatus(day) {
   const hours = company.value.opening_hours?.[day]
