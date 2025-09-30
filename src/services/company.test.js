@@ -1,5 +1,5 @@
 // Diese Datei testet die Datenfunktionen für Firmen.
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 const firestoreMocks = vi.hoisted(() => ({
   getDocs: vi.fn(),
@@ -16,8 +16,18 @@ vi.mock('firebase/firestore', () => firestoreMocks)
 import { getCompanies, getCompany } from './company'
 
 describe('company service', () => {
+  let consoleErrorMock
+  let consoleWarnMock
+
   beforeEach(() => {
     vi.clearAllMocks()
+    consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
+    consoleWarnMock = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    consoleErrorMock.mockRestore()
+    consoleWarnMock.mockRestore()
   })
 
   it('fetches all companies', async () => {
@@ -60,5 +70,28 @@ describe('company service', () => {
     firestoreMocks.getDoc.mockRejectedValueOnce(new Error('fail'))
     const comp = await getCompany('a')
     expect(comp).toBeNull()
+  })
+
+  it('returns independent fallback copies when Firestore has no verified companies', async () => {
+    firestoreMocks.getDocs.mockResolvedValueOnce({ docs: [] })
+    const first = await getCompanies()
+    first[0].company_name = 'Verändert'
+
+    firestoreMocks.getDocs.mockResolvedValueOnce({ docs: [] })
+    const second = await getCompanies()
+
+    expect(second[0].company_name).toBe('Schlüsselservice Berlin Mitte')
+  })
+
+  it('does not leak fallback mutations across getCompany error calls', async () => {
+    firestoreMocks.getDoc.mockRejectedValueOnce(new Error('fail'))
+    const first = await getCompany('demo-berlin')
+    expect(first).not.toBeNull()
+    first.company_name = 'Manipuliert'
+
+    firestoreMocks.getDoc.mockRejectedValueOnce(new Error('fail'))
+    const second = await getCompany('demo-berlin')
+
+    expect(second.company_name).toBe('Schlüsselservice Berlin Mitte')
   })
 })

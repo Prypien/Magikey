@@ -79,15 +79,32 @@ const FALLBACK_COMPANIES = [
   },
 ]
 
+function cloneValue(value) {
+  if (value === undefined || value === null) return value
+  if (typeof globalThis.structuredClone === 'function') {
+    return globalThis.structuredClone(value)
+  }
+  return JSON.parse(JSON.stringify(value))
+}
+
+function cloneFallbackCompanies() {
+  return cloneValue(FALLBACK_COMPANIES)
+}
+
+function cloneFallbackCompany(id) {
+  const fallback = FALLBACK_COMPANIES.find((company) => company.id === id)
+  return fallback ? cloneValue(fallback) : null
+}
+
 function withFallback(result) {
-  return result.length ? result : FALLBACK_COMPANIES
+  return Array.isArray(result) && result.length ? result : cloneFallbackCompanies()
 }
 
 // Holt alle verifizierten Unternehmen aus der Datenbank.
 export async function getCompanies() {
   if (!isFirebaseConfigured || !db) {
     console.warn('Nutze Demo-Daten, da keine Firebase-Konfiguration vorliegt.')
-    return FALLBACK_COMPANIES
+    return cloneFallbackCompanies()
   }
   try {
     // Nur Unternehmen berücksichtigen, die als "verified" markiert sind.
@@ -99,14 +116,14 @@ export async function getCompanies() {
   } catch (err) {
     // Im Fehlerfall leere Liste zurückgeben, damit die App stabil bleibt.
     console.error('Fehler beim Abrufen der Firmen:', err)
-    return FALLBACK_COMPANIES
+    return cloneFallbackCompanies()
   }
 }
 
 // Holt ein einzelnes Unternehmen anhand seiner ID.
 export async function getCompany(id) {
   if (!isFirebaseConfigured || !db) {
-    return FALLBACK_COMPANIES.find((company) => company.id === id) || null
+    return cloneFallbackCompany(id)
   }
   try {
     const snap = await getDoc(doc(db, 'companies', id))
@@ -114,6 +131,6 @@ export async function getCompany(id) {
     return snap.exists() ? { id: snap.id, ...snap.data() } : null
   } catch (err) {
     console.error('Fehler beim Abrufen der Firma:', err)
-    return FALLBACK_COMPANIES.find((company) => company.id === id) || null
+    return cloneFallbackCompany(id)
   }
 }
