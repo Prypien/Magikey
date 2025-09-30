@@ -4,7 +4,7 @@
     class="btn"
     :class="sizeClass"
     :disabled="disabled"
-    @click="$emit('click')"
+    @click="emit('click')"
   >
     <slot />
   </button>
@@ -20,6 +20,8 @@ const props = defineProps({
   },
   disabled: Boolean
 })
+
+const emit = defineEmits(['click'])
 
 const sizeClass = computed(() =>
   props.size === 'sm'

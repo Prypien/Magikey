@@ -11,6 +11,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   size: {
     type: Number,
@@ -18,5 +20,8 @@ const props = defineProps({
   }
 })
 
-const style = `width: ${props.size}px; height: ${props.size}px;`
+const style = computed(() => ({
+  width: `${props.size}px`,
+  height: `${props.size}px`
+}))
 </script>
