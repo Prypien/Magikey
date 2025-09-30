@@ -101,7 +101,7 @@
                 Jetzt anrufen
               </button>
               <button
-                v-if="company.email"
+                v-if="company.contact_email"
                 type="button"
                 class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
                 @click="openReview('message')"
@@ -189,9 +189,9 @@ const activeTracking = computed(() =>
 )
 
 const contactEmailLink = computed(() => {
-  if (!company.value.email) return ''
+  if (!company.value.contact_email) return ''
   const subject = encodeURIComponent('Anfrage über Magikey')
-  return `mailto:${company.value.email}?subject=${subject}`
+  return `mailto:${company.value.contact_email}?subject=${subject}`
 })
 
 const mapUrl = computed(() => {
