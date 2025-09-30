@@ -89,7 +89,6 @@ const error = ref('')
 
 const primaryLabel = computed(() => {
   if (props.action === 'whatsapp') return 'Review-Bogen anfordern & WhatsApp öffnen'
-  if (props.action === 'message') return 'Review-Bogen anfordern & Nachricht senden'
   return 'Review-Bogen anfordern & anrufen'
 })
 
