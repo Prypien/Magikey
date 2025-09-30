@@ -32,31 +32,24 @@
               <h2 class="text-2xl font-semibold text-slate-900">{{ company.company_name }}</h2>
               <p class="text-sm text-slate-500">{{ company.city }} · PLZ {{ company.postal_code }}</p>
             </div>
-            <Transition name="fade">
+            <div class="w-full space-y-3 rounded-3xl border border-white/80 bg-white/70 p-5 text-center shadow-inner">
+              <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Verifizierungsstatus</p>
               <div
-                v-if="!company.verified"
-                class="flex flex-col items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50/80 px-5 py-4 text-sm text-amber-700"
+                class="mx-auto inline-flex items-center gap-3 rounded-full px-4 py-2 text-sm font-semibold"
+                :class="statusMeta.badgeClass"
               >
-                <p>Dein Profil ist noch nicht verifiziert.</p>
-                <Button
-                  size="sm"
-                  type="button"
-                  @click="verifyProfile"
-                  :disabled="verificationSending"
-                >
-                  <template v-if="verificationSending">Senden…</template>
-                  <template v-else>Verifizierungsmail senden</template>
-                </Button>
-                <p v-if="verificationSent" class="text-emerald-600">E-Mail wurde gesendet.</p>
+                <i class="fa" :class="statusMeta.icon"></i>
+                {{ statusMeta.label }}
               </div>
-              <div
-                v-else
-                class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600"
-              >
-                <i class="fa fa-check-circle"></i>
-                Profil verifiziert
+              <p class="text-sm text-slate-600">{{ statusMeta.description }}</p>
+              <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 text-xs text-emerald-700">
+                <p class="font-semibold">Sicherheitsversprechen</p>
+                <p>
+                  Unser Trust-Team prüft dein Profil manuell, verknüpft offizielle Quellen und schaltet dich erst nach
+                  erfolgreicher Prüfung frei.
+                </p>
               </div>
-            </Transition>
+            </div>
           </div>
         </div>
 
@@ -76,10 +69,17 @@
                 label="Notdienstpreis"
                 :value="`${company.emergency_price} €`"
               />
+              <DataRow label="Verband" :value="company.association_member ? 'Mitglied' : 'kein Mitglied'" />
+              <DataRow label="Website" :value="company.website_url || '–'" />
+              <DataRow label="Google-Profil" :value="company.google_place_url || '–'" />
             </div>
             <div class="space-y-3 text-sm text-slate-600">
               <h4 class="font-semibold text-slate-800">Beschreibung</h4>
               <p>{{ company.description || 'Noch keine Beschreibung hinterlegt.' }}</p>
+              <div v-if="company.price_comment" class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 text-xs text-emerald-700">
+                <p class="font-semibold">Preis-Transparenz</p>
+                <p>{{ company.price_comment }}</p>
+              </div>
             </div>
           </div>
 
@@ -115,6 +115,29 @@
                 </router-link>
               </div>
             </div>
+
+            <div class="glass-card space-y-4 p-6 sm:p-8">
+              <h3 class="text-lg font-semibold text-slate-900">Vertrauenssignale</h3>
+              <p class="text-sm text-slate-600">
+                Transparente Informationen stärken das Sicherheitsgefühl deiner Kundschaft.
+              </p>
+              <ul class="space-y-3 text-sm">
+                <li class="flex items-start gap-3">
+                  <i class="fa fa-shield-alt mt-1 text-emerald-500"></i>
+                  <span>{{ company.security_badge || 'Hinterlege ein geprüftes Siegel im Admin-Bereich.' }}</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fa fa-comments mt-1 text-emerald-500"></i>
+                  <span>{{ company.review_policy_note || 'Alle Bewertungen laufen über Magikey und werden moderiert.' }}</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fa fa-location-dot mt-1 text-emerald-500"></i>
+                  <span>
+                    {{ company.google_place_url ? 'Google-Standort ist verknüpft.' : 'Bitte reiche den offiziellen Google-Link nach.' }}
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -123,20 +146,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
-import Button from '@/components/common/Button.vue'
-import { sendVerificationEmail } from '@/services/auth'
 import { DAYS, DAY_LABELS } from '@/constants/days'
 import { onAuthStateChanged } from 'firebase/auth'
 
 const company = ref(null)
 const loading = ref(true)
-const verificationSending = ref(false)
-const verificationSent = ref(false)
 
 let unsubscribeAuth
 
@@ -197,6 +216,46 @@ onUnmounted(() => {
 
 const days = DAYS.map(key => ({ key, label: DAY_LABELS[key] }))
 
+const statusMeta = computed(() => {
+  if (!company.value) {
+    return {
+      label: 'Unbekannt',
+      description: 'Wir laden deine Daten…',
+      icon: 'fa-spinner fa-spin',
+      badgeClass: 'border-slate-200 bg-slate-50 text-slate-600',
+    }
+  }
+
+  const status = company.value.verification_status || (company.value.verified ? 'verified' : 'pending')
+
+  if (status === 'verified') {
+    return {
+      label: 'Verifiziert',
+      description: 'Dein Profil ist freigeschaltet und erscheint in den Suchergebnissen.',
+      icon: 'fa-check-circle',
+      badgeClass: 'border-emerald-200 bg-emerald-50 text-emerald-600',
+    }
+  }
+
+  if (status === 'on_hold') {
+    return {
+      label: 'Unterlagen nachreichen',
+      description:
+        'Unser Trust-Team benötigt noch Nachweise. Bitte reiche fehlende Dokumente im Admin-Dialog nach.',
+      icon: 'fa-hourglass-half',
+      badgeClass: 'border-amber-200 bg-amber-50 text-amber-600',
+    }
+  }
+
+  return {
+    label: 'In manueller Prüfung',
+    description:
+      'Wir gleichen deine Angaben mit offiziellen Quellen ab. Du wirst informiert, sobald die Freigabe erfolgt.',
+    icon: 'fa-magnifying-glass',
+    badgeClass: 'border-slate-200 bg-slate-50 text-slate-600',
+  }
+})
+
 function formatTimeRange(range) {
   if (!range || !range.open || !range.close) return 'geschlossen'
   return `${range.open} – ${range.close}`
@@ -208,20 +267,6 @@ function dayStatus(day) {
   return 'text-black'
 }
 
-async function verifyProfile() {
-  if (!isFirebaseConfigured) return
-  const user = auth.currentUser
-  if (!user || verificationSending.value) return
-  verificationSending.value = true
-  try {
-    await sendVerificationEmail(user)
-    verificationSent.value = true
-  } catch (e) {
-    window.alert('Fehler beim Senden der Verifizierungsmail: ' + e.message)
-  } finally {
-    verificationSending.value = false
-  }
-}
 </script>
 
 <style scoped>

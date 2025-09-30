@@ -241,13 +241,26 @@ const register = async (form) => {
         is_247: form.is_247 || false,
         emergency_price: form.is_247 ? form.emergency_price || '' : '',
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         verified: false,
+        verification_status: 'pending',
+        association_member: false,
+        google_place_url: '',
+        website_url: '',
+        price_comment: '',
+        security_badge: '',
+        review_policy_note:
+          'Bewertungen werden ausschließlich über die Magikey-Plattform erfasst und manuell geprüft.',
+        admin_notes: '',
       })
     }
     await sendVerificationEmail(user)
     router.push({
       name: 'success',
-      query: { msg: 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.', next: '/dashboard' }
+      query: {
+        msg: 'Registrierung eingegangen – unser Trust-Team prüft dein Unternehmen.',
+        next: '/dashboard',
+      },
     })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)

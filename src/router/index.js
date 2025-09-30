@@ -62,6 +62,17 @@ const routes = [
       { path: 'success', name: 'success', component: () => import('@/pages/static/SuccessView.vue') },
       { path: 'verify', name: 'verify-email', component: () => import('@/pages/auth/VerifyEmailView.vue') },
       { path: 'verify-email', redirect: '/verify' },
+      {
+        path: 'admin/verification',
+        name: 'admin-verification',
+        component: () => import('@/pages/admin/VerificationQueueView.vue'),
+      },
+      {
+        path: 'review/:requestId',
+        name: 'review-request',
+        component: () => import('@/pages/review/ReviewSubmissionView.vue'),
+        props: true,
+      },
     ],
   },
   {
