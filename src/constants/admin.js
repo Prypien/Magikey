@@ -1,10 +1,13 @@
 export const ADMIN_EMAILS = [
-  'admin@magikey.de',
+  'jen@preisser.de',
 ]
+
+const NORMALIZED_ADMIN_EMAILS = ADMIN_EMAILS.map((email) => email.trim().toLowerCase())
 
 export function isAdminUser(user) {
   if (!user) return false
-  const email = user.email?.toLowerCase?.()
-  if (!email) return false
-  return ADMIN_EMAILS.includes(email)
+  const rawEmail = typeof user.email === 'string' ? user.email : ''
+  const normalizedEmail = rawEmail.trim().toLowerCase()
+  if (!normalizedEmail) return false
+  return NORMALIZED_ADMIN_EMAILS.includes(normalizedEmail)
 }
