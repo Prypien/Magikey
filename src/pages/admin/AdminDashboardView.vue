@@ -225,7 +225,9 @@ async function loadCompanies() {
   try {
     const q = query(collection(db, 'companies'), orderBy('created_at', 'desc'))
     const snap = await getDocs(q)
-    companies.value = snap.docs.map((document) => ({ id: document.id, ...document.data() }))
+    companies.value = snap.docs
+      .map((document) => ({ id: document.id, ...document.data() }))
+      .filter((company) => !company.is_admin)
     lastRefresh.value = new Date()
     if (companies.value.length && !companies.value.find((c) => c.id === selectedId.value)) {
       selectedId.value = companies.value[0].id

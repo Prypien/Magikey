@@ -80,6 +80,7 @@ import { useRouter } from 'vue-router'
 import { login as loginService, resetPassword as resetPasswordService } from '@/services/auth'
 import Button from '@/components/common/Button.vue'
 import Loader from '@/components/common/Loader.vue'
+import { isAdminUser } from '@/constants/admin'
 
 defineProps({
   showCancel: {
@@ -101,9 +102,10 @@ const login = async () => {
   error.value = ''
   loading.value = true
   try {
-    await loginService(email.value, password.value)
+    const credential = await loginService(email.value, password.value)
     emit('success')
-    router.push('/dashboard')
+    const targetRoute = isAdminUser(credential.user) ? '/admin' : '/dashboard'
+    router.push(targetRoute)
   } catch (e) {
     error.value = e.message
   } finally {

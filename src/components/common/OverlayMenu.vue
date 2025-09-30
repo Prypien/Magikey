@@ -16,19 +16,25 @@
             <li>
               <router-link to="/hilfe" class="menu-link">Hilfe-Center</router-link>
             </li>
-            <li v-if="!companyData">
-              <router-link to="/register" class="menu-link">Problemsolver:in werden</router-link>
+            <li v-if="isAdmin">
+              <router-link to="/admin" class="menu-link">Admin Dashboard</router-link>
+            </li>
+            <li v-if="companyData">
+              <router-link to="/dashboard" class="menu-link">Unternehmens-Dashboard</router-link>
             </li>
             <li>
               <router-link to="/" class="menu-link">Schlosser finden</router-link>
             </li>
-            <li v-if="!companyData">
-              <router-link to="/login" class="menu-link">Einloggen</router-link>
-            </li>
             <li v-if="companyData">
               <router-link to="/edit" class="menu-link">Profil bearbeiten</router-link>
             </li>
-            <li v-if="companyData">
+            <li v-if="!isAuthenticated">
+              <router-link to="/register" class="menu-link">Problemsolver:in werden</router-link>
+            </li>
+            <li v-if="!isAuthenticated">
+              <router-link to="/login" class="menu-link">Einloggen</router-link>
+            </li>
+            <li v-if="isAuthenticated">
               <button @click="$emit('logout')" class="menu-link w-full text-left">Abmelden</button>
             </li>
           </ul>
@@ -44,7 +50,9 @@ import { watch, onBeforeUnmount, ref } from 'vue'
 
 const props = defineProps({
   modelValue: Boolean,
-  companyData: Object
+  companyData: Object,
+  isAdmin: { type: Boolean, default: false },
+  isAuthenticated: { type: Boolean, default: false }
 })
 const emit = defineEmits(['update:modelValue', 'logout'])
 // Menü schließen
