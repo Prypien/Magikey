@@ -1,123 +1,122 @@
 <template>
-  <section class="page-wrapper">
-    <div class="space-y-8">
-      <header class="glass-card border border-emerald-100/70 bg-emerald-50/60 p-6 sm:p-8">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div class="space-y-2">
-            <p class="badge-neutral inline-flex items-center gap-2 text-emerald-600">
-              <i class="fa fa-shield-check text-lg"></i>
-              Magikey Trust Center
-            </p>
-            <h1 class="text-2xl font-semibold text-slate-900">
-              Unternehmen verifizieren & Vertrauensanker setzen
-            </h1>
-            <p class="text-sm text-slate-600">
-              Prüfe neue Registrierungen, hinterlege die offiziellen Quellen und bestätige die Seriosität. Erst nach
-              deiner Freigabe erscheint der Betrieb öffentlich.
-            </p>
-          </div>
-          <div class="rounded-3xl border border-white/70 bg-white/80 px-5 py-4 text-center shadow-inner">
-            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Wartende Prüfungen</p>
-            <p class="text-3xl font-semibold text-emerald-600">{{ pendingCount }}</p>
-          </div>
+  <section class="page-wrapper space-y-6">
+    <header class="glass-card border border-slate-100/80 bg-white/80 p-6 sm:p-8">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-2">
+          <p class="badge-neutral inline-flex items-center gap-2 text-emerald-600">
+            <i class="fa fa-shield-check text-lg"></i>
+            Magikey Trust Center
+          </p>
+          <h1 class="text-2xl font-semibold text-slate-900">Unternehmen verifizieren</h1>
+          <p class="text-sm text-slate-600">
+            Prüfe neue Registrierungen, ergänze offizielle Quellen und gib Vertrauensstatus frei. Deine Entscheidung steuert,
+            ob Betriebe in der Suche erscheinen.
+          </p>
         </div>
-      </header>
+        <dl class="flex flex-col rounded-3xl border border-emerald-100/70 bg-emerald-50/60 px-6 py-4 text-center">
+          <dt class="text-xs font-medium uppercase tracking-wide text-emerald-700/80">Offene Prüfungen</dt>
+          <dd class="text-3xl font-semibold text-emerald-600">{{ pendingCount }}</dd>
+        </dl>
+      </div>
+    </header>
 
-      <div class="grid gap-6 lg:grid-cols-[0.42fr,0.58fr] xl:grid-cols-[0.38fr,0.62fr]">
-        <aside class="glass-card space-y-4 p-4 sm:p-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-slate-900">Prüffälle</h2>
-            <button class="text-sm text-emerald-600 hover:underline" @click="loadCompanies" :disabled="loading">
-              <i class="fa fa-rotate"></i>
-              Aktualisieren
-            </button>
-          </div>
+    <div class="grid gap-6 lg:grid-cols-[0.42fr,0.58fr] xl:grid-cols-[0.36fr,0.64fr]">
+      <aside class="glass-card border border-slate-100/70 bg-white/80 p-4 sm:p-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-slate-900">Prüffälle</h2>
+          <button
+            class="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 px-3 py-1 text-xs font-medium text-emerald-700 transition hover:bg-emerald-50"
+            @click="loadCompanies"
+            :disabled="loading"
+          >
+            <i class="fa fa-rotate"></i>
+            Aktualisieren
+          </button>
+        </div>
 
           <div v-if="loading" class="flex justify-center py-10">
             <Loader :size="56" />
           </div>
 
-          <ul v-else class="space-y-3">
-            <li
-              v-for="companyItem in companies"
-              :key="companyItem.id"
-              class="rounded-3xl border border-white/70 bg-white/70 p-4 shadow-inner transition hover:border-emerald-200"
+        <ul v-else class="space-y-3">
+          <li
+            v-for="companyItem in companies"
+            :key="companyItem.id"
+            class="rounded-2xl border border-slate-100/80 bg-white/90 p-4 shadow-sm transition hover:border-emerald-200"
+          >
+            <button
+              class="flex w-full flex-col gap-2 text-left"
+              :class="{
+                'outline outline-2 outline-emerald-400/70 shadow-lg': companyItem.id === selectedCompanyId,
+              }"
+              @click="selectCompany(companyItem.id)"
             >
-              <button
-                class="flex w-full flex-col gap-2 text-left"
-                :class="{
-                  'outline outline-2 outline-emerald-400/70 shadow-lg': companyItem.id === selectedCompanyId,
-                }"
-                @click="selectCompany(companyItem.id)"
-              >
-                <div class="flex items-center justify-between gap-3">
-                  <h3 class="text-base font-semibold text-slate-900">{{ companyItem.company_name }}</h3>
-                  <span
-                    class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium"
-                    :class="statusBadgeClass(companyItem.verification_status, companyItem.verified)"
-                  >
-                    <i class="fa" :class="statusIcon(companyItem.verification_status, companyItem.verified)"></i>
-                    {{ statusLabel(companyItem.verification_status, companyItem.verified) }}
-                  </span>
-                </div>
-                <div class="flex flex-wrap gap-2 text-xs">
-                  <span
-                    v-if="companyItem.is_admin"
-                    class="pill-checkbox border-emerald-200 bg-emerald-50 text-emerald-600"
-                  >
-                    <i class="fa fa-user-shield"></i>
-                    Admin
-                  </span>
-                  <span
-                    v-if="companyItem.association_member"
-                    class="pill-checkbox border-sky-200 bg-sky-50 text-sky-600"
-                  >
-                    <i class="fa fa-handshake"></i>
-                    Verband
-                  </span>
-                </div>
-                <p class="text-xs text-slate-500">
-                  {{ companyItem.city || '–' }} · registriert am
-                  {{ formatDate(companyItem.created_at) }}
-                </p>
-              </button>
-            </li>
-          </ul>
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="text-base font-semibold text-slate-900">{{ companyItem.company_name }}</h3>
+                <span
+                  class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                  :class="statusBadgeClass(companyItem.verification_status, companyItem.verified)"
+                >
+                  <i class="fa" :class="statusIcon(companyItem.verification_status, companyItem.verified)"></i>
+                  {{ statusLabel(companyItem.verification_status, companyItem.verified) }}
+                </span>
+              </div>
+              <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                <span class="pill-checkbox text-[11px]" v-if="companyItem.is_admin">
+                  <i class="fa fa-user-shield"></i>
+                  Admin
+                </span>
+                <span class="pill-checkbox text-[11px]" v-if="companyItem.association_member">
+                  <i class="fa fa-handshake"></i>
+                  Verband
+                </span>
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] text-slate-600">
+                  {{ companyItem.city || 'Unbekannter Ort' }}
+                </span>
+              </div>
+              <p class="mt-2 text-xs text-slate-500">
+                Registriert am {{ formatDate(companyItem.created_at) }}
+              </p>
+            </button>
+          </li>
+        </ul>
 
           <p v-if="!loading && !companies.length" class="text-center text-sm text-slate-500">
             Aktuell warten keine Unternehmen auf eine Prüfung. Schau später wieder vorbei.
           </p>
         </aside>
 
-        <div class="glass-card space-y-6 p-4 sm:p-6 lg:p-8" v-if="selectedCompany">
-          <div class="space-y-3">
-            <p class="badge-neutral inline-flex items-center gap-2 text-slate-600">
-              <i class="fa fa-id-card"></i>
-              Unternehmensakte
-            </p>
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div class="glass-card space-y-6 border border-slate-100/80 bg-white/80 p-4 sm:p-6 lg:p-8" v-if="selectedCompany">
+        <div class="space-y-2">
+          <p class="badge-neutral inline-flex items-center gap-2 text-slate-600">
+            <i class="fa fa-id-card"></i>
+            Unternehmensakte
+          </p>
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
               <h2 class="text-xl font-semibold text-slate-900">{{ selectedCompany.company_name }}</h2>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  class="pill-checkbox text-xs"
-                  :class="selectedCompany.association_member ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : ''"
-                >
-                  <i class="fa fa-handshake"></i>
-                  Verband: {{ selectedCompany.association_member ? 'Mitglied' : 'kein Mitglied' }}
-                </span>
-                <span v-if="selectedCompany.security_badge" class="pill-checkbox text-xs">
-                  <i class="fa fa-shield"></i>
-                  {{ selectedCompany.security_badge }}
-                </span>
-              </div>
+              <p class="text-sm text-slate-500">
+                {{ selectedCompany.address || 'Adresse folgt' }} · {{ selectedCompany.city || 'Ort unbekannt' }}
+              </p>
             </div>
-            <p class="text-sm text-slate-600">
-              {{ selectedCompany.description || 'Keine Beschreibung hinterlegt.' }}
-            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="pill-checkbox text-xs" v-if="selectedCompany.association_member">
+                <i class="fa fa-handshake"></i>
+                Verbandsmitglied
+              </span>
+              <span class="pill-checkbox text-xs" v-if="selectedCompany.security_badge">
+                <i class="fa fa-shield"></i>
+                {{ selectedCompany.security_badge }}
+              </span>
+            </div>
           </div>
+          <p class="text-sm text-slate-600">
+            {{ selectedCompany.description || 'Noch keine Beschreibung hinterlegt.' }}
+          </p>
+        </div>
 
-          <form class="space-y-6" @submit.prevent="saveAdministrativeData">
-            <div class="grid gap-4 md:grid-cols-2">
+        <form class="space-y-6" @submit.prevent="saveAdministrativeData">
+          <div class="grid gap-4 md:grid-cols-2">
               <label class="space-y-2">
                 <span class="label text-slate-700">Google-Unternehmensprofil</span>
                 <input
@@ -132,133 +131,136 @@
                 </span>
               </label>
 
-              <label class="space-y-2">
-                <span class="label text-slate-700">Website des Unternehmens</span>
-                <input
-                  v-model="form.website_url"
-                  type="url"
-                  placeholder="https://"
-                  class="water-input"
-                  required
-                />
-                <span class="text-xs text-slate-500">Wir binden die geprüfte Website prominent im Profil ein.</span>
-              </label>
+          <label class="space-y-2">
+            <span class="label text-slate-700">Website des Unternehmens</span>
+            <input
+              v-model="form.website_url"
+              type="url"
+              placeholder="https://"
+              class="water-input"
+              required
+            />
+            <span class="text-xs text-slate-500">Wir binden die geprüfte Website prominent im Profil ein.</span>
+          </label>
 
-              <label class="space-y-2 md:col-span-2">
-                <span class="label text-slate-700">Preis-Kommentar</span>
-                <textarea
-                  v-model="form.price_comment"
-                  class="water-textarea min-h-[100px]"
-                  placeholder="Beschreibe transparent, wie sich die Preise zusammensetzen."
-                ></textarea>
-                <span class="text-xs text-slate-500">
-                  Zeige klar, welche Leistungen enthalten sind (Anfahrt, Nachtzuschläge, Verbandsrabatte …).
-                </span>
-              </label>
+          <label class="space-y-2 md:col-span-2">
+            <span class="label text-slate-700">Preis-Kommentar</span>
+            <textarea
+              v-model="form.price_comment"
+              class="water-textarea min-h-[100px]"
+              placeholder="Beschreibe transparent, wie sich die Preise zusammensetzen."
+            ></textarea>
+            <span class="text-xs text-slate-500">
+              Zeige klar, welche Leistungen enthalten sind (Anfahrt, Nachtzuschläge, Verbandsrabatte …).
+            </span>
+          </label>
 
-              <label class="flex items-center gap-3">
-                <input v-model="form.association_member" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-gold" />
-                <span class="text-sm text-slate-600">Unternehmen ist Mitglied im Branchenverband</span>
-              </label>
+          <label class="flex items-center gap-3">
+            <input v-model="form.association_member" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-gold" />
+            <span class="text-sm text-slate-600">Unternehmen ist Mitglied im Branchenverband</span>
+          </label>
 
-              <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
-                <label class="flex items-start gap-3">
-                  <input
-                    v-model="form.is_admin"
-                    type="checkbox"
-                    class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-600"
-                  />
-                  <div class="space-y-1">
-                    <span class="text-sm font-medium text-emerald-700">Administrator-Rechte</span>
-                    <p class="text-xs text-emerald-700/80">
-                      Administratoren können andere Schlüsseldienste verifizieren und Vertrauensdaten pflegen.
-                    </p>
-                  </div>
-                </label>
+          <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
+            <label class="flex items-start gap-3">
+              <input
+                v-model="form.is_admin"
+                type="checkbox"
+                class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-600"
+              />
+              <div class="space-y-1">
+                <span class="text-sm font-medium text-emerald-700">Administrator-Rechte</span>
+                <p class="text-xs text-emerald-700/80">
+                  Administratoren können andere Schlüsseldienste verifizieren und Vertrauensdaten pflegen.
+                </p>
               </div>
-
-              <label class="space-y-2">
-                <span class="label text-slate-700">Sicherheits-Siegel</span>
-                <input
-                  v-model="form.security_badge"
-                  type="text"
-                  class="water-input"
-                  placeholder="z. B. Verband Deutscher Schlüsseldienste"
-                />
-              </label>
-
-              <label class="space-y-2 md:col-span-2">
-                <span class="label text-slate-700">Hinweis zur Bewertungsrichtlinie</span>
-                <textarea
-                  v-model="form.review_policy_note"
-                  class="water-textarea min-h-[100px]"
-                  placeholder="Erkläre, dass alle Rezensionen über Magikey eingeholt und überprüft werden."
-                ></textarea>
-              </label>
-
-              <label class="space-y-2">
-                <span class="label text-slate-700">Status</span>
-                <select v-model="form.verification_status" class="water-input">
-                  <option v-for="status in statusOptions" :key="status.value" :value="status.value">
-                    {{ status.label }}
-                  </option>
-                </select>
-              </label>
-
-              <label class="space-y-2 md:col-span-2">
-                <span class="label text-slate-700">Interne Notiz</span>
-                <textarea
-                  v-model="form.admin_notes"
-                  class="water-textarea min-h-[90px]"
-                  placeholder="Dokumentiere Gespräche, Nachweise oder Rückfragen."
-                ></textarea>
-              </label>
-            </div>
-
-            <div class="flex flex-wrap gap-3">
-              <Button type="submit" :disabled="saving">
-                <template v-if="saving">
-                  Speichern…
-                </template>
-                <template v-else>
-                  Vertrauensdaten sichern
-                </template>
-              </Button>
-              <Button
-                type="button"
-                class="border-emerald-200 text-emerald-600 !bg-white hover:!bg-emerald-50"
-                @click="verifySelectedCompany"
-                :disabled="form.verification_status === 'verified' || verifying"
-              >
-                <template v-if="verifying">
-                  Prüfe…
-                </template>
-                <template v-else>
-                  Unternehmen verifizieren
-                </template>
-              </Button>
-            </div>
-
-            <p v-if="successMessage" class="text-sm font-medium text-emerald-600">
-              <i class="fa fa-check-circle"></i>
-              {{ successMessage }}
-            </p>
-            <p v-if="errorMessage" class="text-sm font-medium text-red-500">
-              <i class="fa fa-exclamation-triangle"></i>
-              {{ errorMessage }}
-            </p>
-          </form>
-        </div>
-
-        <div v-else class="glass-card flex items-center justify-center p-8 text-center text-slate-500">
-          <div class="space-y-3">
-            <i class="fa fa-user-shield text-4xl text-emerald-400"></i>
-            <p>Wähle links ein Unternehmen, um die Vertrauensprüfung zu beginnen.</p>
+            </label>
           </div>
+
+          <label class="space-y-2">
+            <span class="label text-slate-700">Sicherheits-Siegel</span>
+            <input
+              v-model="form.security_badge"
+              type="text"
+              class="water-input"
+              placeholder="z. B. Verband Deutscher Schlüsseldienste"
+            />
+          </label>
+
+          <label class="space-y-2 md:col-span-2">
+            <span class="label text-slate-700">Hinweis zur Bewertungsrichtlinie</span>
+            <textarea
+              v-model="form.review_policy_note"
+              class="water-textarea min-h-[100px]"
+              placeholder="Erkläre, dass alle Rezensionen über Magikey eingeholt und überprüft werden."
+            ></textarea>
+          </label>
+
+          <label class="space-y-2">
+            <span class="label text-slate-700">Status</span>
+            <select v-model="form.verification_status" class="water-input">
+              <option v-for="status in statusOptions" :key="status.value" :value="status.value">
+                {{ status.label }}
+              </option>
+            </select>
+          </label>
+
+          <label class="space-y-2 md:col-span-2">
+            <span class="label text-slate-700">Interne Notiz</span>
+            <textarea
+              v-model="form.admin_notes"
+              class="water-textarea min-h-[90px]"
+              placeholder="Dokumentiere Gespräche, Nachweise oder Rückfragen."
+            ></textarea>
+          </label>
         </div>
+
+        <div class="flex flex-wrap gap-3">
+          <Button type="submit" :disabled="saving">
+            <template v-if="saving">Speichern…</template>
+            <template v-else>Vertrauensdaten sichern</template>
+          </Button>
+          <Button
+            type="button"
+            class="border-emerald-200 text-emerald-600 !bg-white hover:!bg-emerald-50"
+            @click="verifySelectedCompany"
+            :disabled="form.verification_status === 'verified' || verifying"
+          >
+            <template v-if="verifying">Prüfe…</template>
+            <template v-else>Unternehmen verifizieren</template>
+          </Button>
+          <Button
+            type="button"
+            class="border border-slate-200 !bg-white text-slate-600 hover:!bg-slate-50"
+            @click="toggleAdminRights"
+            :disabled="adminUpdating"
+          >
+            <template v-if="adminUpdating">Aktualisiere Rechte…</template>
+            <template v-else>{{ form.is_admin ? 'Adminrechte entziehen' : 'Adminrechte vergeben' }}</template>
+          </Button>
+        </div>
+
+        <p v-if="successMessage" class="text-sm font-medium text-emerald-600">
+          <i class="fa fa-check-circle"></i>
+          {{ successMessage }}
+        </p>
+        <p v-if="errorMessage" class="text-sm font-medium text-red-500">
+          <i class="fa fa-exclamation-triangle"></i>
+          {{ errorMessage }}
+        </p>
+      </form>
+    </div>
+
+    <div
+      v-else
+      class="glass-card flex items-center justify-center border border-slate-100/80 bg-white/70 p-8 text-center text-slate-500"
+    >
+      <div class="space-y-3">
+        <i class="fa fa-user-shield text-4xl text-emerald-400"></i>
+        <p>Wähle links ein Unternehmen, um die Vertrauensprüfung zu beginnen.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 </template>
 
 <script setup>
@@ -274,6 +276,7 @@ const companies = ref([])
 const loading = ref(true)
 const saving = ref(false)
 const verifying = ref(false)
+const adminUpdating = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 const selectedCompanyId = ref('')
@@ -426,6 +429,35 @@ async function verifySelectedCompany() {
     errorMessage.value = 'Verifizierung nicht möglich. Prüfe die Angaben.'
   } finally {
     verifying.value = false
+  }
+}
+
+async function toggleAdminRights() {
+  if (!selectedCompany.value) return
+  adminUpdating.value = true
+  successMessage.value = ''
+  errorMessage.value = ''
+
+  try {
+    const payload = {
+      is_admin: !form.is_admin,
+      updated_at: new Date().toISOString(),
+    }
+    const updated = await updateCompanyAdmin(selectedCompany.value.id, payload)
+    if (updated) {
+      form.is_admin = Boolean(updated.is_admin)
+      companies.value = companies.value.map((company) =>
+        company.id === updated.id ? { ...company, ...updated } : company
+      )
+      successMessage.value = updated.is_admin
+        ? 'Administrator-Rechte wurden vergeben.'
+        : 'Administrator-Rechte wurden entzogen.'
+    }
+  } catch (error) {
+    console.error('Adminrechte konnten nicht aktualisiert werden:', error)
+    errorMessage.value = 'Adminrechte konnten nicht aktualisiert werden.'
+  } finally {
+    adminUpdating.value = false
   }
 }
 
