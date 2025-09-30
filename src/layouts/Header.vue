@@ -40,13 +40,24 @@
     </div>
 
     <div class="flex items-center gap-1 sm:gap-2 md:gap-3">
+      <!-- Link zum Adminbereich -->
+      <router-link
+        v-if="isAdmin"
+        to="/admin"
+        class="hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 hover:text-emerald-800 md:inline-flex"
+        v-show="!hideNavOnHomeMobile"
+      >
+        <i class="fa fa-shield-alt"></i>
+        Admin Dashboard
+      </router-link>
+
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
       <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-1 sm:gap-2 hover:underline" v-show="!hideNavOnHomeMobile">
         <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full object-cover" />
         <span class="font-medium text-xs sm:text-sm md:text-base">{{ companyData.company_name }}</span>
       </router-link>
 
-      <template v-if="!companyData">
+      <template v-if="!isAuthenticated">
         <router-link to="/register" class="btn-outline hidden md:inline-flex items-center" v-show="!hideNavOnHomeMobile">
           <i class="fa fa-key mr-2 animate-bounce"></i>
           Werde Problemsolver:in
@@ -66,7 +77,13 @@
     </div>
 
     <teleport to="body">
-      <OverlayMenu v-model="showOverlay" :companyData="companyData" @logout="logout" />
+      <OverlayMenu
+        v-model="showOverlay"
+        :companyData="companyData"
+        :is-admin="isAdmin"
+        :is-authenticated="isAuthenticated"
+        @logout="logout"
+      />
     </teleport>
   </header>
 </template>
@@ -83,6 +100,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 import FilterBar from '@/components/user/FilterBar.vue'
 import MobileFilterBar from '@/components/user/MobileFilterBar.vue'
+import { isAdminUser } from '@/constants/admin'
 
 const emit = defineEmits(['update-height'])
 
@@ -96,6 +114,10 @@ const hideNavOnHomeMobile = computed(() => isMobile.value && route.name === 'hom
 const showOverlay = ref(false)
 // Daten des eingelog gten Unternehmens
 const companyData = ref(null)
+// Aktuell eingeloggter User
+const currentUser = ref(null)
+// Merkt sich, ob der aktuelle User Adminrechte hat
+const isAdmin = ref(false)
 // Referenz auf den Menü-Button für Click-Outside-Handling
 const menuButton = ref(null)
 // Referenz auf den Header für dynamische Höhe
@@ -105,6 +127,8 @@ const searchActive = ref(false)
 let resizeObserver = null
 let unsubscribeAuth = null
 // zeigt, ob die Ansicht mobil ist
+const isAuthenticated = computed(() => Boolean(currentUser.value))
+
 // Menü ein- oder ausblenden
 function toggleOverlay() {
   showOverlay.value = !showOverlay.value
@@ -174,7 +198,10 @@ onBeforeUnmount(() => {
 
 // Lädt die Unternehmensdaten des eingeloggten Users
 async function fetchCompanyData(user) {
-  if (!isFirebaseConfigured || !user) {
+  currentUser.value = user
+  isAdmin.value = isAdminUser(user)
+
+  if (!isFirebaseConfigured || !user || isAdmin.value) {
     companyData.value = null
     return
   }
@@ -182,7 +209,13 @@ async function fetchCompanyData(user) {
     const docRef = doc(db, 'companies', user.uid)
     const docSnap = await getDoc(docRef)
     if (docSnap.exists()) {
-      companyData.value = docSnap.data()
+      const data = docSnap.data()
+      if (data?.is_admin) {
+        isAdmin.value = true
+        companyData.value = null
+        return
+      }
+      companyData.value = data
     } else {
       companyData.value = null
     }

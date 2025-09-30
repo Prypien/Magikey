@@ -111,7 +111,9 @@ export async function getCompanies() {
     const q = query(collection(db, 'companies'), where('verified', '==', true))
     const snap = await getDocs(q)
     // Wandelt die Ergebnisse in einfache JS-Objekte um.
-    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    const data = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((company) => !company.is_admin)
     return withFallback(data)
   } catch (err) {
     // Im Fehlerfall leere Liste zurückgeben, damit die App stabil bleibt.
@@ -128,7 +130,10 @@ export async function getCompany(id) {
   try {
     const snap = await getDoc(doc(db, 'companies', id))
     // Existiert die Firma nicht, geben wir null zurück.
-    return snap.exists() ? { id: snap.id, ...snap.data() } : null
+    if (!snap.exists()) return null
+    const data = { id: snap.id, ...snap.data() }
+    if (data.is_admin) return null
+    return data
   } catch (err) {
     console.error('Fehler beim Abrufen der Firma:', err)
     return cloneFallbackCompany(id)
