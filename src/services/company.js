@@ -16,6 +16,7 @@ const FALLBACK_COMPANIES = [
     id: 'demo-berlin',
     company_name: 'Schlüsselservice Berlin Mitte',
     verified: true,
+    is_admin: true,
     logo_url:
       'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=160&h=160&q=80',
     postal_code: '10115',
@@ -49,6 +50,7 @@ const FALLBACK_COMPANIES = [
     company_name: 'Hansestadt Schlüsselnotdienst',
     verified: true,
     verification_status: 'verified',
+    is_admin: false,
     logo_url:
       'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=160&h=160&q=80',
     postal_code: '20095',

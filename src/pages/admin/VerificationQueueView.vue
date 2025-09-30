@@ -60,6 +60,22 @@
                     {{ statusLabel(companyItem.verification_status, companyItem.verified) }}
                   </span>
                 </div>
+                <div class="flex flex-wrap gap-2 text-xs">
+                  <span
+                    v-if="companyItem.is_admin"
+                    class="pill-checkbox border-emerald-200 bg-emerald-50 text-emerald-600"
+                  >
+                    <i class="fa fa-user-shield"></i>
+                    Admin
+                  </span>
+                  <span
+                    v-if="companyItem.association_member"
+                    class="pill-checkbox border-sky-200 bg-sky-50 text-sky-600"
+                  >
+                    <i class="fa fa-handshake"></i>
+                    Verband
+                  </span>
+                </div>
                 <p class="text-xs text-slate-500">
                   {{ companyItem.city || '–' }} · registriert am
                   {{ formatDate(companyItem.created_at) }}
@@ -144,6 +160,22 @@
                 <input v-model="form.association_member" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-gold" />
                 <span class="text-sm text-slate-600">Unternehmen ist Mitglied im Branchenverband</span>
               </label>
+
+              <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
+                <label class="flex items-start gap-3">
+                  <input
+                    v-model="form.is_admin"
+                    type="checkbox"
+                    class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-600"
+                  />
+                  <div class="space-y-1">
+                    <span class="text-sm font-medium text-emerald-700">Administrator-Rechte</span>
+                    <p class="text-xs text-emerald-700/80">
+                      Administratoren können andere Schlüsseldienste verifizieren und Vertrauensdaten pflegen.
+                    </p>
+                  </div>
+                </label>
+              </div>
 
               <label class="space-y-2">
                 <span class="label text-slate-700">Sicherheits-Siegel</span>
@@ -251,6 +283,7 @@ const form = reactive({
   website_url: '',
   price_comment: '',
   association_member: false,
+  is_admin: false,
   security_badge: '',
   review_policy_note: '',
   verification_status: 'pending',
@@ -278,6 +311,7 @@ watch(selectedCompany, (company) => {
   form.website_url = company.website_url || ''
   form.price_comment = company.price_comment || ''
   form.association_member = Boolean(company.association_member)
+  form.is_admin = Boolean(company.is_admin)
   form.security_badge = company.security_badge || ''
   form.review_policy_note = company.review_policy_note || ''
   form.verification_status = company.verification_status || (company.verified ? 'verified' : 'pending')
@@ -348,6 +382,7 @@ async function saveAdministrativeData() {
       website_url: form.website_url,
       price_comment: form.price_comment,
       association_member: form.association_member,
+      is_admin: Boolean(form.is_admin),
       security_badge: form.security_badge,
       review_policy_note: form.review_policy_note,
       verification_status: form.verification_status,

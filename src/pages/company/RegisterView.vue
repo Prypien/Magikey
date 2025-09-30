@@ -245,6 +245,7 @@ const register = async (form) => {
         verified: false,
         verification_status: 'pending',
         association_member: false,
+        is_admin: false,
         google_place_url: '',
         website_url: '',
         price_comment: '',

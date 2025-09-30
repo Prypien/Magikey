@@ -8,8 +8,9 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import HomeView from '@/pages/HomeView.vue'
 
 // Firebase-Auth-Instanz zum Prüfen von Login-Status
-import { auth, isFirebaseConfigured } from '@/firebase'
+import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 
 // Definierte Routen
 const routes = [
@@ -66,6 +67,7 @@ const routes = [
         path: 'admin/verification',
         name: 'admin-verification',
         component: () => import('@/pages/admin/VerificationQueueView.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true },
       },
       {
         path: 'review/:requestId',
@@ -89,6 +91,7 @@ const router = createRouter({
 })
 
 let authReady = false
+const adminStatusCache = new Map()
 
 function waitForAuthInit() {
   if (!isFirebaseConfigured || authReady) {
@@ -112,6 +115,38 @@ function waitForAuthInit() {
   })
 }
 
+async function userIsAdmin(uid) {
+  if (!uid) return false
+
+  if (!isFirebaseConfigured || !db) {
+    return true
+  }
+
+  if (adminStatusCache.has(uid)) {
+    const cached = adminStatusCache.get(uid)
+    if (typeof cached === 'boolean') {
+      return cached
+    }
+    return cached
+  }
+
+  const fetchPromise = (async () => {
+    try {
+      const snap = await getDoc(doc(db, 'companies', uid))
+      const isAdmin = Boolean(snap.exists() && snap.data()?.is_admin)
+      adminStatusCache.set(uid, isAdmin)
+      return isAdmin
+    } catch (error) {
+      console.error('Fehler beim Laden der Admin-Berechtigung:', error)
+      adminStatusCache.delete(uid)
+      throw error
+    }
+  })()
+
+  adminStatusCache.set(uid, fetchPromise)
+  return fetchPromise
+}
+
 // Navigation Guard für geschützte Routen
 router.beforeEach(async (to, from, next) => {
   try {
@@ -122,15 +157,32 @@ router.beforeEach(async (to, from, next) => {
 
   const user = isFirebaseConfigured ? auth.currentUser : null
   const requiresAuth = isFirebaseConfigured && to.meta.requiresAuth
+  const requiresAdmin = isFirebaseConfigured && to.meta.requiresAdmin
   const isLoginRoute = to.name === 'login'
 
   if (requiresAuth && !user) {
     next({ name: 'login' })
+    return
   } else if (user && isLoginRoute) {
     next({ name: 'dashboard' })
-  } else {
-    next()
+    return
   }
+
+  if (requiresAdmin) {
+    try {
+      const isAdmin = await userIsAdmin(user?.uid)
+      if (!isAdmin) {
+        next({ name: 'dashboard', query: { notice: 'admin_required' } })
+        return
+      }
+    } catch (error) {
+      console.error('Admin-Prüfung fehlgeschlagen:', error)
+      next({ name: 'dashboard', query: { notice: 'admin_error' } })
+      return
+    }
+  }
+
+  next()
 })
 
 export default router

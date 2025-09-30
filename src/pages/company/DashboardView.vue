@@ -17,6 +17,13 @@
         <p>Keine Firmendaten gefunden.</p>
       </div>
       <div v-else class="space-y-10">
+        <div
+          v-if="adminNotice"
+          class="glass-card border border-amber-200/70 bg-amber-50/80 p-4 text-sm text-amber-700"
+        >
+          <i class="fa fa-user-shield mr-2"></i>
+          {{ adminNotice }}
+        </div>
         <div class="glass-card p-8 sm:p-10">
           <div class="flex flex-col items-center gap-4 text-center">
             <div class="relative">
@@ -48,6 +55,13 @@
                   Unser Trust-Team prüft dein Profil manuell, verknüpft offizielle Quellen und schaltet dich erst nach
                   erfolgreicher Prüfung frei.
                 </p>
+              </div>
+              <div
+                v-if="company.is_admin"
+                class="rounded-2xl border border-emerald-200/80 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-700"
+              >
+                <p class="font-semibold">Administrator-Rechte aktiv</p>
+                <p>Du kannst andere Schlüsseldienste im Trust Center prüfen und verifizieren.</p>
               </div>
             </div>
           </div>
@@ -113,6 +127,14 @@
                   <i class="fa fa-eye"></i>
                   Vorschau anzeigen
                 </router-link>
+                <router-link
+                  v-if="company.is_admin"
+                  to="/admin/verification"
+                  class="pill-checkbox border-emerald-200 bg-emerald-50 text-emerald-700"
+                >
+                  <i class="fa fa-user-shield"></i>
+                  Trust Center öffnen
+                </router-link>
               </div>
             </div>
 
@@ -146,18 +168,23 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
 import { DAYS, DAY_LABELS } from '@/constants/days'
 import { onAuthStateChanged } from 'firebase/auth'
+import { useRoute, useRouter } from 'vue-router'
 
 const company = ref(null)
 const loading = ref(true)
+const adminNotice = ref('')
 
 let unsubscribeAuth
+
+const route = useRoute()
+const router = useRouter()
 
 async function loadCompany(uid) {
   if (!isFirebaseConfigured) {
@@ -215,6 +242,28 @@ onUnmounted(() => {
 })
 
 const days = DAYS.map(key => ({ key, label: DAY_LABELS[key] }))
+
+watch(
+  () => route.query.notice,
+  (notice) => {
+    if (notice === 'admin_required') {
+      adminNotice.value =
+        'Du benötigst Administrator-Rechte, um das Trust Center aufzurufen. Bitte lasse dich von einem bestehenden Admin freischalten.'
+    } else if (notice === 'admin_error') {
+      adminNotice.value =
+        'Deine Berechtigung konnte nicht geprüft werden. Aktualisiere die Seite oder wende dich an das Magikey Trust-Team.'
+    } else {
+      adminNotice.value = ''
+    }
+
+    if (notice) {
+      const newQuery = { ...route.query }
+      delete newQuery.notice
+      router.replace({ query: newQuery }).catch(() => {})
+    }
+  },
+  { immediate: true }
+)
 
 const statusMeta = computed(() => {
   if (!company.value) {
