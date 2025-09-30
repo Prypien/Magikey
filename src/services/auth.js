@@ -12,6 +12,14 @@ import {
   sendEmailVerification,
 } from 'firebase/auth'
 
+function getAppUrl() {
+  const fallbackOrigin =
+    typeof window !== 'undefined' && window?.location?.origin
+      ? window.location.origin
+      : ''
+  return (import.meta.env.VITE_PUBLIC_URL ?? fallbackOrigin).replace(/\/$/, '')
+}
+
 // Meldet einen Benutzer mit E-Mail und Passwort an.
 function ensureAuthAvailable() {
   if (!isFirebaseConfigured || !auth) {
@@ -30,7 +38,7 @@ export async function resetPassword(email) {
   ensureAuthAvailable()
   const actionCodeSettings = {
     // Link, den der Nutzer nach dem Klick in der E-Mail öffnet.
-    url: 'https://magikey.de/reset-password/confirm',
+    url: `${getAppUrl()}/reset-password/confirm`,
     // Der Link soll direkt in dieser Web-App geöffnet werden.
     handleCodeInApp: true,
   }
@@ -56,7 +64,7 @@ export async function sendVerificationEmail(user = auth.currentUser) {
   ensureAuthAvailable()
   if (!user) throw new Error('No user')
   const actionCodeSettings = {
-    url: 'https://magikey.de/verify',
+    url: `${getAppUrl()}/verify`,
     handleCodeInApp: true,
   }
   return sendEmailVerification(user, actionCodeSettings)

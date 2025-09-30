@@ -1,5 +1,5 @@
 // Diese Datei überprüft die Authentifizierungsfunktionen mit Tests.
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 vi.mock('@/firebase', () => ({
   auth: 'auth-instance',
@@ -20,6 +20,11 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswor
 describe('auth service', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.stubEnv('VITE_PUBLIC_URL', 'https://app.magikey.test')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
   })
 
   it('login calls firebase signInWithEmailAndPassword', async () => {
@@ -30,7 +35,7 @@ describe('auth service', () => {
   it('resetPassword calls firebase sendPasswordResetEmail', async () => {
     await resetPassword('mail@example.com')
     expect(sendPasswordResetEmail).toHaveBeenCalledWith('auth-instance', 'mail@example.com', {
-      url: 'https://magikey.de/reset-password/confirm',
+      url: 'https://app.magikey.test/reset-password/confirm',
       handleCodeInApp: true,
     })
   })
@@ -49,7 +54,7 @@ describe('auth service', () => {
     const user = { uid: '1' }
     await sendVerificationEmail(user)
     expect(sendEmailVerification).toHaveBeenCalledWith(user, {
-      url: 'https://magikey.de/verify',
+      url: 'https://app.magikey.test/verify',
       handleCodeInApp: true,
     })
   })
