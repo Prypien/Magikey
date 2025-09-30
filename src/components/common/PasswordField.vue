@@ -5,7 +5,7 @@
       type="password"
       :name="name"
       :label="label"
-      validation="required|min:6"
+      validation="required|length:6,255"
       :placeholder="placeholder"
       :help="help"
       :classes="inputClasses"
