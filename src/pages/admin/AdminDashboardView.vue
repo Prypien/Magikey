@@ -179,9 +179,179 @@
             </div>
 
             <form class="space-y-8" @submit.prevent="saveVerification('in_review')">
-              <div class="grid gap-6 xl:grid-cols-2">
+              <nav class="dashboard-tabs" role="tablist">
+                <button
+                  type="button"
+                  role="tab"
+                  class="dashboard-tabs__button"
+                  :class="{ 'dashboard-tabs__button--active': activeTab === 'verification' }"
+                  @click="activeTab = 'verification'"
+                >
+                  <i class="fa fa-clipboard-check"></i>
+                  Prüfungsdaten
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  class="dashboard-tabs__button"
+                  :class="{ 'dashboard-tabs__button--active': activeTab === 'basics' }"
+                  @click="activeTab = 'basics'"
+                >
+                  <i class="fa fa-id-card"></i>
+                  Basisdaten
+                </button>
+              </nav>
+
+              <div class="space-y-8" v-show="activeTab === 'verification'">
                 <section class="detail-card space-y-5">
-                  <div class="flex items-center justify-between">
+                  <h3 class="section-label">Verifizierungs-Checkliste</h3>
+                  <p class="text-sm text-slate-600">
+                    Konzentriere dich auf diese Schritte, um das Profil für die Veröffentlichung vorzubereiten.
+                  </p>
+                  <ul class="verification-checklist">
+                    <li
+                      v-for="item in verificationChecklist"
+                      :key="item.id"
+                      class="verification-checklist__item"
+                      :class="{ 'verification-checklist__item--done': item.complete }"
+                    >
+                      <i class="fa" :class="item.complete ? 'fa-check-circle' : 'fa-circle'" aria-hidden="true"></i>
+                      <div>
+                        <p class="font-medium text-slate-800">{{ item.label }}</p>
+                        <p v-if="item.helper" class="text-xs text-slate-500">{{ item.helper }}</p>
+                      </div>
+                    </li>
+                  </ul>
+                </section>
+
+                <section class="detail-card space-y-5">
+                  <h3 class="section-label">Verifizierungsinformationen</h3>
+                  <div class="grid gap-5 md:grid-cols-2">
+                    <label class="form-field">
+                      <span>Google Unternehmensprofil</span>
+                      <input v-model="form.google_place_url" type="url" placeholder="https://maps.google.com/..." />
+                    </label>
+                    <label class="form-field">
+                      <span>Google Rezensionen</span>
+                      <input v-model="form.google_reviews_url" type="url" placeholder="https://maps.google.com/..." />
+                    </label>
+                    <label class="form-field">
+                      <span>Offizielle Website</span>
+                      <input v-model="form.website_url" type="url" placeholder="https://..." />
+                    </label>
+                    <label class="form-field">
+                      <span>Preis-Einschätzung</span>
+                      <input v-model="form.price_statement" type="text" placeholder="z. B. Preise telefonisch bestätigt" />
+                    </label>
+                    <label class="form-field">
+                      <span>Register-/Verbandsnummer</span>
+                      <input v-model="form.register_number" type="text" placeholder="HRB / Verbandsnummer" />
+                    </label>
+                    <label class="form-checkbox">
+                      <input v-model="form.association_member" type="checkbox" />
+                      <span>Unternehmen ist im Verband gelistet</span>
+                    </label>
+                  </div>
+
+                  <div class="grid gap-4 md:grid-cols-2">
+                    <label class="form-field">
+                      <span>Ansprechpartner:in Trust-Team</span>
+                      <input v-model="form.assigned_admin" type="text" placeholder="z. B. Max Mustermann" />
+                    </label>
+                    <label class="form-field md:col-span-2">
+                      <span>Interne Notizen</span>
+                      <textarea v-model="form.admin_notes" rows="4" placeholder="Hinweise für das Trust-Team"></textarea>
+                    </label>
+                  </div>
+                </section>
+
+                <section class="detail-card space-y-5">
+                  <h3 class="section-label">Beschreibung &amp; Kommunikation</h3>
+                  <label class="form-field">
+                    <span>Beschreibung</span>
+                    <textarea v-model="form.description" rows="3" placeholder="Kurzbeschreibung des Angebots"></textarea>
+                  </label>
+                  <div class="verification-callout">
+                    <div class="space-y-2">
+                      <p class="font-semibold" :class="form.email_verified ? 'text-emerald-600' : 'text-amber-600'">
+                        {{ emailVerificationLabel }}
+                      </p>
+                      <p v-if="!form.email_verified" class="text-xs text-slate-500">
+                        Markiere die E-Mail als bestätigt, sobald du sie erfolgreich geprüft hast.
+                      </p>
+                      <p v-if="resendSuccess" class="flex items-center gap-1 text-xs text-emerald-600">
+                        <i class="fa fa-check-circle"></i>
+                        Einladung erneut ausgelöst.
+                      </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        class="btn-secondary"
+                        :disabled="saving || form.email_verified"
+                        @click="markEmailVerified"
+                      >
+                        <i class="fa fa-envelope-open"></i>
+                        Als verifiziert markieren
+                      </button>
+                      <button
+                        v-if="form.email_verified"
+                        type="button"
+                        class="btn-outline"
+                        :disabled="saving"
+                        @click="resetEmailVerification"
+                      >
+                        <i class="fa fa-undo"></i>
+                        Status zurücksetzen
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-outline"
+                        :disabled="resending || !primaryContactEmail"
+                        @click="resendRegistrationEmail"
+                      >
+                        <i class="fa fa-paper-plane"></i>
+                        Registrierungsmail erneut senden
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="detail-card space-y-5">
+                  <h3 class="section-label">Leistungen &amp; Zeiten</h3>
+                  <div class="space-y-3">
+                    <p class="text-sm font-medium text-slate-600">Schlosstypen</p>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        v-for="option in lockTypeOptions"
+                        :key="option.value"
+                        type="button"
+                        class="pill-checkbox px-4 py-2 text-xs sm:text-sm"
+                        :class="{ 'border-gold bg-gold/25 text-slate-900 shadow': form.lock_types.includes(option.value) }"
+                        @click="toggleLockType(option.value)"
+                      >
+                        <span>{{ option.label }}</span>
+                      </button>
+                    </div>
+                    <p v-if="!form.lock_types.length" class="text-xs text-slate-500">
+                      Es wurden noch keine Schlosstypen ausgewählt.
+                    </p>
+                    <div v-else class="flex flex-wrap gap-2 text-xs text-slate-500">
+                      <span v-for="type in form.lock_types" :key="type" class="rounded-full bg-slate-100 px-3 py-1">
+                        {{ lockTypeLabel(type) }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <p class="text-sm font-medium text-slate-600">Öffnungszeiten</p>
+                    <OpeningHoursForm v-model="form.opening_hours" />
+                  </div>
+                </section>
+              </div>
+
+              <div class="space-y-8" v-show="activeTab === 'basics'">
+                <section class="detail-card space-y-5">
+                  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h3 class="section-label">Account &amp; Kommunikation</h3>
                     <span class="text-xs text-slate-400">UID: {{ currentCompany.id }}</span>
                   </div>
@@ -226,12 +396,12 @@
                         <input v-model="form.city" type="text" placeholder="Berlin" />
                       </label>
                     </div>
-                    <div class="grid gap-4 sm:grid-cols-3">
-                      <label class="form-field sm:col-span-1">
+                    <div class="price-grid">
+                      <label class="form-field">
                         <span>Preis (ab)</span>
                         <input v-model="form.price" type="number" min="0" step="1" placeholder="69" />
                       </label>
-                      <label class="form-field sm:col-span-1">
+                      <label class="form-field">
                         <span>Notdienstpreis</span>
                         <input
                           v-model="form.emergency_price"
@@ -242,7 +412,7 @@
                           :disabled="!form.is_247"
                         />
                       </label>
-                      <label class="form-checkbox sm:col-span-1">
+                      <label class="form-checkbox">
                         <input v-model="form.is_247" type="checkbox" />
                         <span>24/7 Notdienst</span>
                       </label>
@@ -250,117 +420,6 @@
                   </div>
                 </section>
               </div>
-
-              <section class="detail-card space-y-5">
-                <h3 class="section-label">Beschreibung &amp; Kommunikation</h3>
-                <label class="form-field">
-                  <span>Beschreibung</span>
-                  <textarea v-model="form.description" rows="3" placeholder="Kurzbeschreibung des Angebots"></textarea>
-                </label>
-                <div class="verification-callout">
-                  <div>
-                    <p class="font-semibold" :class="form.email_verified ? 'text-emerald-600' : 'text-amber-600'">
-                      {{ emailVerificationLabel }}
-                    </p>
-                    <p v-if="!form.email_verified" class="text-xs text-slate-500">
-                      Markiere die E-Mail als bestätigt, sobald du sie erfolgreich geprüft hast.
-                    </p>
-                  </div>
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      class="btn-secondary"
-                      :disabled="saving || form.email_verified"
-                      @click="markEmailVerified"
-                    >
-                      <i class="fa fa-envelope-open"></i>
-                      Als verifiziert markieren
-                    </button>
-                    <button
-                      v-if="form.email_verified"
-                      type="button"
-                      class="btn-outline"
-                      :disabled="saving"
-                      @click="resetEmailVerification"
-                    >
-                      <i class="fa fa-undo"></i>
-                      Status zurücksetzen
-                    </button>
-                  </div>
-                </div>
-              </section>
-
-              <section class="detail-card space-y-5">
-                <h3 class="section-label">Leistungen &amp; Zeiten</h3>
-                <div class="space-y-3">
-                  <p class="text-sm font-medium text-slate-600">Schlosstypen</p>
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      v-for="option in lockTypeOptions"
-                      :key="option.value"
-                      type="button"
-                      class="pill-checkbox px-4 py-2 text-xs sm:text-sm"
-                      :class="{ 'border-gold bg-gold/25 text-slate-900 shadow': form.lock_types.includes(option.value) }"
-                      @click="toggleLockType(option.value)"
-                    >
-                      <span>{{ option.label }}</span>
-                    </button>
-                  </div>
-                  <p v-if="!form.lock_types.length" class="text-xs text-slate-500">
-                    Es wurden noch keine Schlosstypen ausgewählt.
-                  </p>
-                  <div v-else class="flex flex-wrap gap-2 text-xs text-slate-500">
-                    <span v-for="type in form.lock_types" :key="type" class="rounded-full bg-slate-100 px-3 py-1">
-                      {{ lockTypeLabel(type) }}
-                    </span>
-                  </div>
-                </div>
-                <div class="space-y-3">
-                  <p class="text-sm font-medium text-slate-600">Öffnungszeiten</p>
-                  <OpeningHoursForm v-model="form.opening_hours" />
-                </div>
-              </section>
-
-              <section class="detail-card space-y-5">
-                <h3 class="section-label">Verifizierungsinformationen</h3>
-                <div class="grid gap-5 md:grid-cols-2">
-                  <label class="form-field">
-                    <span>Google Unternehmensprofil</span>
-                    <input v-model="form.google_place_url" type="url" placeholder="https://maps.google.com/..." />
-                  </label>
-                  <label class="form-field">
-                    <span>Google Rezensionen</span>
-                    <input v-model="form.google_reviews_url" type="url" placeholder="https://maps.google.com/..." />
-                  </label>
-                  <label class="form-field">
-                    <span>Offizielle Website</span>
-                    <input v-model="form.website_url" type="url" placeholder="https://..." />
-                  </label>
-                  <label class="form-field">
-                    <span>Preis-Einschätzung</span>
-                    <input v-model="form.price_statement" type="text" placeholder="z. B. Preise telefonisch bestätigt" />
-                  </label>
-                  <label class="form-field">
-                    <span>Register-/Verbandsnummer</span>
-                    <input v-model="form.register_number" type="text" placeholder="HRB / Verbandsnummer" />
-                  </label>
-                  <label class="form-checkbox">
-                    <input v-model="form.association_member" type="checkbox" />
-                    <span>Unternehmen ist im Verband gelistet</span>
-                  </label>
-                </div>
-
-                <div class="grid gap-4 md:grid-cols-2">
-                  <label class="form-field">
-                    <span>Ansprechpartner:in Trust-Team</span>
-                    <input v-model="form.assigned_admin" type="text" placeholder="z. B. Max Mustermann" />
-                  </label>
-                  <label class="form-field md:col-span-2">
-                    <span>Interne Notizen</span>
-                    <textarea v-model="form.admin_notes" rows="4" placeholder="Hinweise für das Trust-Team"></textarea>
-                  </label>
-                </div>
-              </section>
 
               <div class="action-bar">
                 <p class="flex items-center gap-2 text-sm text-slate-600">
@@ -402,6 +461,7 @@ import {
 import Loader from '@/components/common/Loader.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
+import { requestRegistrationEmail } from '@/services/admin'
 
 const companies = ref([])
 const loading = ref(true)
@@ -411,6 +471,9 @@ const selectedId = ref('')
 const searchTerm = ref('')
 const lastRefresh = ref(null)
 const lockTypeOptions = LOCK_TYPE_OPTIONS
+const activeTab = ref('verification')
+const resending = ref(false)
+const resendSuccess = ref(false)
 
 function createEmptyForm() {
   return {
@@ -559,9 +622,77 @@ watch(
       return
     }
     hydrateForm()
+    activeTab.value = 'verification'
+    resendSuccess.value = false
+    resending.value = false
   },
   { immediate: true }
 )
+
+const primaryContactEmail = computed(() => {
+  if (form.email) return form.email
+  if (form.contact_email) return form.contact_email
+  const current = currentCompany.value
+  if (current?.email) return current.email
+  if (current?.contact_email) return current.contact_email
+  return ''
+})
+
+const verificationChecklist = computed(() => {
+  const items = []
+
+  items.push({
+    id: 'email_verification',
+    label: 'Kontaktadresse bestätigt',
+    complete: Boolean(form.email_verified),
+    helper: form.email_verified
+      ? form.email_verified_at
+        ? `Verifiziert am ${formatDate(form.email_verified_at)}`
+        : 'E-Mail als verifiziert markiert'
+      : primaryContactEmail.value
+      ? `Zu prüfen: ${primaryContactEmail.value}`
+      : 'Keine Kontaktadresse hinterlegt',
+  })
+
+  items.push({
+    id: 'google_profile',
+    label: 'Google Unternehmensprofil',
+    complete: Boolean(form.google_place_url),
+    helper: form.google_place_url ? '' : 'Link zum Google-Profil ergänzen',
+  })
+
+  items.push({
+    id: 'website',
+    label: 'Website geprüft',
+    complete: Boolean(form.website_url),
+    helper: form.website_url ? '' : 'Website-Adresse ergänzen',
+  })
+
+  const hasPriceInfo = Boolean(form.price_statement || form.price || form.emergency_price)
+  items.push({
+    id: 'pricing',
+    label: 'Preisangaben dokumentiert',
+    complete: hasPriceInfo,
+    helper: hasPriceInfo ? '' : 'Preis oder Einschätzung ergänzen',
+  })
+
+  const hasServices = Array.isArray(form.lock_types) && form.lock_types.length > 0
+  items.push({
+    id: 'services',
+    label: 'Leistungsumfang gepflegt',
+    complete: hasServices,
+    helper: hasServices ? '' : 'Schlosstypen auswählen',
+  })
+
+  items.push({
+    id: 'notes',
+    label: 'Interne Notizen hinterlegt',
+    complete: Boolean(form.admin_notes),
+    helper: form.admin_notes ? '' : 'Kurzes Prüfprotokoll ergänzen',
+  })
+
+  return items
+})
 
 const verificationStatusLabel = computed(() => {
   if (!currentCompany.value) return 'Status unbekannt'
@@ -721,6 +852,35 @@ async function resetEmailVerification() {
   form.email_verified = false
   form.email_verified_at = null
   await saveVerification(currentCompany.value.verification?.status || 'pending', { keepStatus: true })
+}
+
+async function resendRegistrationEmail() {
+  if (!currentCompany.value) return
+  const email = primaryContactEmail.value
+  if (!email) {
+    alert('Es ist keine E-Mail-Adresse hinterlegt, an die die Registrierungsmail gesendet werden kann.')
+    return
+  }
+  if (!isFirebaseConfigured || !db) {
+    alert('Firebase ist nicht konfiguriert. Registrierungsmail kann nicht gesendet werden.')
+    return
+  }
+  resending.value = true
+  resendSuccess.value = false
+  try {
+    await requestRegistrationEmail({
+      companyId: currentCompany.value.id,
+      companyName: currentCompany.value.company_name || '',
+      email,
+      triggeredBy: 'admin-dashboard',
+    })
+    resendSuccess.value = true
+  } catch (error) {
+    console.error('Registrierungsmail konnte nicht gesendet werden:', error)
+    alert('Registrierungsmail konnte nicht gesendet werden. Bitte erneut versuchen.')
+  } finally {
+    resending.value = false
+  }
 }
 
 loadCompanies()
@@ -935,6 +1095,86 @@ loadCompanies()
 .dashboard-status__hint {
   font-size: 0.75rem;
   color: #94a3b8;
+}
+
+.dashboard-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.4rem;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.dashboard-tabs__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.dashboard-tabs__button:hover {
+  color: #1f2937;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.dashboard-tabs__button--active {
+  border-color: rgba(251, 191, 36, 0.6);
+  background: rgba(251, 191, 36, 0.18);
+  color: #b45309;
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.22);
+}
+
+.verification-checklist {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.verification-checklist__item {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(248, 250, 252, 0.6);
+  padding: 0.75rem 0.95rem;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.verification-checklist__item i {
+  margin-top: 0.1rem;
+  font-size: 0.9rem;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.verification-checklist__item--done {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(209, 250, 229, 0.45);
+  color: rgb(22, 101, 52);
+}
+
+.verification-checklist__item--done i {
+  color: rgb(5, 150, 105);
+}
+
+.price-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .price-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .detail-card {
