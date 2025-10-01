@@ -1,142 +1,147 @@
 <template>
   <section class="page-wrapper">
-    <div class="mx-auto max-w-6xl space-y-8">
-      <header class="glass-card space-y-4 p-8 sm:p-10">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div class="space-y-2">
-            <p class="badge-neutral inline-flex items-center gap-2 text-xs font-semibold text-emerald-700">
-              <i class="fa fa-user-shield"></i>
-              Adminbereich
-            </p>
-            <h1 class="text-3xl font-semibold text-slate-900">Trust &amp; Safety Cockpit</h1>
-            <p class="text-sm text-slate-600">
-              Prüfe neue Unternehmen, ergänze verifizierende Informationen und gib Profile für die Suche frei. Jede
-              Aktion wird im Firestore protokolliert.
-            </p>
-          </div>
-          <div class="rounded-3xl border border-emerald-200 bg-emerald-50/80 p-5 text-sm text-emerald-700 shadow-inner">
-            <p class="font-semibold text-emerald-900">Live-Überblick</p>
-            <p class="mt-2 flex items-center gap-2">
-              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-              {{ pendingCount }} Profile in Prüfung
-            </p>
-            <p class="mt-1 text-xs text-emerald-600">Aktualisiert {{ lastRefreshLabel }}</p>
-          </div>
-        </div>
-      </header>
-
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article class="summary-card summary-card--pending">
-          <div class="summary-card__label">
-            <i class="fa fa-hourglass-half"></i>
-            Ausstehende Profile
-          </div>
-          <p class="summary-card__value">{{ pendingCount }}</p>
-          <p class="summary-card__hint">Warten auf Freigabe</p>
-        </article>
-        <article class="summary-card summary-card--review">
-          <div class="summary-card__label">
-            <i class="fa fa-tasks"></i>
-            In Bearbeitung
-          </div>
-          <p class="summary-card__value">{{ inReviewCount }}</p>
-          <p class="summary-card__hint">Aktive Prüfungen</p>
-        </article>
-        <article class="summary-card summary-card--verified">
-          <div class="summary-card__label">
-            <i class="fa fa-shield-check"></i>
-            Verifizierte Profile
-          </div>
-          <p class="summary-card__value">{{ verifiedCount }}</p>
-          <p class="summary-card__hint">Live in der Suche</p>
-        </article>
-        <article class="summary-card summary-card--total">
-          <div class="summary-card__label">
-            <i class="fa fa-database"></i>
-            Gesamtbestand
-          </div>
-          <p class="summary-card__value">{{ totalCount }}</p>
-          <p class="summary-card__hint">Aktualisiert {{ lastRefreshLabel }}</p>
-        </article>
-      </div>
-
-      <div class="dashboard-grid gap-6 lg:grid-cols-[340px,1fr]">
-        <aside class="dashboard-sidebar glass-card space-y-6 p-6 sm:p-8">
-          <div class="flex items-center justify-between gap-3">
-            <h2 class="text-lg font-semibold text-slate-900">Unternehmen</h2>
-            <button type="button" class="pill-checkbox text-xs" @click="loadCompanies" :disabled="loading">
-              <i class="fa fa-sync"></i>
-              Aktualisieren
-            </button>
-          </div>
-
-          <div class="space-y-3">
-            <label class="search-field">
-              <i class="fa fa-search"></i>
-              <input v-model="searchTerm" type="search" placeholder="Suchen nach Name, Ort oder PLZ" />
-            </label>
-            <div class="flex flex-wrap gap-2 text-xs text-slate-500">
-              <button
-                type="button"
-                class="filter-chip"
-                :class="{ active: filter === 'pending' }"
-                @click="filter = 'pending'"
+    <div class="mx-auto max-w-6xl">
+      <div class="dashboard-grid flex flex-col gap-6 lg:grid lg:grid-cols-[360px,1fr] lg:gap-8">
+        <div class="space-y-6 lg:space-y-8">
+          <header class="glass-card space-y-4 p-8 sm:p-10">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div class="space-y-2">
+                <p class="badge-neutral inline-flex items-center gap-2 text-xs font-semibold text-emerald-700">
+                  <i class="fa fa-user-shield"></i>
+                  Adminbereich
+                </p>
+                <h1 class="text-3xl font-semibold text-slate-900">Trust &amp; Safety Cockpit</h1>
+                <p class="text-sm text-slate-600">
+                  Prüfe neue Unternehmen, ergänze verifizierende Informationen und gib Profile für die Suche frei. Jede
+                  Aktion wird im Firestore protokolliert.
+                </p>
+              </div>
+              <div
+                class="rounded-3xl border border-emerald-200 bg-emerald-50/80 p-5 text-sm text-emerald-700 shadow-inner"
               >
+                <p class="font-semibold text-emerald-900">Live-Überblick</p>
+                <p class="mt-2 flex items-center gap-2">
+                  <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                  {{ pendingCount }} Profile in Prüfung
+                </p>
+                <p class="mt-1 text-xs text-emerald-600">Aktualisiert {{ lastRefreshLabel }}</p>
+              </div>
+            </div>
+          </header>
+
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 lg:gap-5">
+            <article class="summary-card summary-card--pending">
+              <div class="summary-card__label">
                 <i class="fa fa-hourglass-half"></i>
-                In Prüfung
-              </button>
-              <button
-                type="button"
-                class="filter-chip"
-                :class="{ active: filter === 'verified' }"
-                @click="filter = 'verified'"
-              >
-                <i class="fa fa-check-circle"></i>
-                Verifiziert
-              </button>
-              <button type="button" class="filter-chip" :class="{ active: filter === 'all' }" @click="filter = 'all'">
-                <i class="fa fa-list"></i>
-                Alle
+                Ausstehende Profile
+              </div>
+              <p class="summary-card__value">{{ pendingCount }}</p>
+              <p class="summary-card__hint">Warten auf Freigabe</p>
+            </article>
+            <article class="summary-card summary-card--review">
+              <div class="summary-card__label">
+                <i class="fa fa-tasks"></i>
+                In Bearbeitung
+              </div>
+              <p class="summary-card__value">{{ inReviewCount }}</p>
+              <p class="summary-card__hint">Aktive Prüfungen</p>
+            </article>
+            <article class="summary-card summary-card--verified">
+              <div class="summary-card__label">
+                <i class="fa fa-shield-check"></i>
+                Verifizierte Profile
+              </div>
+              <p class="summary-card__value">{{ verifiedCount }}</p>
+              <p class="summary-card__hint">Live in der Suche</p>
+            </article>
+            <article class="summary-card summary-card--total">
+              <div class="summary-card__label">
+                <i class="fa fa-database"></i>
+                Gesamtbestand
+              </div>
+              <p class="summary-card__value">{{ totalCount }}</p>
+              <p class="summary-card__hint">Aktualisiert {{ lastRefreshLabel }}</p>
+            </article>
+          </div>
+
+          <aside class="dashboard-sidebar glass-card space-y-6 p-6 sm:p-8">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-lg font-semibold text-slate-900">Unternehmen</h2>
+              <button type="button" class="pill-checkbox text-xs" @click="loadCompanies" :disabled="loading">
+                <i class="fa fa-sync"></i>
+                Aktualisieren
               </button>
             </div>
-          </div>
 
-          <div v-if="loading" class="flex items-center justify-center py-10">
-            <Loader :size="48" />
-          </div>
-          <ul v-else class="dashboard-company-list space-y-2">
-            <li
-              v-if="!filteredCompanies.length"
-              class="rounded-2xl border border-dashed border-slate-200 p-5 text-center text-sm text-slate-500"
-            >
-              Keine Unternehmen im ausgewählten Filter.
-            </li>
-            <li
-              v-for="companyItem in filteredCompanies"
-              :key="companyItem.id"
-              class="company-item"
-              :class="{ active: companyItem.id === selectedId }"
-            >
-              <button type="button" class="w-full text-left" @click="selectCompany(companyItem.id)">
-                <div class="flex items-center justify-between gap-3">
-                  <div class="min-w-0 space-y-1">
-                    <p class="truncate text-sm font-semibold text-slate-800">{{ companyItem.company_name }}</p>
-                    <p class="truncate text-xs text-slate-500">
-                      {{ companyItem.city }} · {{ companyItem.postal_code }}
-                    </p>
+            <div class="space-y-3">
+              <label class="search-field">
+                <i class="fa fa-search"></i>
+                <input v-model="searchTerm" type="search" placeholder="Suchen nach Name, Ort oder PLZ" />
+              </label>
+              <div class="flex flex-wrap gap-2 text-xs text-slate-500">
+                <button
+                  type="button"
+                  class="filter-chip"
+                  :class="{ active: filter === 'pending' }"
+                  @click="filter = 'pending'"
+                >
+                  <i class="fa fa-hourglass-half"></i>
+                  In Prüfung
+                </button>
+                <button
+                  type="button"
+                  class="filter-chip"
+                  :class="{ active: filter === 'verified' }"
+                  @click="filter = 'verified'"
+                >
+                  <i class="fa fa-check-circle"></i>
+                  Verifiziert
+                </button>
+                <button type="button" class="filter-chip" :class="{ active: filter === 'all' }" @click="filter = 'all'">
+                  <i class="fa fa-list"></i>
+                  Alle
+                </button>
+              </div>
+            </div>
+
+            <div v-if="loading" class="flex items-center justify-center py-10">
+              <Loader :size="48" />
+            </div>
+            <ul v-else class="dashboard-company-list space-y-2">
+              <li
+                v-if="!filteredCompanies.length"
+                class="rounded-2xl border border-dashed border-slate-200 p-5 text-center text-sm text-slate-500"
+              >
+                Keine Unternehmen im ausgewählten Filter.
+              </li>
+              <li
+                v-for="companyItem in filteredCompanies"
+                :key="companyItem.id"
+                class="company-item"
+                :class="{ active: companyItem.id === selectedId }"
+              >
+                <button type="button" class="w-full text-left" @click="selectCompany(companyItem.id)">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0 space-y-1">
+                      <p class="truncate text-sm font-semibold text-slate-800">{{ companyItem.company_name }}</p>
+                      <p class="truncate text-xs text-slate-500">
+                        {{ companyItem.city }} · {{ companyItem.postal_code }}
+                      </p>
+                    </div>
+                    <span
+                      class="status-pill"
+                      :class="companyItem.verified ? 'status-pill--verified' : 'status-pill--pending'"
+                    >
+                      <i class="fa" :class="companyItem.verified ? 'fa-check' : 'fa-hourglass-half'"></i>
+                      {{ companyItem.verified ? 'Live' : 'On Hold' }}
+                    </span>
                   </div>
-                  <span
-                    class="status-pill"
-                    :class="companyItem.verified ? 'status-pill--verified' : 'status-pill--pending'"
-                  >
-                    <i class="fa" :class="companyItem.verified ? 'fa-check' : 'fa-hourglass-half'"></i>
-                    {{ companyItem.verified ? 'Live' : 'On Hold' }}
-                  </span>
-                </div>
-              </button>
-            </li>
-          </ul>
-        </aside>
+                </button>
+              </li>
+            </ul>
+          </aside>
+
+        </div>
 
         <div class="dashboard-content glass-card min-h-[28rem] p-6 sm:p-10">
           <div
