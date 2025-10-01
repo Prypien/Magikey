@@ -107,13 +107,17 @@
                 name="price"
                 label="Preis (ab)"
                 min="0"
+                step="1"
+                validation="required|min:0"
                 :classes="inputClasses"
+                help="Bitte gib deinen Einstiegspreis an, z. B. für eine einfache Türöffnung."
               />
 
               <FormKit
                 type="text"
                 name="address"
                 label="Straße und Hausnummer"
+                validation="required"
                 :classes="inputClasses"
               />
 
@@ -121,6 +125,7 @@
                 type="text"
                 name="postal_code"
                 label="Postleitzahl"
+                validation="required|length:5"
                 :classes="inputClasses"
               />
 
@@ -128,6 +133,7 @@
                 type="text"
                 name="city"
                 label="Ort"
+                validation="required"
                 :classes="inputClasses"
               />
 
@@ -136,7 +142,9 @@
                 name="description"
                 label="Beschreibung"
                 placeholder="Beschreibe dein Angebot in ein paar Sätzen"
+                validation="required|min:20"
                 :classes="textareaClasses"
+                help="Dieser Text wird im Profil angezeigt. Mindestens 20 Zeichen."
               />
             </div>
 
@@ -243,9 +251,43 @@ function toggleLockType(value) {
 }
 
 
+function normalizeText(value) {
+  return typeof value === 'string' ? value.trim() : value
+}
+
+function hasValidOpeningHours(hours) {
+  const values = Object.values(hours || {})
+  if (!values.length) return false
+  return values.every((entry) => entry?.open && entry?.close)
+}
+
+function cloneOpeningHours(hours) {
+  try {
+    const hasNativeClone =
+      typeof globalThis !== 'undefined' && typeof globalThis.structuredClone === 'function'
+    if (hasNativeClone) {
+      return globalThis.structuredClone(hours || {})
+    }
+    return JSON.parse(JSON.stringify(hours || {}))
+  } catch (error) {
+    console.warn('Konnte Öffnungszeiten nicht klonen, nutze Fallback.', error)
+    return hours || {}
+  }
+}
+
 const register = async (form) => {
   if (!isFirebaseConfigured || !auth || !db) {
     alert('Registrierung ist derzeit nicht verfügbar.')
+    return
+  }
+
+  if (!lockTypes.value.length) {
+    alert('Bitte wähle mindestens einen Schlosstyp aus.')
+    return
+  }
+
+  if (!hasValidOpeningHours(openingHours.value)) {
+    alert('Bitte gib vollständige Öffnungszeiten an (inklusive Öffnungs- und Schließzeiten).')
     return
   }
   try {
@@ -254,24 +296,24 @@ const register = async (form) => {
       form.email,
       form.password
     )
-    const whatsappNumber = hasSeparateWhatsapp.value ? form.whatsapp || '' : form.phone
+    const whatsappNumber = hasSeparateWhatsapp.value ? normalizeText(form.whatsapp || '') : normalizeText(form.phone)
     const companyRef = doc(db, 'companies', user.uid)
     const existing = await getDoc(companyRef)
     if (!existing.exists()) {
       await setDoc(companyRef, {
-        company_name: form.company_name,
-        email: form.email,
-        phone: form.phone,
+        company_name: normalizeText(form.company_name),
+        email: normalizeText(form.email),
+        phone: normalizeText(form.phone),
         whatsapp: whatsappNumber || '',
-        address: form.address || '',
-        city: form.city || '',
-        postal_code: form.postal_code || '',
-        price: form.price || '',
-        description: form.description || '',
-        lock_types: lockTypes.value,
-        opening_hours: openingHours.value,
+        address: normalizeText(form.address || ''),
+        city: normalizeText(form.city || ''),
+        postal_code: normalizeText(form.postal_code || ''),
+        price: Number(form.price),
+        description: normalizeText(form.description || ''),
+        lock_types: [...lockTypes.value],
+        opening_hours: cloneOpeningHours(openingHours.value),
         is_247: form.is_247 || false,
-        emergency_price: form.is_247 ? form.emergency_price || '' : '',
+        emergency_price: form.is_247 ? Number(form.emergency_price) : null,
         created_at: serverTimestamp(),
         verified: false,
         verification: {

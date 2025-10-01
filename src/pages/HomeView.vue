@@ -19,8 +19,19 @@
           </div>
           <p class="max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
             Finde vertrauenswürdige Schlüsseldienste in deiner Nähe – transparent, schnell und mit
-            Notdienstoptionen, wenn es eilig ist.
+            Notdienstoptionen, wenn es eilig ist. Alle Betriebe werden von unserem Trust-Team verifiziert,
+            bevor sie auf Magikey erscheinen.
           </p>
+          <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 sm:text-sm">
+            <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
+              <i class="fa fa-shield-alt"></i>
+              Sicherheit zuerst: geprüfte Unternehmensdaten
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-slate-600">
+              <i class="fa fa-user-check"></i>
+              Nur bestätigte Anbieter werden gelistet
+            </span>
+          </div>
         </header>
 
         <div v-if="activeBadges.length" class="flex flex-wrap gap-2">
