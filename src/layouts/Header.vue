@@ -206,7 +206,7 @@ async function fetchCompanyData(user) {
     return
   }
 
-  const role = await getUserRole(user)
+  const role = await getUserRole(user, { forceRefresh: true })
   setCachedUserRole(user.uid, role)
   isAdmin.value = role === USER_ROLES.ADMIN
 
