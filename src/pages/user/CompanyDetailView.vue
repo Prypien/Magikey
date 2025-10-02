@@ -123,6 +123,13 @@
             ></iframe>
           </div>
         </div>
+
+        <CompanyReviews
+          class="mt-10"
+          :google-reviews-url="company.verification?.google_reviews_url || ''"
+          :magikey-reviews="magikeyReviews"
+          :loading="reviewsLoading"
+        />
       </div>
     </div>
   </section>
@@ -148,6 +155,8 @@ import { DAYS, DAY_LABELS } from '@/constants/days'
 import TrackingRequestPanel from '@/components/tracking/TrackingRequestPanel.vue'
 import { useTrackingStore } from '@/stores/tracking'
 import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
+import CompanyReviews from '@/components/reviews/CompanyReviews.vue'
+import { useReviewStore } from '@/stores/reviews'
 
 const route = useRoute()
 const companyId = route.params.id
@@ -155,6 +164,10 @@ const company = ref({})
 const days = DAYS
 const showReviewModal = ref(false)
 const pendingAction = ref('call')
+const reviewStore = useReviewStore()
+
+const magikeyReviews = computed(() => reviewStore.getReviewsForCompany(companyId))
+const reviewsLoading = computed(() => reviewStore.isLoading(companyId))
 
 onMounted(async () => {
   if (companyId) {
@@ -166,6 +179,7 @@ onMounted(async () => {
     } catch (err) {
       console.error('Fehler beim Laden:', err)
     }
+    await reviewStore.fetchCompanyReviews(companyId)
   }
 })
 
