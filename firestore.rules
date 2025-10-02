@@ -34,7 +34,7 @@ service cloud.firestore {
     match /companies/{companyId} {
       // Owners can manage their own company profile
       allow create: if isCompanyOwner(companyId);
-      allow read: if resource.data.verified == true || isCompanyOwner(companyId) || isAdminUser();
+      allow read: if (resource != null && resource.data.verified == true) || isCompanyOwner(companyId) || isAdminUser();
       allow update: if
         (isCompanyOwner(companyId) &&
         (
