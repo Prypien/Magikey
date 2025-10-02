@@ -34,4 +34,13 @@ describe('evaluatePasswordStrength', () => {
       barClass: 'bg-green-500',
     })
   })
+
+  it('handles empty input gracefully', () => {
+    const result = evaluatePasswordStrength()
+    expect(result).toMatchObject({
+      score: 0,
+      percent: 0,
+      label: 'Schwach',
+    })
+  })
 })
