@@ -46,7 +46,7 @@ Der Code ist in `src` organisiert. Wichtige Unterordner:
 - `pages` – Seitenansichten, unterteilt in
   - `pages/auth` – Passwortrücksetzung und E-Mail-Bestätigung
   - `pages/company` – Workflows für Dienstleister (Dashboard, Login, …)
-  - `pages/static` – rechtliche Inhalte, Hilfe und Fallback-Seiten
+  - `pages/static` – rechtliche Inhalte, Hilfe, Support und Fallback-Seiten
   - `pages/user` – Such- und Ergebnisansichten für Endnutzer
 - `services` – Logik für Auth und Storage
 - `firebase` – Initialisierung (`index.js`) und Hilfsfunktionen für Cloud Functions
@@ -63,6 +63,7 @@ VITE_FIREBASE_API_KEY=<dein-key>
 VITE_FIREBASE_AUTH_DOMAIN=<deine-domain>
 ...
 VITE_GOOGLE_MAPS_API_KEY=<maps-key>
+VITE_PAYPAL_ME_URL=<paypal-me-link>
 ```
 
 Weitere Details zur Datenstruktur findest du in [docs/firestore.md](docs/firestore.md).
@@ -72,6 +73,12 @@ Die Sicherheitsregeln für Firestore und Storage liegen in den Dateien
 `firebase.json` eingebunden und regeln unter anderem, dass nur
 verifizierte Firmenprofile öffentlich lesbar sind und Logos nur vom
 Eigentümer hochgeladen werden dürfen.
+
+### Support-Seite
+
+Unter <http://localhost:5173/support> (bzw. `/support` im Produktivbetrieb) finden Nutzer:innen eine Informationsseite zu freiwilligen Beiträgen.
+Hinterlege dafür optional einen PayPal.me-Link in der `.env` als `VITE_PAYPAL_ME_URL`.
+Ist kein Link gesetzt, weist die Seite auf den Kontakt per E-Mail hin.
 
 ## Storage CORS-Konfiguration
 

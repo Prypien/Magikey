@@ -297,5 +297,6 @@ const navLinks = [
   { label: 'Suche', to: '/' },
   { label: 'Registrieren', to: '/register' },
   { label: 'Hilfe', to: '/hilfe' },
+  { label: 'Support', to: '/support' },
 ]
 
