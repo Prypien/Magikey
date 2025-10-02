@@ -144,7 +144,20 @@
                 </span>
               </div>
               <div
-                v-if="!activeRequests.length"
+                v-if="trackingLoading"
+                class="flex items-center gap-3 rounded-2xl border border-dashed border-white/60 bg-white/60 p-4 text-sm text-slate-500"
+              >
+                <Loader :size="20" class="text-gold" />
+                <span>Live-Anfragen werden geladen…</span>
+              </div>
+              <div
+                v-else-if="trackingError"
+                class="rounded-2xl border border-red-200 bg-red-50/70 p-4 text-sm text-red-600"
+              >
+                {{ trackingError }}
+              </div>
+              <div
+                v-else-if="!activeRequests.length"
                 class="rounded-2xl border border-dashed border-white/60 bg-white/60 p-4 text-sm text-slate-500"
               >
                 Derzeit liegen keine Live-Trackings vor.
@@ -196,6 +209,12 @@
                   </div>
                 </div>
               </div>
+              <p
+                v-if="trackingActionError"
+                class="rounded-2xl border border-red-200 bg-red-50/70 p-3 text-xs text-red-600"
+              >
+                {{ trackingActionError }}
+              </p>
             </div>
 
             <div class="glass-card p-6 sm:p-8 space-y-4">
@@ -222,7 +241,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
@@ -296,13 +315,35 @@ onUnmounted(() => {
   if (typeof unsubscribeAuth === 'function') {
     unsubscribeAuth()
   }
+  unsubscribeFromCompanyRequests()
 })
 
 const days = DAYS.map(key => ({ key, label: DAY_LABELS[key] }))
 
-const { requests, stopTracking } = useTrackingStore()
+const { requests, stopTracking, subscribeToCompanyRequests, unsubscribeFromCompanyRequests, companyStream } =
+  useTrackingStore()
 const companyId = computed(() => company.value?.id || (isFirebaseConfigured ? auth.currentUser?.uid : null))
 const activeRequests = computed(() => requests.value.filter((req) => req.companyId === companyId.value))
+const trackingLoading = computed(
+  () => companyStream.value.companyId === companyId.value && companyStream.value.loading
+)
+const trackingError = computed(
+  () => (companyStream.value.companyId === companyId.value ? companyStream.value.error : '')
+)
+const trackingActionError = ref('')
+
+watch(
+  companyId,
+  (id) => {
+    trackingActionError.value = ''
+    if (id) {
+      subscribeToCompanyRequests(id)
+    } else {
+      unsubscribeFromCompanyRequests()
+    }
+  },
+  { immediate: true }
+)
 
 function formatRemaining(minutes) {
   return formatDuration(minutes, { short: true })
@@ -312,8 +353,13 @@ function etaLabel(request) {
   return formatEta(request.etaTimestamp)
 }
 
-function endTracking(requestId) {
-  stopTracking(requestId)
+async function endTracking(requestId) {
+  trackingActionError.value = ''
+  try {
+    await stopTracking(requestId)
+  } catch (error) {
+    trackingActionError.value = error?.message || 'Tracking konnte nicht beendet werden.'
+  }
 }
 
 function distanceLabel(request) {
