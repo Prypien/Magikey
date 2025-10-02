@@ -16,6 +16,9 @@
             <li>
               <router-link to="/hilfe" class="menu-link">Hilfe-Center</router-link>
             </li>
+            <li>
+              <router-link to="/support" class="menu-link">Magikey unterstützen</router-link>
+            </li>
             <li v-if="isAdmin">
               <router-link to="/admin" class="menu-link">Admin Dashboard</router-link>
             </li>

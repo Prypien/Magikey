@@ -60,6 +60,11 @@ const routes = [
         component: () => import('@/pages/static/DatenschutzView.vue'),
       },
       { path: 'hilfe', name: 'help', component: () => import('@/pages/static/HelpCenterView.vue') },
+      {
+        path: 'support',
+        name: 'support',
+        component: () => import('@/pages/static/SupportView.vue'),
+      },
       { path: 'success', name: 'success', component: () => import('@/pages/static/SuccessView.vue') },
       { path: 'verify', name: 'verify-email', component: () => import('@/pages/auth/VerifyEmailView.vue') },
       { path: 'verify-email', redirect: '/verify' },
