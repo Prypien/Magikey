@@ -91,23 +91,32 @@
             </div>
 
             <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
-              <button
-                v-if="company.phone"
-                type="button"
+              <a
+                v-if="phoneLink"
+                :href="phoneLink"
                 class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
-                @click="openReview('call')"
               >
                 <i class="fa fa-phone"></i>
                 Jetzt anrufen
-              </button>
-              <button
+              </a>
+              <a
                 v-if="whatsappLink"
-                type="button"
+                :href="whatsappLink"
+                target="_blank"
+                rel="noopener"
                 class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
-                @click="openReview('whatsapp')"
               >
                 <i class="fa fa-whatsapp"></i>
                 Über WhatsApp schreiben
+              </a>
+            </div>
+            <div class="text-center text-sm text-slate-600">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 font-semibold text-slate-600 underline hover:text-slate-800"
+                @click="openReview('feedback')"
+              >
+                Feedback geben
               </button>
             </div>
           </div>
@@ -154,7 +163,7 @@ const companyId = route.params.id
 const company = ref({})
 const days = DAYS
 const showReviewModal = ref(false)
-const pendingAction = ref('call')
+const pendingAction = ref('feedback')
 
 onMounted(async () => {
   if (companyId) {
@@ -215,6 +224,13 @@ const openStatus = computed(() => {
   return 'Derzeit geschlossen'
 })
 
+const phoneLink = computed(() => {
+  const raw = company.value.phone
+  if (!raw) return ''
+  const normalized = raw.toString().replace(/[^0-9+]/g, '')
+  return normalized ? `tel:${normalized}` : ''
+})
+
 const whatsappLink = computed(() => {
   const raw = company.value.whatsapp
   if (!raw) return ''
@@ -222,7 +238,7 @@ const whatsappLink = computed(() => {
   return normalized ? `https://wa.me/${normalized}` : ''
 })
 
-function openReview(action) {
+function openReview(action = 'feedback') {
   pendingAction.value = action
   showReviewModal.value = true
 }
@@ -234,8 +250,8 @@ function closeReviewModal() {
 function handleReviewSubmitted() {
   const action = pendingAction.value
   showReviewModal.value = false
-  if (action === 'call' && company.value.phone) {
-    window.location.href = `tel:${company.value.phone}`
+  if (action === 'call' && phoneLink.value) {
+    window.location.href = phoneLink.value
   } else if (action === 'whatsapp' && whatsappLink.value) {
     window.open(whatsappLink.value, '_blank', 'noopener')
   }
