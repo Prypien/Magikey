@@ -7,7 +7,7 @@
         Zurück
       </button>
 
-      <div class="glass-card p-8 sm:p-10">
+      <div v-if="company" class="glass-card p-8 sm:p-10">
         <div class="grid gap-10 lg:grid-cols-[1.15fr,0.85fr]">
           <div class="space-y-6">
             <div class="flex flex-col items-center gap-4 text-center">
@@ -124,6 +124,10 @@
           </div>
         </div>
       </div>
+      <div v-else class="glass-card p-8 sm:p-10 text-center text-sm text-slate-600">
+        <span v-if="isLoading">Unternehmensdaten werden geladen…</span>
+        <span v-else>Das angeforderte Unternehmen wurde nicht gefunden.</span>
+      </div>
     </div>
   </section>
 
@@ -140,7 +144,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
@@ -150,26 +154,36 @@ import { useTrackingStore } from '@/stores/tracking'
 import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
 
 const route = useRoute()
+const router = useRouter()
 const companyId = route.params.id
-const company = ref({})
+const company = ref(null)
 const days = DAYS
 const showReviewModal = ref(false)
 const pendingAction = ref('call')
+const isLoading = ref(true)
 
 onMounted(async () => {
-  if (companyId) {
-    try {
-      const data = await getCompany(companyId)
-      if (data) {
-        company.value = data
-      }
-    } catch (err) {
-      console.error('Fehler beim Laden:', err)
+  if (!companyId) {
+    router.replace({ name: 'not-found' })
+    return
+  }
+  try {
+    const data = await getCompany(companyId)
+    if (data) {
+      company.value = data
+    } else {
+      router.replace({ name: 'not-found' })
     }
+  } catch (err) {
+    console.error('Fehler beim Laden:', err)
+    router.replace({ name: 'not-found' })
+  } finally {
+    isLoading.value = false
   }
 })
 
 const fullAddress = computed(() => {
+  if (!company.value) return ''
   const parts = [company.value.address, company.value.postal_code, company.value.city].filter(Boolean)
   return parts.join(', ')
 })
@@ -201,6 +215,7 @@ const now = new Date()
 const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
 const isOpen = computed(() => {
+  if (!company.value) return false
   const day = days[now.getDay() - 1 < 0 ? 6 : now.getDay() - 1]
   const hours = company.value.opening_hours?.[day]
   if (!hours || !hours.open || !hours.close) return false
@@ -210,13 +225,14 @@ const isOpen = computed(() => {
 })
 
 const openStatus = computed(() => {
+  if (!company.value) return 'Derzeit geschlossen'
   if (isOpen.value) return 'Jetzt geöffnet'
   if (company.value.is_247 && company.value.emergency_price) return `Notdienst verfügbar – ${company.value.emergency_price} €`
   return 'Derzeit geschlossen'
 })
 
 const whatsappLink = computed(() => {
-  const raw = company.value.whatsapp
+  const raw = company.value?.whatsapp
   if (!raw) return ''
   const normalized = raw.toString().replace(/[^0-9]/g, '')
   return normalized ? `https://wa.me/${normalized}` : ''
@@ -242,7 +258,7 @@ function handleReviewSubmitted() {
 }
 
 function dayStatus(day) {
-  const hours = company.value.opening_hours?.[day]
+  const hours = company.value?.opening_hours?.[day]
   if (!hours || !hours.open || !hours.close) return 'text-gray-500'
   return 'text-black'
 }
@@ -257,7 +273,7 @@ function formatTimeRange(range) {
 }
 
 const lockTypes = computed(() =>
-  (company.value.lock_types || []).map((t) => ({
+  (company.value?.lock_types || []).map((t) => ({
     icon: LOCK_TYPE_ICONS[t] || '',
     label: LOCK_TYPE_LABELS[t] || t
   }))

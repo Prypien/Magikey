@@ -98,6 +98,12 @@ function cloneFallbackCompany(id) {
   return fallback ? cloneValue(fallback) : null
 }
 
+function isVerifiedCompany(company) {
+  if (!company) return false
+  if (company.verified !== true) return false
+  return company.verification?.status === 'verified'
+}
+
 function withFallback(result) {
   return Array.isArray(result) && result.length ? result : cloneFallbackCompanies()
 }
@@ -127,7 +133,8 @@ export async function getCompanies() {
 // Holt ein einzelnes Unternehmen anhand seiner ID.
 export async function getCompany(id) {
   if (!isFirebaseConfigured || !db) {
-    return cloneFallbackCompany(id)
+    const fallback = cloneFallbackCompany(id)
+    return isVerifiedCompany(fallback) ? fallback : null
   }
   try {
     const snap = await getDoc(doc(db, 'companies', id))
@@ -135,9 +142,11 @@ export async function getCompany(id) {
     if (!snap.exists()) return null
     const data = { id: snap.id, ...snap.data() }
     if (data.is_admin) return null
+    if (!isVerifiedCompany(data)) return null
     return data
   } catch (err) {
     console.error('Fehler beim Abrufen der Firma:', err)
-    return cloneFallbackCompany(id)
+    const fallback = cloneFallbackCompany(id)
+    return isVerifiedCompany(fallback) ? fallback : null
   }
 }
