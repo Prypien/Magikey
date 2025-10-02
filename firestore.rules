@@ -31,6 +31,10 @@ service cloud.firestore {
       return role == 'company' || role == 'user';
     }
 
+    function isTrackingStatus(value) {
+      return value in ['en_route', 'arrived', 'cancelled'];
+    }
+
     match /companies/{companyId} {
       // Owners can manage their own company profile
       allow create: if isCompanyOwner(companyId);
@@ -110,6 +114,87 @@ service cloud.firestore {
           request.resource.data.status.size() > 0;
 
       allow read, update, delete: if false;
+    }
+
+    match /tracking_requests/{requestId} {
+      allow create: if request.resource.data.keys().hasOnly([
+            'companyId',
+            'companyName',
+            'companyLocation',
+            'userLocation',
+            'distanceKm',
+            'durationMinutes',
+            'requestedAt',
+            'eta',
+            'status',
+            'clientSecret',
+            'createdAt',
+            'updatedAt'
+          ]) &&
+          request.resource.data.companyId is string &&
+          request.resource.data.companyId.size() > 0 &&
+          request.resource.data.companyName is string &&
+          request.resource.data.companyName.size() > 0 &&
+          request.resource.data.companyLocation is map &&
+          request.resource.data.companyLocation.lat is number &&
+          request.resource.data.companyLocation.lng is number &&
+          request.resource.data.userLocation is map &&
+          request.resource.data.userLocation.lat is number &&
+          request.resource.data.userLocation.lng is number &&
+          request.resource.data.distanceKm is number &&
+          request.resource.data.distanceKm >= 0 &&
+          request.resource.data.durationMinutes is number &&
+          request.resource.data.durationMinutes >= 0 &&
+          request.resource.data.requestedAt is timestamp &&
+          request.resource.data.eta is timestamp &&
+          isTrackingStatus(request.resource.data.status) &&
+          request.resource.data.status != 'cancelled' &&
+          request.resource.data.clientSecret is string &&
+          request.resource.data.clientSecret.size() >= 16 &&
+          request.resource.data.createdAt is timestamp &&
+          request.resource.data.updatedAt is timestamp;
+
+      allow read: if resource != null && (isCompanyOwner(resource.data.companyId) || isAdminUser());
+
+      allow update: if
+        (resource != null && (isCompanyOwner(resource.data.companyId) || isAdminUser())) ||
+        (
+          request.auth == null &&
+          request.resource.data.keys().hasOnly([
+            'companyId',
+            'companyName',
+            'companyLocation',
+            'userLocation',
+            'distanceKm',
+            'durationMinutes',
+            'requestedAt',
+            'eta',
+            'status',
+            'clientSecret',
+            'createdAt',
+            'updatedAt',
+            'endedAt'
+          ]) &&
+          request.resource.data.companyId == resource.data.companyId &&
+          request.resource.data.companyName == resource.data.companyName &&
+          request.resource.data.companyLocation == resource.data.companyLocation &&
+          request.resource.data.userLocation == resource.data.userLocation &&
+          request.resource.data.distanceKm == resource.data.distanceKm &&
+          request.resource.data.durationMinutes == resource.data.durationMinutes &&
+          request.resource.data.requestedAt == resource.data.requestedAt &&
+          request.resource.data.eta == resource.data.eta &&
+          request.resource.data.clientSecret == resource.data.clientSecret &&
+          request.resource.data.createdAt == resource.data.createdAt &&
+          isTrackingStatus(request.resource.data.status) &&
+          request.resource.data.updatedAt is timestamp &&
+          (
+            (resource.data.endedAt == null && request.resource.data.endedAt == null) ||
+            request.resource.data.endedAt == resource.data.endedAt ||
+            request.resource.data.endedAt is timestamp
+          )
+        );
+
+      allow delete: if resource != null && (isCompanyOwner(resource.data.companyId) || isAdminUser());
     }
 
     // Deny all other access by default

@@ -133,7 +133,7 @@ async function request() {
   loading.value = true
   try {
     const location = await detectCurrentLocation({ enableHighAccuracy: true, timeout: 10000 })
-    startTracking(props.company, location)
+    await startTracking(props.company, location)
   } catch (err) {
     error.value = err?.message || 'Standort konnte nicht ermittelt werden.'
   } finally {
@@ -141,9 +141,13 @@ async function request() {
   }
 }
 
-function stop() {
+async function stop() {
   if (activeRequest.value) {
-    stopTracking(activeRequest.value.id)
+    try {
+      await stopTracking(activeRequest.value.id)
+    } catch (err) {
+      error.value = err?.message || 'Tracking konnte nicht beendet werden.'
+    }
   }
 }
 </script>
