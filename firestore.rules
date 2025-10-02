@@ -1,18 +1,34 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function requestEmail() {
-      return request.auth != null && request.auth.token.email is string
-        ? request.auth.token.email
-        : '';
+    function getUserRole() {
+      if (request.auth == null) {
+        return '';
+      }
+
+      let userPath = /databases/$(database)/documents/users/$(request.auth.uid);
+      if (!exists(userPath)) {
+        return '';
+      }
+
+      let userDoc = get(userPath);
+      return userDoc.data.role is string ? userDoc.data.role : '';
     }
 
     function isAdminUser() {
-      return requestEmail() == 'jen@preisser.de' || requestEmail().matches('.*@magikey\\.de$');
+      return getUserRole() == 'admin';
+    }
+
+    function isAuthenticatedUser(userId) {
+      return request.auth != null && request.auth.uid == userId;
     }
 
     function isCompanyOwner(companyId) {
       return request.auth != null && request.auth.uid == companyId;
+    }
+
+    function isNonAdminRole(role) {
+      return role == 'company' || role == 'user';
     }
 
     match /companies/{companyId} {
@@ -33,6 +49,35 @@ service cloud.firestore {
       // Anyone may add an email address
       allow create: if true;
       allow read, update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow create: if isAuthenticatedUser(userId)
+        && request.resource.data.keys().hasOnly(['email', 'role', 'created_at', 'updated_at'])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && isNonAdminRole(request.resource.data.role)
+        && request.resource.data.created_at is timestamp
+        && request.resource.data.updated_at is timestamp;
+
+      allow read: if isAuthenticatedUser(userId) || isAdminUser();
+
+      allow update: if (
+          isAuthenticatedUser(userId)
+          && request.resource.data.keys().hasOnly(['email', 'role', 'created_at', 'updated_at'])
+          && request.resource.data.email is string
+          && request.resource.data.email.size() > 0
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.created_at == resource.data.created_at
+          && request.resource.data.updated_at is timestamp
+        ) || isAdminUser();
+
+      allow delete: if isAdminUser();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create, update, delete: if isAdminUser();
     }
 
     match /review_requests/{requestId} {

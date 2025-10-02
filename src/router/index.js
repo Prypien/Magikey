@@ -10,7 +10,7 @@ import HomeView from '@/pages/HomeView.vue'
 // Firebase-Auth-Instanz zum Prüfen von Login-Status
 import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
-import { isAdminUser } from '@/constants/admin'
+import { USER_ROLES, getUserRole } from '@/constants/admin'
 
 // Definierte Routen
 const routes = [
@@ -126,7 +126,8 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = isFirebaseConfigured && to.meta.requiresAuth
   const requiresAdmin = isFirebaseConfigured && to.meta.requiresAdmin
   const isLoginRoute = to.name === 'login'
-  const userIsAdmin = isAdminUser(user)
+  const userRole = user ? await getUserRole(user) : USER_ROLES.USER
+  const userIsAdmin = userRole === USER_ROLES.ADMIN
 
   if (requiresAuth && !user) {
     next({ name: 'login' })
