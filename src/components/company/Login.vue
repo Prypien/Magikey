@@ -104,7 +104,7 @@ const login = async () => {
   try {
     const credential = await loginService(email.value, password.value)
     emit('success')
-    const role = await getUserRole(credential.user)
+    const role = await getUserRole(credential.user, { forceRefresh: true })
     setCachedUserRole(credential.user?.uid, role)
     const targetRoute = role === USER_ROLES.ADMIN ? '/admin' : '/dashboard'
     router.push(targetRoute)

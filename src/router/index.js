@@ -126,7 +126,9 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = isFirebaseConfigured && to.meta.requiresAuth
   const requiresAdmin = isFirebaseConfigured && to.meta.requiresAdmin
   const isLoginRoute = to.name === 'login'
-  const userRole = user ? await getUserRole(user) : USER_ROLES.USER
+  const userRole = user
+    ? await getUserRole(user, { forceRefresh: requiresAdmin })
+    : USER_ROLES.USER
   const userIsAdmin = userRole === USER_ROLES.ADMIN
 
   if (requiresAuth && !user) {

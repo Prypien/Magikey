@@ -342,7 +342,7 @@ const register = async (form) => {
       rolePayload.created_at = timestamp
     }
     await setDoc(userRef, rolePayload, { merge: true })
-    setCachedUserRole(user.uid, USER_ROLES.COMPANY)
+    setCachedUserRole(user.uid, USER_ROLES.COMPANY, { fetchedAt: Date.now() })
     await sendVerificationEmail(user)
     router.push({
       name: 'success',
