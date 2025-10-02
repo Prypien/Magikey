@@ -26,6 +26,54 @@ export const filteredCompanies = computed(() => {
   const normalizedLocationDigits = normalizedLocation?.replace(/\s+/g, '')
   const normalizedLocationLower = normalizedLocation?.toLowerCase()
 
+  const locationLat = Number(filters.locationMeta?.lat)
+  const locationLng = Number(filters.locationMeta?.lng)
+  const hasLocationCoords = Number.isFinite(locationLat) && Number.isFinite(locationLng)
+
+  function getCompanyCoordinates(company) {
+    const lat = Number(
+      company?.coordinates?.lat ??
+        company?.coordinates?.latitude ??
+        company?.latitude ??
+        company?.lat
+    )
+    const lng = Number(
+      company?.coordinates?.lng ??
+        company?.coordinates?.longitude ??
+        company?.longitude ??
+        company?.lng
+    )
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+    return { lat, lng }
+  }
+
+  function getServiceRadius(company) {
+    const radius = Number(company?.service_radius_km)
+    if (!Number.isFinite(radius) || radius < 0) return null
+    return radius
+  }
+
+  function toRadians(value) {
+    return (value * Math.PI) / 180
+  }
+
+  function distanceInKm(a, b) {
+    const R = 6371
+    const dLat = toRadians(b.lat - a.lat)
+    const dLng = toRadians(b.lng - a.lng)
+    const lat1 = toRadians(a.lat)
+    const lat2 = toRadians(b.lat)
+
+    const sinDLat = Math.sin(dLat / 2)
+    const sinDLng = Math.sin(dLng / 2)
+    const haversine =
+      sinDLat * sinDLat +
+      Math.cos(lat1) * Math.cos(lat2) * sinDLng * sinDLng
+
+    const c = 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
+    return R * c
+  }
+
   return companies.value.filter((company) => {
     const postalCode = company.postal_code != null ? company.postal_code.toString().trim() : ''
     const normalizedPostalCode = postalCode.replace(/\s+/g, '')
@@ -66,7 +114,28 @@ export const filteredCompanies = computed(() => {
       filters.lockTypes.length === 0 ||
       (company.lock_types || []).some((t) => filters.lockTypes.includes(t))
 
-    return (matchesPLZ || matchesCity) && matchesOpen && inPrice && matchesLock
+    let matchesLocation = matchesPLZ || matchesCity
+
+    if (hasLocationCoords) {
+      const companyCoords = getCompanyCoordinates(company)
+      const serviceRadius = getServiceRadius(company)
+
+      if (companyCoords && serviceRadius !== null) {
+        const distance = distanceInKm(
+          { lat: locationLat, lng: locationLng },
+          companyCoords
+        )
+
+        const withinRadius = distance <= serviceRadius
+        if (withinRadius) {
+          matchesLocation = true
+        } else if (matchesLocation) {
+          matchesLocation = false
+        }
+      }
+    }
+
+    return matchesLocation && matchesOpen && inPrice && matchesLock
   })
 })
 
