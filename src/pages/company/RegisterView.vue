@@ -142,7 +142,7 @@
                 name="description"
                 label="Beschreibung"
                 placeholder="Beschreibe dein Angebot in ein paar Sätzen"
-                validation="required|min:20"
+                validation="required|length:20,1000"
                 :classes="textareaClasses"
                 help="Dieser Text wird im Profil angezeigt. Mindestens 20 Zeichen."
               />
