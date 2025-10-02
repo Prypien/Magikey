@@ -123,6 +123,13 @@
             ></iframe>
           </div>
         </div>
+
+        <CompanyReviews
+          class="mt-10"
+          :google-reviews-url="company.verification?.google_reviews_url || ''"
+          :magikey-reviews="magikeyReviews"
+          :loading="reviewsLoading"
+        />
       </div>
     </div>
   </section>
@@ -139,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
@@ -148,26 +155,52 @@ import { DAYS, DAY_LABELS } from '@/constants/days'
 import TrackingRequestPanel from '@/components/tracking/TrackingRequestPanel.vue'
 import { useTrackingStore } from '@/stores/tracking'
 import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
+import CompanyReviews from '@/components/reviews/CompanyReviews.vue'
+import { useReviewStore } from '@/stores/reviews'
 
 const route = useRoute()
-const companyId = route.params.id
+const companyId = computed(() => route.params.id)
 const company = ref({})
 const days = DAYS
 const showReviewModal = ref(false)
 const pendingAction = ref('call')
+const reviewStore = useReviewStore()
+
+const magikeyReviews = computed(() => reviewStore.getReviewsForCompany(companyId.value))
+const reviewsLoading = computed(() => reviewStore.isLoading(companyId.value))
+
+async function loadCompanyDetails(id) {
+  if (!id) return
+
+  if (company.value?.id && company.value.id !== id) {
+    company.value = {}
+  }
+
+  try {
+    const data = await getCompany(id)
+    if (companyId.value !== id) return
+    company.value = data || {}
+  } catch (err) {
+    console.error('Fehler beim Laden:', err)
+    if (companyId.value !== id) return
+    company.value = {}
+  }
+
+  if (companyId.value !== id) return
+  await reviewStore.fetchCompanyReviews(id)
+}
 
 onMounted(async () => {
-  if (companyId) {
-    try {
-      const data = await getCompany(companyId)
-      if (data) {
-        company.value = data
-      }
-    } catch (err) {
-      console.error('Fehler beim Laden:', err)
-    }
-  }
+  await loadCompanyDetails(companyId.value)
 })
+
+watch(
+  companyId,
+  async (newId, oldId) => {
+    if (!newId || newId === oldId) return
+    await loadCompanyDetails(newId)
+  }
+)
 
 const fullAddress = computed(() => {
   const parts = [company.value.address, company.value.postal_code, company.value.city].filter(Boolean)
