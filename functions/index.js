@@ -1,9 +1,10 @@
 // Diese Datei stellt eine Cloud Function bereit, um aus Koordinaten die Postleitzahl zu holen.
 /* eslint-env node */
 /* global fetch */
-const functions = require('firebase-functions')
-const admin = require('firebase-admin')
-const cors = require('cors')({ origin: true })
+const functions = require('./firebaseFunctions')
+const admin = require('./firebaseAdmin')
+const cors = require('./cors')({ origin: true })
+const { sendReviewEmail } = require('./reviewMailer')
 
 admin.initializeApp()
 
@@ -48,3 +49,41 @@ exports.postalCodeFromCoords = functions.https.onRequest((req, res) => {
     }
   })
 })
+
+exports._sendReviewEmail = sendReviewEmail
+
+exports.onReviewRequestCreated = functions.firestore
+  .document('review_requests/{requestId}')
+  .onCreate(async (snap, context) => {
+    const data = snap.data()
+    const requestId = context.params.requestId
+
+    if (!data) {
+      functions.logger.warn('Received empty review request payload', { requestId })
+      return null
+    }
+
+    if (!data.customer_email) {
+      functions.logger.warn('Missing customer_email on review request', { requestId })
+      return null
+    }
+
+    try {
+      const result = await exports._sendReviewEmail({
+        ...data,
+        requestId,
+      })
+      functions.logger.info('Review request email processed', {
+        requestId,
+        provider: result?.provider,
+      })
+    } catch (error) {
+      functions.logger.error('Failed to send review request email', {
+        requestId,
+        error: error.message,
+      })
+      throw error
+    }
+
+    return null
+  })

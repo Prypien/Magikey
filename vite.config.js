@@ -35,4 +35,9 @@ export default defineConfig({
     // Increase the limit to avoid warnings when chunks are still large
     chunkSizeWarningLimit: 1000,
   },
+  test: {
+    env: {
+      MAGIKEY_USE_FUNCTIONS_STUB: 'true',
+    },
+  },
 })

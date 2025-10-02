@@ -10,6 +10,18 @@ export async function createReviewInvite({
   if (!customerEmail) throw new Error('E-Mail-Adresse ist erforderlich')
   if (!companyId) throw new Error('Unternehmens-ID fehlt')
 
+  if (import.meta?.env?.DEV) {
+    console.info(
+      '[DEV] Mock-Mailversand: Review-E-Mail würde gesendet werden an',
+      customerEmail,
+      {
+        companyId,
+        companyName,
+        contactType,
+      },
+    )
+  }
+
   if (!isFirebaseConfigured || !db) {
     console.warn('Firebase nicht konfiguriert. Review-Anfrage wird nicht gespeichert.')
     return { id: null, simulated: true }
