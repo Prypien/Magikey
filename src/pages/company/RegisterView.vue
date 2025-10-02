@@ -207,6 +207,7 @@ import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { USER_ROLES, setCachedUserRole } from '@/constants/admin'
 import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
@@ -329,6 +330,19 @@ const register = async (form) => {
         },
       })
     }
+    const userRef = doc(db, 'users', user.uid)
+    const userSnap = await getDoc(userRef)
+    const timestamp = serverTimestamp()
+    const rolePayload = {
+      email: normalizeText(form.email),
+      role: USER_ROLES.COMPANY,
+      updated_at: timestamp,
+    }
+    if (!userSnap.exists()) {
+      rolePayload.created_at = timestamp
+    }
+    await setDoc(userRef, rolePayload, { merge: true })
+    setCachedUserRole(user.uid, USER_ROLES.COMPANY)
     await sendVerificationEmail(user)
     router.push({
       name: 'success',

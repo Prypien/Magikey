@@ -100,7 +100,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import OverlayMenu from '@/components/common/OverlayMenu.vue'
 import FilterBar from '@/components/user/FilterBar.vue'
 import MobileFilterBar from '@/components/user/MobileFilterBar.vue'
-import { isAdminUser } from '@/constants/admin'
+import { USER_ROLES, clearCachedUserRole, getUserRole, setCachedUserRole } from '@/constants/admin'
 
 const emit = defineEmits(['update-height'])
 
@@ -199,9 +199,18 @@ onBeforeUnmount(() => {
 // Lädt die Unternehmensdaten des eingeloggten Users
 async function fetchCompanyData(user) {
   currentUser.value = user
-  isAdmin.value = isAdminUser(user)
+  if (!user) {
+    isAdmin.value = false
+    clearCachedUserRole()
+    companyData.value = null
+    return
+  }
 
-  if (!isFirebaseConfigured || !user || isAdmin.value) {
+  const role = await getUserRole(user)
+  setCachedUserRole(user.uid, role)
+  isAdmin.value = role === USER_ROLES.ADMIN
+
+  if (!isFirebaseConfigured || isAdmin.value) {
     companyData.value = null
     return
   }
@@ -228,7 +237,12 @@ async function fetchCompanyData(user) {
 // Ausloggen des Users und Redirect
 async function logout() {
   if (!isFirebaseConfigured) return
+  if (currentUser.value?.uid) {
+    clearCachedUserRole(currentUser.value.uid)
+  }
   await signOut(auth)
+  isAdmin.value = false
+  companyData.value = null
   router.push('/')
 }
 </script>

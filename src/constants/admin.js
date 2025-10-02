@@ -1,21 +1,68 @@
-export const ADMIN_EMAILS = ['jen@preisser.de']
+import { db, isFirebaseConfigured } from '@/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
-export const ADMIN_EMAIL_DOMAINS = ['magikey.de']
+export const USER_ROLES = {
+  ADMIN: 'admin',
+  USER: 'user',
+  COMPANY: 'company',
+}
 
-const NORMALIZED_ADMIN_EMAILS = ADMIN_EMAILS.map((email) => email.trim().toLowerCase())
-const NORMALIZED_ADMIN_DOMAINS = ADMIN_EMAIL_DOMAINS.map((domain) => domain.trim().toLowerCase())
+const roleCache = new Map()
 
-export function isAdminUser(user) {
-  if (!user) return false
-  const rawEmail = typeof user.email === 'string' ? user.email : ''
-  const normalizedEmail = rawEmail.trim().toLowerCase()
-  if (!normalizedEmail) return false
+function normalizeRole(role) {
+  if (typeof role !== 'string') return USER_ROLES.USER
+  const value = role.trim().toLowerCase()
+  if (!value) return USER_ROLES.USER
+  if (value === USER_ROLES.ADMIN) return USER_ROLES.ADMIN
+  if (value === USER_ROLES.COMPANY) return USER_ROLES.COMPANY
+  return USER_ROLES.USER
+}
 
-  if (NORMALIZED_ADMIN_EMAILS.includes(normalizedEmail)) {
-    return true
+export function setCachedUserRole(uid, role) {
+  if (!uid) return
+  roleCache.set(uid, normalizeRole(role))
+}
+
+export function clearCachedUserRole(uid) {
+  if (uid) {
+    roleCache.delete(uid)
+  } else {
+    roleCache.clear()
+  }
+}
+
+async function fetchRoleByUid(uid) {
+  if (!uid || !isFirebaseConfigured || !db) {
+    return USER_ROLES.USER
   }
 
-  const domain = normalizedEmail.split('@')[1]
-  if (!domain) return false
-  return NORMALIZED_ADMIN_DOMAINS.includes(domain)
+  if (roleCache.has(uid)) {
+    return roleCache.get(uid)
+  }
+
+  try {
+    const snap = await getDoc(doc(db, 'users', uid))
+    const data = snap.exists() ? snap.data() : null
+    const role = normalizeRole(data?.role)
+    roleCache.set(uid, role)
+    return role
+  } catch (error) {
+    console.error('Konnte Nutzerrolle nicht laden:', error)
+    return USER_ROLES.USER
+  }
+}
+
+export async function getUserRole(user) {
+  if (!user) return USER_ROLES.USER
+  return fetchRoleByUid(user.uid)
+}
+
+export async function isAdminUser(user) {
+  const role = await getUserRole(user)
+  return role === USER_ROLES.ADMIN
+}
+
+export async function isAdminByUid(uid) {
+  const role = await fetchRoleByUid(uid)
+  return role === USER_ROLES.ADMIN
 }
