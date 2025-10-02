@@ -114,6 +114,17 @@
               />
 
               <FormKit
+                type="number"
+                name="service_radius_km"
+                label="Einsatzradius (km)"
+                min="0"
+                step="1"
+                validation="required|min:0"
+                :classes="inputClasses"
+                help="Wie weit fährst du maximal zu Kund:innen? Bitte in Kilometern angeben."
+              />
+
+              <FormKit
                 type="text"
                 name="address"
                 label="Straße und Hausnummer"
@@ -212,6 +223,7 @@ import Button from '@/components/common/Button.vue'
 import PasswordField from '@/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/components/company/OpeningHoursForm.vue'
 import { LOCK_TYPE_OPTIONS } from '@/constants/lockTypes'
+import { searchLocations } from '@/services/location'
 import { sendVerificationEmail } from '@/services/auth'
 
 const router = useRouter()
@@ -256,6 +268,12 @@ function normalizeText(value) {
   return typeof value === 'string' ? value.trim() : value
 }
 
+function normalizeRadius(value) {
+  const radius = Number(value)
+  if (!Number.isFinite(radius) || radius < 0) return 0
+  return radius
+}
+
 function hasValidOpeningHours(hours) {
   const values = Object.values(hours || {})
   if (!values.length) return false
@@ -273,6 +291,28 @@ function cloneOpeningHours(hours) {
   } catch (error) {
     console.warn('Konnte Öffnungszeiten nicht klonen, nutze Fallback.', error)
     return hours || {}
+  }
+}
+
+function buildGeocodeQuery(form) {
+  const parts = [form.address, form.postal_code, form.city]
+    .map((part) => normalizeText(part))
+    .filter(Boolean)
+  return parts.join(', ')
+}
+
+async function resolveCoordinates(form) {
+  const query = buildGeocodeQuery(form)
+  if (!query) return null
+
+  try {
+    const [result] = await searchLocations(query, { limit: 1 })
+    if (!result) return null
+    if (!Number.isFinite(result.lat) || !Number.isFinite(result.lng)) return null
+    return { lat: result.lat, lng: result.lng }
+  } catch (error) {
+    console.warn('Konnte Koordinaten nicht ermitteln:', error)
+    return null
   }
 }
 
@@ -300,6 +340,8 @@ const register = async (form) => {
     const whatsappNumber = hasSeparateWhatsapp.value ? normalizeText(form.whatsapp || '') : normalizeText(form.phone)
     const companyRef = doc(db, 'companies', user.uid)
     const existing = await getDoc(companyRef)
+    const coordinates = await resolveCoordinates(form)
+
     if (!existing.exists()) {
       await setDoc(companyRef, {
         company_name: normalizeText(form.company_name),
@@ -315,6 +357,8 @@ const register = async (form) => {
         opening_hours: cloneOpeningHours(openingHours.value),
         is_247: form.is_247 || false,
         emergency_price: form.is_247 ? Number(form.emergency_price) : null,
+        service_radius_km: normalizeRadius(form.service_radius_km),
+        coordinates: coordinates || null,
         created_at: serverTimestamp(),
         verified: false,
         verification: {
