@@ -32,14 +32,64 @@ describe('company service', () => {
 
   it('fetches all companies', async () => {
     firestoreMocks.getDocs.mockResolvedValueOnce({
-      docs: [{ id: 'a', data: () => ({ name: 'A' }) }]
+      docs: [
+        {
+          id: 'a',
+          data: () => ({
+            name: 'A',
+            verified: true,
+            verification: { status: 'verified' }
+          })
+        }
+      ]
     })
     const comps = await getCompanies()
     expect(firestoreMocks.collection).toHaveBeenCalledWith('db-instance', 'companies')
     expect(firestoreMocks.where).toHaveBeenCalledWith('verified', '==', true)
     expect(firestoreMocks.query).toHaveBeenCalledWith('collection', 'where')
     expect(firestoreMocks.getDocs).toHaveBeenCalledWith('query')
-    expect(comps).toEqual([{ id: 'a', name: 'A' }])
+    expect(comps).toEqual([
+      {
+        id: 'a',
+        name: 'A',
+        verified: true,
+        verification: { status: 'verified' }
+      }
+    ])
+  })
+
+  it('filters out non-verified companies from the collection result', async () => {
+    firestoreMocks.getDocs.mockResolvedValueOnce({
+      docs: [
+        {
+          id: 'a',
+          data: () => ({
+            name: 'A',
+            verified: true,
+            verification: { status: 'pending' }
+          })
+        },
+        {
+          id: 'b',
+          data: () => ({
+            name: 'B',
+            verified: true,
+            verification: { status: 'verified' }
+          })
+        }
+      ]
+    })
+
+    const comps = await getCompanies()
+
+    expect(comps).toEqual([
+      {
+        id: 'b',
+        name: 'B',
+        verified: true,
+        verification: { status: 'verified' }
+      }
+    ])
   })
 
   it('fetches one company', async () => {

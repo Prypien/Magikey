@@ -89,10 +89,6 @@ function cloneValue(value) {
   return JSON.parse(JSON.stringify(value))
 }
 
-function cloneFallbackCompanies() {
-  return cloneValue(FALLBACK_COMPANIES)
-}
-
 function cloneFallbackCompany(id) {
   const fallback = FALLBACK_COMPANIES.find((company) => company.id === id)
   return fallback ? cloneValue(fallback) : null
@@ -104,8 +100,13 @@ function isVerifiedCompany(company) {
   return company.verification?.status === 'verified'
 }
 
+function cloneFallbackCompanies() {
+  return cloneValue(FALLBACK_COMPANIES.filter(isVerifiedCompany))
+}
+
 function withFallback(result) {
-  return Array.isArray(result) && result.length ? result : cloneFallbackCompanies()
+  const verified = Array.isArray(result) ? result.filter(isVerifiedCompany) : []
+  return verified.length ? verified : cloneFallbackCompanies()
 }
 
 // Holt alle verifizierten Unternehmen aus der Datenbank.
@@ -122,6 +123,7 @@ export async function getCompanies() {
     const data = snap.docs
       .map((d) => ({ id: d.id, ...d.data() }))
       .filter((company) => !company.is_admin)
+      .filter(isVerifiedCompany)
     return withFallback(data)
   } catch (err) {
     // Im Fehlerfall leere Liste zurückgeben, damit die App stabil bleibt.
