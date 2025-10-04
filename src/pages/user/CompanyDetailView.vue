@@ -7,7 +7,7 @@
         Zurück
       </button>
 
-      <div class="glass-card p-8 sm:p-10">
+      <div v-if="company" class="glass-card p-8 sm:p-10">
         <div class="grid gap-10 lg:grid-cols-[1.15fr,0.85fr]">
           <div class="space-y-6">
             <div class="flex flex-col items-center gap-4 text-center">
@@ -133,6 +133,10 @@
           </div>
         </div>
       </div>
+      <div v-else-if="!isLoading" class="glass-card p-8 text-center text-slate-600">
+        <h1 class="section-heading mb-2 text-2xl">Firma nicht gefunden</h1>
+        <p>Die angeforderte Firma existiert nicht oder wurde noch nicht verifiziert.</p>
+      </div>
     </div>
   </section>
 
@@ -149,7 +153,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
@@ -159,27 +163,38 @@ import { useTrackingStore } from '@/stores/tracking'
 import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
 
 const route = useRoute()
+const router = useRouter()
 const companyId = route.params.id
-const company = ref({})
+const company = ref(null)
+const isLoading = ref(true)
 const days = DAYS
 const showReviewModal = ref(false)
 const pendingAction = ref('feedback')
 
 onMounted(async () => {
-  if (companyId) {
-    try {
-      const data = await getCompany(companyId)
-      if (data) {
-        company.value = data
-      }
-    } catch (err) {
-      console.error('Fehler beim Laden:', err)
+  if (!companyId) {
+    isLoading.value = false
+    return
+  }
+
+  try {
+    const data = await getCompany(companyId)
+    if (data) {
+      company.value = data
+    } else {
+      await router.replace({ name: 'not-found' })
     }
+  } catch (err) {
+    console.error('Fehler beim Laden:', err)
+  } finally {
+    isLoading.value = false
   }
 })
 
 const fullAddress = computed(() => {
-  const parts = [company.value.address, company.value.postal_code, company.value.city].filter(Boolean)
+  const current = company.value
+  if (!current) return ''
+  const parts = [current.address, current.postal_code, current.city].filter(Boolean)
   return parts.join(', ')
 })
 const { requests } = useTrackingStore()
@@ -189,9 +204,11 @@ const activeTracking = computed(() =>
 )
 
 const mapUrl = computed(() => {
+  const current = company.value
+  if (!current) return ''
   const tracking = activeTracking.value
-  const companyLat = tracking?.companyLocation?.lat ?? company.value?.coordinates?.lat ?? company.value?.latitude
-  const companyLng = tracking?.companyLocation?.lng ?? company.value?.coordinates?.lng ?? company.value?.longitude
+  const companyLat = tracking?.companyLocation?.lat ?? current?.coordinates?.lat ?? current?.latitude
+  const companyLng = tracking?.companyLocation?.lng ?? current?.coordinates?.lng ?? current?.longitude
 
   if (
     tracking &&
@@ -210,8 +227,10 @@ const now = new Date()
 const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
 const isOpen = computed(() => {
+  const current = company.value
+  if (!current) return false
   const day = days[now.getDay() - 1 < 0 ? 6 : now.getDay() - 1]
-  const hours = company.value.opening_hours?.[day]
+  const hours = current.opening_hours?.[day]
   if (!hours || !hours.open || !hours.close) return false
 
   const toMin = (t) => parseInt(t.split(':')[0]) * 60 + parseInt(t.split(':')[1])
@@ -219,20 +238,22 @@ const isOpen = computed(() => {
 })
 
 const openStatus = computed(() => {
+  const current = company.value
+  if (!current) return 'Unbekannt'
   if (isOpen.value) return 'Jetzt geöffnet'
-  if (company.value.is_247 && company.value.emergency_price) return `Notdienst verfügbar – ${company.value.emergency_price} €`
+  if (current.is_247 && current.emergency_price) return `Notdienst verfügbar – ${current.emergency_price} €`
   return 'Derzeit geschlossen'
 })
 
 const phoneLink = computed(() => {
-  const raw = company.value.phone
+  const raw = company.value?.phone
   if (!raw) return ''
   const normalized = raw.toString().replace(/[^0-9+]/g, '')
   return normalized ? `tel:${normalized}` : ''
 })
 
 const whatsappLink = computed(() => {
-  const raw = company.value.whatsapp
+  const raw = company.value?.whatsapp
   if (!raw) return ''
   const normalized = raw.toString().replace(/[^0-9]/g, '')
   return normalized ? `https://wa.me/${normalized}` : ''
@@ -258,7 +279,7 @@ function handleReviewSubmitted() {
 }
 
 function dayStatus(day) {
-  const hours = company.value.opening_hours?.[day]
+  const hours = company.value?.opening_hours?.[day]
   if (!hours || !hours.open || !hours.close) return 'text-gray-500'
   return 'text-black'
 }
@@ -273,7 +294,7 @@ function formatTimeRange(range) {
 }
 
 const lockTypes = computed(() =>
-  (company.value.lock_types || []).map((t) => ({
+  (company.value?.lock_types || []).map((t) => ({
     icon: LOCK_TYPE_ICONS[t] || '',
     label: LOCK_TYPE_LABELS[t] || t
   }))

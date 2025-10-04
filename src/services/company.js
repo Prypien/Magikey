@@ -134,7 +134,10 @@ export async function getCompany(id) {
     // Existiert die Firma nicht, geben wir null zurück.
     if (!snap.exists()) return null
     const data = { id: snap.id, ...snap.data() }
-    if (data.is_admin) return null
+    const verificationStatus = data.verification?.status
+    if (data.is_admin || data.verified !== true || verificationStatus !== 'verified') {
+      return null
+    }
     return data
   } catch (err) {
     console.error('Fehler beim Abrufen der Firma:', err)

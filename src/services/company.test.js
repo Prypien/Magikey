@@ -46,16 +46,40 @@ describe('company service', () => {
     firestoreMocks.getDoc.mockResolvedValueOnce({
       exists: () => true,
       id: 'a',
-      data: () => ({ name: 'A' })
+      data: () => ({ name: 'A', verified: true, verification: { status: 'verified' } })
     })
     const comp = await getCompany('a')
     expect(firestoreMocks.doc).toHaveBeenCalledWith('db-instance', 'companies', 'a')
-    expect(comp).toEqual({ id: 'a', name: 'A' })
+    expect(comp).toEqual({ id: 'a', name: 'A', verified: true, verification: { status: 'verified' } })
   })
 
   it('returns null when company not found', async () => {
     firestoreMocks.getDoc.mockResolvedValueOnce({ exists: () => false })
     const comp = await getCompany('missing')
+    expect(comp).toBeNull()
+  })
+
+  it('returns null when company is not verified', async () => {
+    firestoreMocks.getDoc.mockResolvedValueOnce({
+      exists: () => true,
+      id: 'b',
+      data: () => ({ name: 'B', verified: false, verification: { status: 'pending' } })
+    })
+
+    const comp = await getCompany('b')
+
+    expect(comp).toBeNull()
+  })
+
+  it('returns null when verification status is not verified', async () => {
+    firestoreMocks.getDoc.mockResolvedValueOnce({
+      exists: () => true,
+      id: 'c',
+      data: () => ({ name: 'C', verified: true, verification: { status: 'pending' } })
+    })
+
+    const comp = await getCompany('c')
+
     expect(comp).toBeNull()
   })
 
