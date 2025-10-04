@@ -119,10 +119,29 @@ if (typeof window !== 'undefined') {
   }, UPDATE_INTERVAL_MS)
 }
 
-function generateClientSecret() {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID()
+function resolveCrypto() {
+  if (typeof globalThis !== 'undefined' && globalThis.crypto) {
+    return globalThis.crypto
   }
+  if (typeof window !== 'undefined' && window.crypto) {
+    return window.crypto
+  }
+  return null
+}
+
+function generateClientSecret() {
+  const cryptoImpl = resolveCrypto()
+  if (cryptoImpl?.randomUUID) {
+    return cryptoImpl.randomUUID()
+  }
+
+  if (cryptoImpl?.getRandomValues) {
+    const buffer = new Uint8Array(16)
+    cryptoImpl.getRandomValues(buffer)
+    const hex = Array.from(buffer, (byte) => byte.toString(16).padStart(2, '0')).join('')
+    return `sec-${hex}`
+  }
+
   return `sec-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
 }
 
