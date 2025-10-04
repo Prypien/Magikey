@@ -4,15 +4,28 @@
   <header
     ref="headerRef"
     class="header-shell"
-    :class="{ 'py-6': searchActive }"
+    :class="{
+      'header-search-active': searchActive,
+      'header-compact': compactHeader,
+    }"
   >
     <router-link
       to="/"
-      class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-full border border-transparent bg-white/40 transition-all hover:-translate-y-[1px] hover:border-gold/40 hover:shadow-sm"
-      v-show="!hideNavOnHomeMobile"
+      class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-full border border-transparent bg-white/40 transition-all hover:-translate-y-[1px] hover:border-gold/40 hover:shadow-sm whitespace-nowrap shrink-0"
+      :class="compactHeader ? 'gap-1 px-1.5 py-1 max-w-[9rem]' : ''"
     >
-      <img src="/logo.png" alt="Logo" class="h-8 sm:h-10 md:h-12 w-auto" />
-      <span class="font-bold text-base sm:text-lg md:text-xl text-gold">Magikey</span>
+      <img
+        src="/logo.png"
+        alt="Logo"
+        class="w-auto transition-all duration-200"
+        :class="compactHeader ? 'h-6' : 'h-8 sm:h-10 md:h-12'"
+      />
+      <span
+        class="font-bold text-base sm:text-lg md:text-xl text-gold transition-all duration-200"
+        :class="compactHeader ? 'text-sm truncate' : ''"
+      >
+        Magikey
+      </span>
     </router-link>
 
     <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-slate-600">
@@ -39,28 +52,47 @@
       </transition>
     </div>
 
-    <div class="flex items-center gap-1 sm:gap-2 md:gap-3">
+    <div class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
       <!-- Link zum Adminbereich -->
       <router-link
         v-if="isAdmin"
         to="/admin"
         class="hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 hover:text-emerald-800 md:inline-flex"
-        v-show="!hideNavOnHomeMobile"
       >
         <i class="fa fa-shield-alt"></i>
         Admin Dashboard
       </router-link>
 
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
-      <router-link v-if="companyData" to="/dashboard" class="flex items-center gap-1 sm:gap-2 hover:underline" v-show="!hideNavOnHomeMobile">
-        <img :src="companyData.logo_url || '/logo.png'" alt="Logo" class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full object-cover" />
-        <span class="font-medium text-xs sm:text-sm md:text-base">{{ companyData.company_name }}</span>
+      <router-link
+        v-if="companyData"
+        to="/dashboard"
+        class="flex items-center gap-1 sm:gap-2 hover:underline whitespace-nowrap"
+        :class="compactHeader ? 'text-xs' : ''"
+      >
+        <img
+          :src="companyData.logo_url || '/logo.png'"
+          alt="Logo"
+          class="rounded-full object-cover transition-all duration-200"
+          :class="compactHeader ? 'w-6 h-6' : 'w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9'"
+        />
+        <span class="font-medium text-xs sm:text-sm md:text-base" :class="compactHeader ? 'truncate max-w-[9rem]' : ''">
+          {{ companyData.company_name }}
+        </span>
       </router-link>
 
       <template v-if="!isAuthenticated">
-        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center" v-show="!hideNavOnHomeMobile">
+        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center">
           <i class="fa fa-key mr-2 animate-bounce"></i>
           Werde Problemsolver:in
+        </router-link>
+        <router-link
+          to="/register"
+          class="inline-flex items-center gap-1 rounded-full border border-gold/60 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold transition hover:border-gold hover:bg-gold/20 md:hidden"
+          v-if="isMobile"
+        >
+          <i class="fa fa-key text-[0.7rem]"></i>
+          Jetzt starten
         </router-link>
       </template>
 
@@ -107,9 +139,16 @@ const emit = defineEmits(['update-height'])
 const router = useRouter()
 const route = useRoute()
 
+const navLinks = [
+  { label: 'Suche', to: '/' },
+  { label: 'Registrieren', to: '/register' },
+  { label: 'Hilfe', to: '/hilfe' },
+  { label: 'Support', to: '/support' },
+]
+
 const showFilterBar = computed(() => route.name === 'home')
 const isMobile = ref(false)
-const hideNavOnHomeMobile = computed(() => isMobile.value && route.name === 'home')
+const compactHeader = computed(() => isMobile.value && showFilterBar.value)
 // steuert die Sichtbarkeit des Menüs
 const showOverlay = ref(false)
 // Daten des eingelog gten Unternehmens
@@ -257,6 +296,7 @@ async function logout() {
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   padding: 0.85rem 1rem;
   color: #0f172a;
   border-bottom: 1px solid rgba(255, 255, 255, 0.7);
@@ -266,15 +306,37 @@ async function logout() {
   transition: padding 0.25s ease;
 }
 
+.header-shell.header-compact {
+  padding: 0.65rem 0.75rem;
+}
+
+.header-shell.header-search-active {
+  padding-top: 0.95rem;
+  padding-bottom: 0.95rem;
+}
+
 @media (min-width: 640px) {
   .header-shell {
     padding: 1rem 1.5rem;
+  }
+
+  .header-shell.header-compact {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .header-shell.header-search-active {
+    padding-top: 1.35rem;
+    padding-bottom: 1.35rem;
   }
 }
 
 @media (min-width: 1024px) {
   .header-shell {
     padding: 1.25rem 2.5rem;
+  }
+
+  .header-shell.header-compact {
+    padding: 1.1rem 2rem;
   }
 }
 
@@ -293,10 +355,3 @@ async function logout() {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 </style>
-const navLinks = [
-  { label: 'Suche', to: '/' },
-  { label: 'Registrieren', to: '/register' },
-  { label: 'Hilfe', to: '/hilfe' },
-  { label: 'Support', to: '/support' },
-]
-
