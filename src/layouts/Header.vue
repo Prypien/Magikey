@@ -28,17 +28,6 @@
       </span>
     </router-link>
 
-    <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-slate-600">
-      <router-link
-        v-for="link in navLinks"
-        :key="link.to"
-        :to="link.to"
-        class="rounded-full px-3 py-2 transition hover:text-slate-900 hover:bg-white/60"
-      >
-        {{ link.label }}
-      </router-link>
-    </nav>
-
     <div class="flex-1 min-w-0 flex justify-center px-2 sm:px-4" v-if="showFilterBar">
       <MobileFilterBar v-if="isMobile" />
       <transition name="slide-down">
@@ -138,13 +127,6 @@ const emit = defineEmits(['update-height'])
 
 const router = useRouter()
 const route = useRoute()
-
-const navLinks = [
-  { label: 'Suche', to: '/' },
-  { label: 'Registrieren', to: '/register' },
-  { label: 'Hilfe', to: '/hilfe' },
-  { label: 'Support', to: '/support' },
-]
 
 const showFilterBar = computed(() => route.name === 'home')
 const isMobile = ref(false)
