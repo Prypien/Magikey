@@ -165,7 +165,6 @@ import DataRow from '@/components/common/DataRow.vue'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
 import { DAYS, DAY_LABELS } from '@/constants/days'
 import TrackingRequestPanel from '@/components/tracking/TrackingRequestPanel.vue'
-import { useTrackingStore } from '@/stores/tracking'
 import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
 import CompanyReviews from '@/components/reviews/CompanyReviews.vue'
 import { useReviewStore } from '@/stores/reviews'
@@ -220,27 +219,14 @@ const fullAddress = computed(() => {
   const parts = [current.address, current.postal_code, current.city].filter(Boolean)
   return parts.join(', ')
 })
-const { requests } = useTrackingStore()
-
-const activeTracking = computed(() =>
-  requests.value.find((request) => request.companyId === company.value?.id) || null
-)
-
 const mapUrl = computed(() => {
   const current = company.value
   if (!current) return ''
-  const tracking = activeTracking.value
-  const companyLat = tracking?.companyLocation?.lat ?? current?.coordinates?.lat ?? current?.latitude
-  const companyLng = tracking?.companyLocation?.lng ?? current?.coordinates?.lng ?? current?.longitude
+  const companyLat = current?.coordinates?.lat ?? current?.latitude
+  const companyLng = current?.coordinates?.lng ?? current?.longitude
 
-  if (
-    tracking &&
-    Number.isFinite(companyLat) &&
-    Number.isFinite(companyLng) &&
-    Number.isFinite(tracking.userLocation?.lat) &&
-    Number.isFinite(tracking.userLocation?.lng)
-  ) {
-    return `https://maps.google.com/maps?saddr=${companyLat},${companyLng}&daddr=${tracking.userLocation.lat},${tracking.userLocation.lng}&output=embed`
+  if (Number.isFinite(companyLat) && Number.isFinite(companyLng)) {
+    return `https://maps.google.com/maps?q=${companyLat},${companyLng}&output=embed`
   }
 
   return `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress.value)}&output=embed`

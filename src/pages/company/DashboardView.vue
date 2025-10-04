@@ -137,83 +137,13 @@
             </div>
 
             <div class="glass-card p-6 sm:p-8 space-y-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-slate-900">Aktive Anfahrten</h3>
-                <span v-if="activeRequests.length" class="text-xs font-medium text-slate-500">
-                  {{ activeRequests.length }} aktiv
-                </span>
-              </div>
-              <div
-                v-if="trackingLoading"
-                class="flex items-center gap-3 rounded-2xl border border-dashed border-white/60 bg-white/60 p-4 text-sm text-slate-500"
-              >
-                <Loader :size="20" class="text-gold" />
-                <span>Live-Anfragen werden geladen…</span>
-              </div>
-              <div
-                v-else-if="trackingError"
-                class="rounded-2xl border border-red-200 bg-red-50/70 p-4 text-sm text-red-600"
-              >
-                {{ trackingError }}
-              </div>
-              <div
-                v-else-if="!activeRequests.length"
-                class="rounded-2xl border border-dashed border-white/60 bg-white/60 p-4 text-sm text-slate-500"
-              >
-                Derzeit liegen keine Live-Trackings vor.
-              </div>
-              <div v-else class="space-y-3">
-                <div
-                  v-for="request in activeRequests"
-                  :key="request.id"
-                  class="space-y-3 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-inner"
-                >
-                  <div class="flex items-center justify-between text-sm font-medium text-slate-700">
-                    <span>{{ request.userLocation.label || 'Unbekannter Standort' }}</span>
-                    <span :class="request.status === 'arrived' ? 'text-emerald-600' : 'text-slate-500'">
-                      {{ request.status === 'arrived' ? 'Angekommen' : 'ETA ' + etaLabel(request) }}
-                    </span>
-                  </div>
-                  <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                    <span class="inline-flex items-center gap-2">
-                      <i class="fa fa-road text-gold"></i>
-                      {{ distanceLabel(request) }}
-                    </span>
-                    <span class="inline-flex items-center gap-2">
-                      <i class="fa fa-clock text-gold"></i>
-                      <span v-if="request.status === 'arrived'">Ankunft erreicht</span>
-                      <span v-else>{{ formatRemaining(request.remainingMinutes) }}</span>
-                    </span>
-                    <span class="inline-flex items-center gap-2">
-                      <i class="fa fa-hourglass-start text-gold"></i>
-                      {{ formatEta(request.requestedAt) }}
-                    </span>
-                  </div>
-                  <div class="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                    <div
-                      class="h-full rounded-full bg-gold transition-all"
-                      :style="{ width: `${request.progressPercent}%` }"
-                    ></div>
-                  </div>
-                  <div class="flex items-center justify-between text-xs text-slate-500">
-                    <span>
-                      {{ request.status === 'arrived' ? 'Bitte Ankunft bestätigen' : 'Tracking läuft' }}
-                    </span>
-                    <button
-                      type="button"
-                      class="font-semibold text-gold transition hover:text-gold/80"
-                      @click="endTracking(request.id)"
-                    >
-                      {{ request.status === 'arrived' ? 'Tracking abschließen' : 'Tracking beenden' }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <p
-                v-if="trackingActionError"
-                class="rounded-2xl border border-red-200 bg-red-50/70 p-3 text-xs text-red-600"
-              >
-                {{ trackingActionError }}
+              <h3 class="text-lg font-semibold text-slate-900">Ankunftszeiten einschätzen</h3>
+              <p class="text-sm text-slate-600">
+                Die frühere Live-Tracking-Funktion wurde entfernt. Bitte stimme die genaue Ankunft direkt mit deinen Kundinnen
+                und Kunden ab. In der Unternehmensansicht wird eine grobe Ankunftszeit auf Basis der Entfernung angezeigt.
+              </p>
+              <p class="text-xs text-slate-500">
+                Tipp: Halte deine Adress- und Kontaktdaten aktuell, damit Nachfragen schnell beantwortet werden können.
               </p>
             </div>
 
@@ -241,7 +171,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
@@ -249,8 +179,6 @@ import DataRow from '@/components/common/DataRow.vue'
 import Loader from '@/components/common/Loader.vue'
 import { DAYS, DAY_LABELS } from '@/constants/days'
 import { onAuthStateChanged } from 'firebase/auth'
-import { useTrackingStore } from '@/stores/tracking'
-import { formatDuration, formatEta } from '@/utils/time'
 
 const company = ref(null)
 const loading = ref(true)
@@ -315,56 +243,9 @@ onUnmounted(() => {
   if (typeof unsubscribeAuth === 'function') {
     unsubscribeAuth()
   }
-  unsubscribeFromCompanyRequests()
 })
 
 const days = DAYS.map(key => ({ key, label: DAY_LABELS[key] }))
-
-const { requests, stopTracking, subscribeToCompanyRequests, unsubscribeFromCompanyRequests, companyStream } =
-  useTrackingStore()
-const companyId = computed(() => company.value?.id || (isFirebaseConfigured ? auth.currentUser?.uid : null))
-const activeRequests = computed(() => requests.value.filter((req) => req.companyId === companyId.value))
-const trackingLoading = computed(
-  () => companyStream.value.companyId === companyId.value && companyStream.value.loading
-)
-const trackingError = computed(
-  () => (companyStream.value.companyId === companyId.value ? companyStream.value.error : '')
-)
-const trackingActionError = ref('')
-
-watch(
-  companyId,
-  (id) => {
-    trackingActionError.value = ''
-    if (id) {
-      subscribeToCompanyRequests(id)
-    } else {
-      unsubscribeFromCompanyRequests()
-    }
-  },
-  { immediate: true }
-)
-
-function formatRemaining(minutes) {
-  return formatDuration(minutes, { short: true })
-}
-
-function etaLabel(request) {
-  return formatEta(request.etaTimestamp)
-}
-
-async function endTracking(requestId) {
-  trackingActionError.value = ''
-  try {
-    await stopTracking(requestId)
-  } catch (error) {
-    trackingActionError.value = error?.message || 'Tracking konnte nicht beendet werden.'
-  }
-}
-
-function distanceLabel(request) {
-  return Number.isFinite(request.distanceKm) ? `${request.distanceKm.toFixed(1)} km` : '–'
-}
 
 function formatTimeRange(range) {
   if (!range || !range.open || !range.close) return 'geschlossen'
