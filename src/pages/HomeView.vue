@@ -370,17 +370,6 @@ function requestEmergencyHelp() {
   const candidate = emergencyCompany.value
   if (!candidate) return
 
-  const contactNumber =
-    candidate.emergency_phone || candidate.phone || candidate.whatsapp || candidate.contact_phone
-
-  if (contactNumber) {
-    const sanitized = String(contactNumber).replace(/[^+\d]/g, '')
-    if (sanitized) {
-      window.location.href = `tel:${sanitized}`
-      return
-    }
-  }
-
   if (candidate.id) {
     router.push({ name: 'details', params: { id: candidate.id } })
   }
