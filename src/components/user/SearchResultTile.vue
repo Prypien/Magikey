@@ -39,7 +39,7 @@
           {{ basePrice }}
         </span>
         <span
-          v-if="emergencyPrice"
+          v-if="showEmergencyPrice"
           class="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1 font-medium text-red-600"
         >
           <i class="fa fa-bolt text-[0.8rem]"></i>
@@ -71,11 +71,12 @@
       <div v-if="lockTypes.length" class="flex flex-wrap gap-2 text-xs text-slate-500">
         <span
           v-for="lock in lockTypes"
-          :key="lock.label"
+          :key="lock.type"
           class="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white px-3 py-1 font-medium text-slate-600"
+          :title="lock.label"
+          :aria-label="lock.label"
         >
-          <span>{{ lock.icon }}</span>
-          <span>{{ lock.label }}</span>
+          <span aria-hidden="true">{{ lock.icon }}</span>
         </span>
       </div>
     </div>
@@ -143,9 +144,10 @@ const borderColor = computed(() =>
 )
 
 const lockTypes = computed(() =>
-  (props.company.lock_types || []).map((t) => ({
-    icon: LOCK_TYPE_ICONS[t] || '',
-    label: LOCK_TYPE_LABELS[t] || t
+  (props.company.lock_types || []).map((type) => ({
+    type,
+    icon: LOCK_TYPE_ICONS[type] || '',
+    label: LOCK_TYPE_LABELS[type] || type
   }))
 )
 
@@ -155,10 +157,19 @@ const basePrice = computed(() => {
   return 'Preis auf Anfrage'
 })
 
-const emergencyPrice = computed(() => {
+const emergencyPriceValue = computed(() => {
   const value = Number.parseInt(props.company.emergency_price, 10)
-  if (Number.isFinite(value) && value > 0) return `Notdienst ${euroFormatter.format(value)} €`
-  return ''
+  if (Number.isFinite(value) && value > 0) return value
+  return null
+})
+
+const showEmergencyPrice = computed(
+  () => !isOpen.value && props.company.is_247 && emergencyPriceValue.value !== null
+)
+
+const emergencyPrice = computed(() => {
+  if (emergencyPriceValue.value === null) return ''
+  return `Notdienst ${euroFormatter.format(emergencyPriceValue.value)} €`
 })
 
 function navigateToDetails() {
