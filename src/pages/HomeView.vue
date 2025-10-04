@@ -16,6 +16,24 @@
             <h1 class="text-3xl font-semibold text-slate-900 sm:text-4xl">
               {{ headline }}
             </h1>
+            <div
+              v-if="emergencyCompany"
+              class="flex w-full flex-col gap-1 sm:w-auto sm:flex-1 sm:items-end"
+            >
+              <button
+                type="button"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-5 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+                @click="requestEmergencyHelp"
+              >
+                <i class="fa fa-bell" aria-hidden="true"></i>
+                Jetzt Hilfe beantragen
+              </button>
+              <p class="text-xs font-medium text-slate-500">
+                Empfohlen: {{ emergencyCompany.company_name }}<span v-if="emergencyRating">
+                  · {{ emergencyRating.toFixed(1) }} / 5 ⭐
+                </span>
+              </p>
+            </div>
           </div>
           <p class="max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
             Finde vertrauenswürdige Schlüsseldienste in deiner Nähe – transparent, schnell und mit
@@ -136,6 +154,7 @@
 
 <script setup>
 import { onMounted, defineAsyncComponent, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import SearchResults from '@/components/user/SearchResults.vue'
 import Loader from '@/components/common/Loader.vue'
 import IntroPopup from '@/components/user/IntroPopup.vue'
@@ -148,11 +167,77 @@ import { detectCurrentLocation } from '@/services/location'
 
 const NotifyForm = defineAsyncComponent(() => import('@/components/user/NotifyForm.vue'))
 
+const router = useRouter()
 const { loading, fetchCompanies, filteredCompanies } = useCompanyStore()
 const showIntro = ref(false)
 const INTRO_KEY = 'introShown'
 const euroFormatter = new Intl.NumberFormat('de-DE')
 const lastUpdatedAt = ref(null)
+
+const emergencyCandidate = computed(() => {
+  const companies = filteredCompanies.value || []
+  if (!companies.length) return null
+
+  function normalizeRating(company) {
+    const possibleValues = [
+      company?.magikey_rating,
+      company?.magikeyRating,
+      company?.rating,
+      company?.average_rating,
+      company?.avg_rating,
+      company?.reviews?.magikey_avg,
+      company?.reviews?.magikeyRating,
+    ]
+
+    for (const value of possibleValues) {
+      const parsed = Number(value)
+      if (Number.isFinite(parsed)) {
+        return Math.max(0, Math.min(5, parsed))
+      }
+    }
+    return null
+  }
+
+  function toNumber(value) {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : null
+  }
+
+  function getComparablePrice(company) {
+    const emergencyPrice = toNumber(company?.emergency_price)
+    if (emergencyPrice !== null) return emergencyPrice
+    const basePrice = toNumber(company?.price)
+    return basePrice !== null ? basePrice : Number.POSITIVE_INFINITY
+  }
+
+  const ranked = companies
+    .map((company) => ({
+      company,
+      rating: normalizeRating(company),
+      is247: company?.is_247 ? 1 : 0,
+      comparablePrice: getComparablePrice(company),
+    }))
+    .sort((a, b) => {
+      const ratingA = a.rating ?? -1
+      const ratingB = b.rating ?? -1
+      if (ratingA !== ratingB) return ratingB - ratingA
+
+      if (a.is247 !== b.is247) return b.is247 - a.is247
+
+      if (a.comparablePrice !== b.comparablePrice) {
+        return a.comparablePrice - b.comparablePrice
+      }
+
+      const nameA = a.company?.company_name || ''
+      const nameB = b.company?.company_name || ''
+      return nameA.localeCompare(nameB, 'de')
+    })
+
+  return ranked[0]
+})
+
+const emergencyCompany = computed(() => emergencyCandidate.value?.company ?? null)
+const emergencyRating = computed(() => emergencyCandidate.value?.rating ?? null)
 
 const headline = computed(() => {
   let text = 'Finde deinen Schlüsseldienst'
@@ -279,5 +364,25 @@ onMounted(async () => {
 function closeIntro() {
   showIntro.value = false
   window.sessionStorage.setItem(INTRO_KEY, '1')
+}
+
+function requestEmergencyHelp() {
+  const candidate = emergencyCompany.value
+  if (!candidate) return
+
+  const contactNumber =
+    candidate.emergency_phone || candidate.phone || candidate.whatsapp || candidate.contact_phone
+
+  if (contactNumber) {
+    const sanitized = String(contactNumber).replace(/[^+\d]/g, '')
+    if (sanitized) {
+      window.location.href = `tel:${sanitized}`
+      return
+    }
+  }
+
+  if (candidate.id) {
+    router.push({ name: 'details', params: { id: candidate.id } })
+  }
 }
 </script>
