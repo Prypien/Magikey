@@ -23,8 +23,11 @@ export const filteredCompanies = computed(() => {
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
   const normalizedLocation = filters.location?.toString().trim()
-  const normalizedLocationDigits = normalizedLocation?.replace(/\s+/g, '')
-  const normalizedLocationLower = normalizedLocation?.toLowerCase()
+  const normalizedLocationDigits = normalizedLocation ? normalizedLocation.replace(/\D/g, '') : ''
+  const normalizedLocationCity = normalizedLocation
+    ? normalizedLocation.replace(/[0-9]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase()
+    : ''
+  const hasLocationFilter = Boolean(normalizedLocationDigits || normalizedLocationCity)
 
   const locationLat = Number(filters.locationMeta?.lat)
   const locationLng = Number(filters.locationMeta?.lng)
@@ -77,12 +80,12 @@ export const filteredCompanies = computed(() => {
   return companies.value.filter((company) => {
     const postalCode = company.postal_code != null ? company.postal_code.toString().trim() : ''
     const normalizedPostalCode = postalCode.replace(/\s+/g, '')
-    const matchesPLZ =
-      !normalizedLocationDigits ||
-      normalizedPostalCode.includes(normalizedLocationDigits)
+    const matchesPLZ = normalizedLocationDigits
+      ? normalizedPostalCode.includes(normalizedLocationDigits)
+      : false
     const city = company.city != null ? company.city.toString().toLowerCase() : ''
-    const matchesCity = normalizedLocationLower
-      ? city.includes(normalizedLocationLower)
+    const matchesCity = normalizedLocationCity
+      ? city.includes(normalizedLocationCity)
       : false
 
     let isOpen = true
@@ -114,7 +117,7 @@ export const filteredCompanies = computed(() => {
       filters.lockTypes.length === 0 ||
       (company.lock_types || []).some((t) => filters.lockTypes.includes(t))
 
-    let matchesLocation = matchesPLZ || matchesCity
+    let matchesLocation = hasLocationFilter ? matchesPLZ || matchesCity : true
 
     if (hasLocationCoords) {
       const companyCoords = getCompanyCoordinates(company)
