@@ -132,6 +132,12 @@
             ></iframe>
           </div>
         </div>
+
+        <CompanyReviews
+          class="mt-10"
+          :google-reviews-url="googleReviewsUrl"
+          :magikey-reviews="magikeyReviews"
+        />
       </div>
       <div v-else-if="!isLoading" class="glass-card p-8 text-center text-slate-600">
         <h1 class="section-heading mb-2 text-2xl">Firma nicht gefunden</h1>
@@ -152,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCompany } from '@/services/company'
 import DataRow from '@/components/common/DataRow.vue'
@@ -161,6 +167,8 @@ import { DAYS, DAY_LABELS } from '@/constants/days'
 import TrackingRequestPanel from '@/components/tracking/TrackingRequestPanel.vue'
 import { useTrackingStore } from '@/stores/tracking'
 import ReviewRequestModal from '@/components/reviews/ReviewRequestModal.vue'
+import CompanyReviews from '@/components/reviews/CompanyReviews.vue'
+import { useReviewStore } from '@/stores/reviews'
 
 const route = useRoute()
 const router = useRouter()
@@ -170,6 +178,11 @@ const isLoading = ref(true)
 const days = DAYS
 const showReviewModal = ref(false)
 const pendingAction = ref('feedback')
+const googleReviewsUrl = computed(
+  () => company.value?.verification?.google_reviews_url ?? ''
+)
+
+const { reviews: magikeyReviews, fetchCompanyReviews } = useReviewStore()
 
 onMounted(async () => {
   if (!companyId) {
@@ -190,6 +203,16 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+watch(
+  () => company.value?.id,
+  (id) => {
+    if (id) {
+      fetchCompanyReviews(id)
+    }
+  },
+  { immediate: true }
+)
 
 const fullAddress = computed(() => {
   const current = company.value
