@@ -30,7 +30,7 @@
               </button>
               <p class="text-xs font-medium text-slate-500">
                 Empfohlen: {{ emergencyCompany.company_name }}<span v-if="emergencyRating">
-                  · {{ emergencyRating.toFixed(1) }} / 5 ⭐
+                  · {{ emergencyRating.toFixed(1) }} / 5 ⭐
                 </span>
               </p>
             </div>
