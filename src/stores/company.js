@@ -4,6 +4,7 @@ import { getCompanies } from '@/services/company'
 import { filters } from './filters'
 import { DAYS } from '@/constants/days'
 import { parseEuroAmount } from '@/utils/price'
+import { normaliseLockTypeList } from '@/utils/lockTypes'
 
 const companies = ref([])
 const loading = ref(false)
@@ -33,6 +34,7 @@ export const filteredCompanies = computed(() => {
   const locationLat = Number(filters.locationMeta?.lat)
   const locationLng = Number(filters.locationMeta?.lng)
   const hasLocationCoords = Number.isFinite(locationLat) && Number.isFinite(locationLng)
+  const filterLockTypes = new Set(normaliseLockTypeList(filters.lockTypes))
 
   function getCompanyCoordinates(company) {
     const lat = Number(
@@ -117,9 +119,10 @@ export const filteredCompanies = computed(() => {
       : filters.price[0] <= 0
 
     const matchesOpen = !filters.openNow || isOpen
+    const companyLockTypes = normaliseLockTypeList(company.lock_types)
     const matchesLock =
-      filters.lockTypes.length === 0 ||
-      (company.lock_types || []).some((t) => filters.lockTypes.includes(t))
+      filterLockTypes.size === 0 ||
+      companyLockTypes.some((type) => filterLockTypes.has(type))
 
     let matchesLocation = hasLocationFilter ? matchesPLZ || matchesCity : true
 

@@ -30,7 +30,7 @@
               </button>
               <p class="text-xs font-medium text-slate-500">
                 Empfohlen: {{ emergencyCompany.company_name }}<span v-if="emergencyRating">
-                  · {{ emergencyRating.toFixed(1) }} / 5 ⭐
+                  · {{ emergencyRating.toFixed(1) }} / 5 ⭐
                 </span>
               </p>
             </div>
@@ -164,6 +164,7 @@ import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 import { detectCurrentLocation } from '@/services/location'
+import { hasLockType } from '@/utils/lockTypes'
 
 const NotifyForm = defineAsyncComponent(() => import('@/components/user/NotifyForm.vue'))
 
@@ -210,20 +211,7 @@ const emergencyCandidate = computed(() => {
     return basePrice !== null ? basePrice : Number.POSITIVE_INFINITY
   }
 
-  const supportsHouseLock = (company) => {
-    const lockTypes = company?.lock_types
-    if (Array.isArray(lockTypes)) {
-      return lockTypes.some((type) => typeof type === 'string' && type.trim().toLowerCase() === 'house')
-    }
-    if (typeof lockTypes === 'string') {
-      return lockTypes
-        .split(/[,;\n]/)
-        .map((part) => part.trim().toLowerCase())
-        .filter(Boolean)
-        .includes('house')
-    }
-    return false
-  }
+  const supportsHouseLock = (company) => hasLockType(company?.lock_types, 'house')
 
   const relevantCompanies = companies.filter(supportsHouseLock)
   if (!relevantCompanies.length) return null
