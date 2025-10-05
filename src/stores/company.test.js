@@ -88,3 +88,28 @@ describe('filteredCompanies price filter', () => {
     expect(ids).not.toContain('c')
   })
 })
+
+describe('filteredCompanies lock type filter', () => {
+  const { companies, filteredCompanies } = useCompanyStore()
+
+  beforeEach(() => {
+    companies.value = [
+      { id: '1', lock_types: [' house '] },
+      { id: '2', lock_types: 'car mechanical' },
+      { id: '3', lock_types: 'HOUSE, safe' },
+    ]
+
+    filters.openNow = false
+    filters.price = [0, 1000]
+    filters.location = ''
+    filters.locationMeta = null
+    filters.lockTypes = []
+  })
+
+  it('matches companies by lock types ignoring case and formatting', () => {
+    filters.lockTypes = ['HOUSE']
+
+    const resultIds = filteredCompanies.value.map((company) => company.id)
+    expect(resultIds).toEqual(['1', '3'])
+  })
+})
