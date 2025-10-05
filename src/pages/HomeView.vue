@@ -175,11 +175,20 @@
           </li>
         </ul>
         <div class="flex flex-wrap gap-3">
-          <button type="button" class="btn" @click="focusSearchSection">
+          <button
+            type="button"
+            class="btn"
+            data-testid="cta-customer-search"
+            @click="focusSearchSection"
+          >
             <i class="fa fa-search-location"></i>
             Zur Suche
           </button>
-          <router-link to="/support" class="pill-checkbox">
+          <router-link
+            to="/support"
+            class="pill-checkbox"
+            data-testid="cta-customer-support"
+          >
             <i class="fa fa-hands-helping"></i>
             Support &amp; Tipps
           </router-link>
@@ -219,11 +228,21 @@
           </li>
         </ul>
         <div class="flex flex-wrap gap-3">
-          <button type="button" class="btn" @click="goToRegister">
+          <button
+            type="button"
+            class="btn"
+            data-testid="cta-company-register"
+            @click="goToRegister"
+          >
             <i class="fa fa-key"></i>
             Jetzt registrieren
           </button>
-          <button type="button" class="pill-checkbox" @click="goToLogin">
+          <button
+            type="button"
+            class="pill-checkbox"
+            data-testid="cta-company-login"
+            @click="goToLogin"
+          >
             <i class="fa fa-sign-in-alt"></i>
             Bereits Partner? Login
           </button>
