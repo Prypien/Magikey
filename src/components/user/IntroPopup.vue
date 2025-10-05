@@ -1,74 +1,67 @@
-<!-- Diese Datei blendet die Begrüßungsbox mit kurzer Erklärung ein. -->
+<!-- Exit-Intent-Popup, das nach Feedback zum Schlüsseldienst fragt. -->
 <template>
-  <section
-    class="relative w-full max-w-md overflow-hidden rounded-xl bg-white p-6 shadow-lg sm:p-8"
-  >
+<section class="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+  <div class="absolute -top-32 right-[-40%] h-64 w-64 rounded-full bg-gold opacity-20 blur-3xl"></div>
+  <div class="absolute -bottom-24 left-[-30%] h-56 w-56 rounded-full bg-slate-200/40 blur-3xl"></div>
+
+  <div class="relative flex flex-col gap-6 p-6 sm:p-10">
     <button
-      class="absolute right-4 top-4 text-gray-400 transition hover:text-gray-600"
+      class="absolute right-6 top-6 text-slate-300 transition hover:text-slate-500"
       @click="$emit('close')"
       aria-label="Schließen"
     >
-      <i class="fa fa-times"></i>
+      <i class="fa fa-times text-lg"></i>
     </button>
 
-    <h1 class="mb-4 flex items-center gap-2 text-lg font-semibold sm:text-xl">
-      <span class="text-gold">
-        <i class="fa fa-key"></i>
-      </span>
-      Schnell den passenden Schlüsseldienst finden
-    </h1>
-
-    <ul class="space-y-1 text-sm sm:text-base">
-      <li class="flex items-start gap-2">
-        <span>✅</span>
-        <span>Vergleiche Preis, Öffnungszeiten und Bewertungen</span>
-      </li>
-      <li class="flex items-start gap-2">
-        <span>📍</span>
-        <span>Für alle Schlosstypen: Haus, Auto, Fahrrad & mehr</span>
-      </li>
-    </ul>
-
-    <div v-if="!filters.location" class="mt-6">
-      <label for="plz" class="label">PLZ eingeben</label>
-      <input
-        id="plz"
-        v-model="postal"
-        type="text"
-        maxlength="5"
-        placeholder="z. B. 10115"
-        class="input"
-      />
-      <button class="btn mt-4 w-full" @click="applyPostal">Suchen</button>
+    <div class="flex items-center gap-4">
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gold text-3xl text-gold bg-opacity-10">
+        <i class="fa fa-unlock-alt"></i>
+      </div>
+      <div class="space-y-1">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold text-opacity-70">
+          Bevor du gehst
+        </p>
+        <h1 class="text-2xl font-semibold text-slate-900 sm:text-3xl">Alles geklappt?</h1>
+      </div>
     </div>
 
-    <i
-      class="fa fa-unlock-alt pointer-events-none absolute bottom-4 right-4 hidden text-6xl text-gray-300 opacity-20 md:block"
-    ></i>
-  </section>
+    <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+      Konntest du dein Schloss öffnen oder brauchst du noch Unterstützung? Sag uns kurz Bescheid, damit wir
+      dir gegebenenfalls den richtigen Kontakt empfehlen können.
+    </p>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <button
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+        type="button"
+        @click="$emit('close')"
+      >
+        <i class="fa fa-check-circle"></i>
+        Schloss ist offen
+      </button>
+
+      <button
+        class="inline-flex items-center justify-center gap-2 rounded-xl border border-gold bg-white px-4 py-3 text-sm font-semibold text-gold shadow-sm transition hover:bg-amber-50 hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+        type="button"
+        @click="$emit('help')"
+      >
+        <i class="fa fa-life-ring"></i>
+        Brauche noch Hilfe
+      </button>
+    </div>
+
+    <div class="rounded-2xl border border-dashed border-slate-200/80 bg-slate-50/70 p-4 text-xs text-slate-500">
+      <p class="font-semibold text-slate-600">Unser Tipp</p>
+      <p>
+        Teile deine Erfahrung nach der Rettung mit anderen – so helfen wir gemeinsam, faire Schlüsseldienste sichtbar zu
+        machen.
+      </p>
+    </div>
+  </div>
+</section>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { filters } from '@/stores/filters'
-
-const postal = ref('')
-const emit = defineEmits(['close'])
-
-function applyPostal() {
-  if (postal.value.trim()) {
-    const label = postal.value.trim()
-    filters.location = label
-    filters.locationMeta = {
-      label,
-      postalCode: label,
-      city: '',
-      lat: null,
-      lng: null,
-      source: 'intro'
-    }
-    emit('close')
-  }
-}
+defineEmits(['close', 'help'])
 </script>
 
