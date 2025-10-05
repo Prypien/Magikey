@@ -10,6 +10,8 @@
         <span class="text-slate-300/60">·</span>
         <router-link to="/datenschutz" class="footer-link">Datenschutz</router-link>
         <span class="text-slate-300/60">·</span>
+        <router-link to="/blog" class="footer-link">Blog</router-link>
+        <span class="text-slate-300/60">·</span>
         <router-link to="/support" class="footer-link">Support</router-link>
         <span class="text-slate-300/60">·</span>
         <router-link to="/hilfe" class="footer-link">Hilfe</router-link>

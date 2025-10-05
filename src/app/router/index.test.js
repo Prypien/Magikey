@@ -38,7 +38,14 @@ const mockDocument = {
   body: {
     style: { overflow: '' },
   },
-  createElement: () => ({ style: {} }),
+  head: {
+    querySelector: vi.fn(() => null),
+    appendChild: vi.fn(),
+  },
+  createElement: () => ({
+    setAttribute: vi.fn(),
+    remove: vi.fn(),
+  }),
   querySelector: () => null,
 }
 
@@ -112,7 +119,7 @@ describe('router configuration', () => {
   })
 
   it('provides all customer facing routes', () => {
-    const customerRoutes = ['home', 'details', 'support', 'help']
+    const customerRoutes = ['home', 'details', 'support', 'help', 'blog']
     const missing = customerRoutes.filter((name) => !findRoute(name))
     expect(missing).toEqual([])
   })
