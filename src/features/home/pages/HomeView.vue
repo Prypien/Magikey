@@ -3,12 +3,12 @@
   <!-- Startseite mit Filterleiste und Firmenliste -->
   <div class="space-y-12">
     <section
-      class="relative overflow-hidden rounded-3xl border border-white/60 bg-white/85 px-6 py-10 shadow-xl backdrop-blur sm:px-10"
+      class="relative overflow-hidden rounded-3xl border border-white/60 bg-white/85 px-4 py-6 shadow-xl backdrop-blur sm:px-8 sm:py-8 lg:px-10 lg:py-10"
     >
-      <div class="absolute -top-24 right-[-20%] h-72 w-72 rounded-full bg-gold/30 blur-3xl"></div>
+      <div class="absolute -top-24 right-[-20%] hidden h-72 w-72 rounded-full bg-gold/30 blur-3xl sm:block"></div>
       <div class="absolute left-[-15%] top-8 hidden h-56 w-56 rounded-full bg-gold/20 blur-3xl md:block"></div>
-      <div class="relative grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-        <div class="flex flex-col gap-8">
+      <div class="relative grid gap-6 md:gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+        <div class="hidden flex-col gap-8 lg:flex">
           <header class="space-y-5">
             <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/70">
               Schlüsseldienst-Finder
@@ -94,7 +94,7 @@
         </div>
 
         <aside class="flex flex-col gap-4">
-          <div class="rounded-2xl border border-red-100 bg-white/90 p-6 shadow-sm">
+          <div class="rounded-2xl border border-red-100 bg-white/90 p-5 shadow-sm sm:p-6">
             <p class="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
               Notfallmodus
             </p>
@@ -122,7 +122,7 @@
             </button>
           </div>
 
-          <div class="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm">
+          <div class="hidden rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm lg:block">
             <p class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-600">
               <i class="fa fa-building"></i>
               Für Unternehmen
