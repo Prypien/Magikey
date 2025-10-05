@@ -1,0 +1,62 @@
+// Diese Datei überprüft die Authentifizierungsfunktionen mit Tests.
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+
+vi.mock('@/core/firebase', () => ({
+  auth: 'auth-instance',
+  isFirebaseConfigured: true,
+}))
+
+vi.mock('firebase/auth', () => ({
+  signInWithEmailAndPassword: vi.fn(() => Promise.resolve('signed-in')),
+  createUserWithEmailAndPassword: vi.fn(() => Promise.resolve('created')),
+  sendPasswordResetEmail: vi.fn(() => Promise.resolve()),
+  signOut: vi.fn(() => Promise.resolve()),
+  sendEmailVerification: vi.fn(() => Promise.resolve()),
+}))
+
+import { login, resetPassword, logout, register, sendVerificationEmail } from './auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, sendEmailVerification } from 'firebase/auth'
+
+describe('auth service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubEnv('VITE_PUBLIC_URL', 'https://app.magikey.test')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('login calls firebase signInWithEmailAndPassword', async () => {
+    await login('test@example.com', 'pass')
+    expect(signInWithEmailAndPassword).toHaveBeenCalledWith('auth-instance', 'test@example.com', 'pass')
+  })
+
+  it('resetPassword calls firebase sendPasswordResetEmail', async () => {
+    await resetPassword('mail@example.com')
+    expect(sendPasswordResetEmail).toHaveBeenCalledWith('auth-instance', 'mail@example.com', {
+      url: 'https://app.magikey.test/reset-password/confirm',
+      handleCodeInApp: true,
+    })
+  })
+
+  it('logout calls firebase signOut', async () => {
+    await logout()
+    expect(signOut).toHaveBeenCalledWith('auth-instance')
+  })
+
+  it('register uses createUserWithEmailAndPassword', async () => {
+    await register('new@mail.com', 'secret')
+    expect(createUserWithEmailAndPassword).toHaveBeenCalledWith('auth-instance', 'new@mail.com', 'secret')
+  })
+
+  it('sendVerificationEmail calls firebase sendEmailVerification', async () => {
+    const user = { uid: '1' }
+    await sendVerificationEmail(user)
+    expect(sendEmailVerification).toHaveBeenCalledWith(user, {
+      url: 'https://app.magikey.test/verify',
+      handleCodeInApp: true,
+    })
+  })
+})
+
