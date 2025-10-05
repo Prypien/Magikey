@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { getCompanies } from '@/services/company'
 import { filters } from './filters'
 import { DAYS } from '@/constants/days'
+import { parseEuroAmount } from '@/utils/price'
 
 const companies = ref([])
 const loading = ref(false)
@@ -109,8 +110,11 @@ export const filteredCompanies = computed(() => {
       }
     }
 
-    const price = parseInt(company.price || '0')
-    const inPrice = price >= filters.price[0] && price <= filters.price[1]
+    const price = parseEuroAmount(company.price)
+    const hasPrice = Number.isFinite(price)
+    const inPrice = hasPrice
+      ? price >= filters.price[0] && price <= filters.price[1]
+      : filters.price[0] <= 0
 
     const matchesOpen = !filters.openNow || isOpen
     const matchesLock =

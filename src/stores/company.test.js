@@ -55,3 +55,36 @@ describe('filteredCompanies location filter', () => {
     expect(resultIds).toEqual(['hamburg'])
   })
 })
+
+describe('filteredCompanies price filter', () => {
+  const { companies, filteredCompanies } = useCompanyStore()
+
+  beforeEach(() => {
+    companies.value = [
+      { id: 'a', price: '59,90', opening_hours: {}, lock_types: [] },
+      { id: 'b', price: '149.50', opening_hours: {}, lock_types: [] },
+      { id: 'c', price: '', opening_hours: {}, lock_types: [] },
+    ]
+
+    filters.openNow = false
+    filters.location = ''
+    filters.locationMeta = null
+    filters.lockTypes = []
+  })
+
+  it('includes companies whose decimal price is within the range', () => {
+    filters.price = [0, 100]
+    expect(filteredCompanies.value.map((company) => company.id)).toEqual(['a', 'c'])
+  })
+
+  it('excludes companies outside the price range', () => {
+    filters.price = [100, 200]
+    expect(filteredCompanies.value.map((company) => company.id)).toEqual(['b'])
+  })
+
+  it('hides companies without price when minimum is above zero', () => {
+    filters.price = [10, 80]
+    const ids = filteredCompanies.value.map((company) => company.id)
+    expect(ids).not.toContain('c')
+  })
+})

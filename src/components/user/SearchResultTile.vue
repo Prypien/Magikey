@@ -93,6 +93,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/constants/lockTypes'
 import { DAYS } from '@/constants/days'
+import { parseEuroAmount } from '@/utils/price'
 
 const props = defineProps({
   company: {
@@ -151,25 +152,24 @@ const lockTypes = computed(() =>
   }))
 )
 
+const basePriceValue = computed(() => parseEuroAmount(props.company.price))
+
 const basePrice = computed(() => {
-  const value = Number.parseInt(props.company.price, 10)
+  const value = basePriceValue.value
   if (Number.isFinite(value) && value > 0) return `ab ${euroFormatter.format(value)} €`
   return 'Preis auf Anfrage'
 })
 
-const emergencyPriceValue = computed(() => {
-  const value = Number.parseInt(props.company.emergency_price, 10)
-  if (Number.isFinite(value) && value > 0) return value
-  return null
-})
+const emergencyPriceValue = computed(() => parseEuroAmount(props.company.emergency_price))
 
 const showEmergencyPrice = computed(
-  () => !isOpen.value && props.company.is_247 && emergencyPriceValue.value !== null
+  () => !isOpen.value && props.company.is_247 && Number.isFinite(emergencyPriceValue.value) && emergencyPriceValue.value > 0
 )
 
 const emergencyPrice = computed(() => {
-  if (emergencyPriceValue.value === null) return ''
-  return `Notdienst ${euroFormatter.format(emergencyPriceValue.value)} €`
+  const value = emergencyPriceValue.value
+  if (!Number.isFinite(value) || value <= 0) return ''
+  return `Notdienst ${euroFormatter.format(value)} €`
 })
 
 function navigateToDetails() {
