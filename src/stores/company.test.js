@@ -1,6 +1,6 @@
 import { describe, beforeEach, it, expect, vi, afterEach } from 'vitest'
 import { useCompanyStore } from './company'
-import { filters } from './filters'
+import { filters, DEFAULT_PRICE_RANGE } from './filters'
 
 describe('filteredCompanies location filter', () => {
   const { companies, filteredCompanies } = useCompanyStore()
@@ -28,7 +28,7 @@ describe('filteredCompanies location filter', () => {
     ]
 
     filters.openNow = false
-    filters.price = [0, 1000]
+    filters.price = [...DEFAULT_PRICE_RANGE]
     filters.lockTypes = []
     filters.location = ''
     filters.locationMeta = null
@@ -53,6 +53,25 @@ describe('filteredCompanies location filter', () => {
 
     const resultIds = filteredCompanies.value.map((company) => company.id)
     expect(resultIds).toEqual(['hamburg'])
+  })
+
+  it('matches companies that use camelCase postalCode fields', () => {
+    companies.value = [
+      {
+        id: 'munich',
+        company_name: 'Schlüsseldienst München',
+        postalCode: '80331',
+        city: 'München',
+        price: 70,
+        opening_hours: {},
+        lock_types: [],
+      },
+    ]
+
+    filters.location = '80331'
+
+    const resultIds = filteredCompanies.value.map((company) => company.id)
+    expect(resultIds).toEqual(['munich'])
   })
 })
 
@@ -87,6 +106,12 @@ describe('filteredCompanies price filter', () => {
     const ids = filteredCompanies.value.map((company) => company.id)
     expect(ids).not.toContain('c')
   })
+
+  it('falls back to default range when price filter is invalid', () => {
+    filters.price = ['invalid']
+    const resultIds = filteredCompanies.value.map((company) => company.id)
+    expect(resultIds).toEqual(['a', 'b', 'c'])
+  })
 })
 
 describe('filteredCompanies lock type filter', () => {
@@ -100,7 +125,7 @@ describe('filteredCompanies lock type filter', () => {
     ]
 
     filters.openNow = false
-    filters.price = [0, 1000]
+    filters.price = [...DEFAULT_PRICE_RANGE]
     filters.location = ''
     filters.locationMeta = null
     filters.lockTypes = []
@@ -120,7 +145,7 @@ describe('filteredCompanies openNow filter', () => {
   beforeEach(() => {
     filters.location = ''
     filters.locationMeta = null
-    filters.price = [0, 1000]
+    filters.price = [...DEFAULT_PRICE_RANGE]
     filters.lockTypes = []
     filters.openNow = true
 
@@ -163,10 +188,10 @@ describe('filteredCompanies service radius handling', () => {
 
   beforeEach(() => {
     filters.openNow = false
-    filters.price = [0, 1000]
+    filters.price = [...DEFAULT_PRICE_RANGE]
     filters.lockTypes = []
     filters.location = '10115 Berlin'
-    filters.locationMeta = { lat: 52.520008, lng: 13.404954 }
+    filters.locationMeta = { lat: '52.520008', lng: '13.404954' }
 
     companies.value = [
       {

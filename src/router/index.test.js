@@ -55,7 +55,7 @@ const firebaseMock = vi.hoisted(() => ({ auth: { currentUser: null }, isFirebase
 vi.mock('@/firebase', () => firebaseMock)
 
 const onAuthStateChangedMock = vi.hoisted(() =>
-  vi.fn((auth, onAuth, onError) => {
+  vi.fn((auth, onAuth) => {
     if (typeof onAuth === 'function') {
       onAuth()
     }

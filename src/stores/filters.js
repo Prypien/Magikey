@@ -1,27 +1,34 @@
 // Diese Datei hält die aktuellen Filterwerte bereit.
 import { reactive } from 'vue'
 
+export const DEFAULT_PRICE_RANGE = Object.freeze([0, 1000])
+
 export const filters = reactive({
   openNow: false,
-  price: [0, 1000],
+  price: [...DEFAULT_PRICE_RANGE],
   location: '',
   locationMeta: null,
   lockTypes: []
 })
 
-export function toggleFilter(key) {
-  filters[key] = !filters[key]
-}
-
 export function clearFilter(key) {
   if (key === 'price') {
-    filters.price = [0, 1000]
-  } else if (key === 'location') {
+    filters.price = [...DEFAULT_PRICE_RANGE]
+    return
+  }
+
+  if (key === 'location') {
     filters.location = ''
     filters.locationMeta = null
-  } else if (key === 'lockTypes') {
+    return
+  }
+
+  if (key === 'lockTypes') {
     filters.lockTypes = []
-  } else {
+    return
+  }
+
+  if (Object.prototype.hasOwnProperty.call(filters, key)) {
     filters[key] = false
   }
 }

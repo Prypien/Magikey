@@ -30,11 +30,12 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { X } from 'lucide-vue-next'
+import { DEFAULT_PRICE_RANGE } from '@/stores/filters'
 
 const props = defineProps({
   modelValue: {
     type: Array,
-    default: () => [0, 1000]
+    default: () => [...DEFAULT_PRICE_RANGE]
   },
   min: { type: Number, default: 0 },
   max: { type: Number, default: 1000 },
@@ -43,11 +44,21 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'close'])
 
-const range = ref([...props.modelValue])
+function toRangeArray(value) {
+  if (Array.isArray(value) && value.length === 2) {
+    return [...value]
+  }
+  return [...DEFAULT_PRICE_RANGE]
+}
 
-watch(() => props.modelValue, (val) => {
-  range.value = [...val]
-})
+const range = ref(toRangeArray(props.modelValue))
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    range.value = toRangeArray(val)
+  }
+)
 
 function apply() {
   emit('update:modelValue', range.value)
