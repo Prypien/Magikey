@@ -99,7 +99,7 @@
       </div>
     </section>
 
-    <section class="space-y-6">
+    <section ref="resultsSection" class="space-y-6">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 class="text-2xl font-semibold text-slate-900">Suchergebnisse</h2>
@@ -140,6 +140,96 @@
         </template>
       </div>
     </section>
+
+    <section class="grid gap-6 lg:grid-cols-2">
+      <article class="glass-card space-y-6 p-6 sm:p-8">
+        <p class="badge-neutral inline-flex items-center gap-2 text-sm text-slate-600">
+          <i class="fa fa-search"></i>
+          Für Kund:innen
+        </p>
+        <div class="space-y-3">
+          <h2 class="text-2xl font-semibold text-slate-900">In drei Schritten zur Hilfe</h2>
+          <p class="text-sm text-slate-600">
+            Nutze Filter für Standort, Preis und Schlosstypen, um sofort passende Angebote zu sehen.
+            Bei Notfällen führen wir dich direkt zum empfohlenen Notdienst.
+          </p>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
+              <i class="fa fa-sliders-h text-[0.65rem]"></i>
+            </span>
+            <span>Filtere live nach Öffnungszeiten, Preisen und Schlosstypen.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
+              <i class="fa fa-map-marker-alt text-[0.65rem]"></i>
+            </span>
+            <span>Vergleiche verifizierte Firmen inklusive Adresse, Bewertungen und Anfahrt.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
+              <i class="fa fa-bell text-[0.65rem]"></i>
+            </span>
+            <span>Nutze den Notdienst-Button für Soforthilfe bei zugefallenen Türen.</span>
+          </li>
+        </ul>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="btn" @click="focusSearchSection">
+            <i class="fa fa-search-location"></i>
+            Zur Suche
+          </button>
+          <router-link to="/support" class="pill-checkbox">
+            <i class="fa fa-hands-helping"></i>
+            Support &amp; Tipps
+          </router-link>
+        </div>
+      </article>
+
+      <article class="glass-card space-y-6 p-6 sm:p-8">
+        <p class="badge-neutral inline-flex items-center gap-2 text-sm text-slate-600">
+          <i class="fa fa-briefcase"></i>
+          Für Unternehmen
+        </p>
+        <div class="space-y-3">
+          <h2 class="text-2xl font-semibold text-slate-900">Werde sichtbarer für Kund:innen</h2>
+          <p class="text-sm text-slate-600">
+            Registriere deinen Schlüsseldienst kostenlos, lade Nachweise hoch und erscheine
+            nach der Verifizierung in der Suche von Magikey.
+          </p>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <i class="fa fa-shield-alt text-[0.65rem]"></i>
+            </span>
+            <span>Profitiere von vertrauensbildenden Verifizierungen durch das Trust-Team.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <i class="fa fa-pen text-[0.65rem]"></i>
+            </span>
+            <span>Pflege Öffnungszeiten, Preise und Notdienstinformationen zentral im Dashboard.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <i class="fa fa-users text-[0.65rem]"></i>
+            </span>
+            <span>Erreiche Menschen, die aktiv nach seriösen Schlüsseldiensten suchen.</span>
+          </li>
+        </ul>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="btn" @click="goToRegister">
+            <i class="fa fa-key"></i>
+            Jetzt registrieren
+          </button>
+          <button type="button" class="pill-checkbox" @click="goToLogin">
+            <i class="fa fa-sign-in-alt"></i>
+            Bereits Partner? Login
+          </button>
+        </div>
+      </article>
+    </section>
   </div>
   <transition name="modal">
     <div
@@ -174,6 +264,7 @@ let exitIntentTriggered = false
 const INTRO_KEY = 'introShown'
 const euroFormatter = new Intl.NumberFormat('de-DE')
 const lastUpdatedAt = ref(null)
+const resultsSection = ref(null)
 
 const emergencyCandidate = computed(() => {
   const companies = filteredCompanies.value || []
@@ -369,6 +460,22 @@ function requestEmergencyHelp() {
   if (candidate.id) {
     router.push({ name: 'details', params: { id: candidate.id } })
   }
+}
+
+function focusSearchSection() {
+  if (typeof window === 'undefined') return
+  const sectionEl = resultsSection.value
+  if (sectionEl?.scrollIntoView) {
+    sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+function goToRegister() {
+  router.push({ name: 'register' })
+}
+
+function goToLogin() {
+  router.push({ name: 'login' })
 }
 
 function setupExitIntent() {
