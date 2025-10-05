@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest'
+import { describe, beforeEach, it, expect, vi, afterEach } from 'vitest'
 import { useCompanyStore } from './company'
 import { filters } from './filters'
 
@@ -111,5 +111,94 @@ describe('filteredCompanies lock type filter', () => {
 
     const resultIds = filteredCompanies.value.map((company) => company.id)
     expect(resultIds).toEqual(['1', '3'])
+  })
+})
+
+describe('filteredCompanies openNow filter', () => {
+  const { companies, filteredCompanies } = useCompanyStore()
+
+  beforeEach(() => {
+    filters.location = ''
+    filters.locationMeta = null
+    filters.price = [0, 1000]
+    filters.lockTypes = []
+    filters.openNow = true
+
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-01T10:00:00Z'))
+
+    companies.value = [
+      {
+        id: 'open',
+        opening_hours: {
+          monday: { open: '08:00', close: '20:00' }
+        },
+      },
+      {
+        id: 'closed',
+        opening_hours: {
+          monday: { open: '21:00', close: '23:00' }
+        },
+      },
+      {
+        id: 'unknown-hours',
+        opening_hours: {},
+      },
+    ]
+  })
+
+  afterEach(() => {
+    filters.openNow = false
+    vi.useRealTimers()
+  })
+
+  it('only keeps companies that are currently open', () => {
+    const resultIds = filteredCompanies.value.map((company) => company.id)
+    expect(resultIds).toEqual(['open'])
+  })
+})
+
+describe('filteredCompanies service radius handling', () => {
+  const { companies, filteredCompanies } = useCompanyStore()
+
+  beforeEach(() => {
+    filters.openNow = false
+    filters.price = [0, 1000]
+    filters.lockTypes = []
+    filters.location = '10115 Berlin'
+    filters.locationMeta = { lat: 52.520008, lng: 13.404954 }
+
+    companies.value = [
+      {
+        id: 'nearby',
+        city: 'Berlin',
+        postal_code: '10115',
+        coordinates: { lat: 52.52, lng: 13.41 },
+        service_radius_km: 15,
+        opening_hours: {},
+        lock_types: [],
+      },
+      {
+        id: 'outside-radius',
+        city: 'Berlin',
+        postal_code: '10115',
+        coordinates: { lat: 53.551086, lng: 9.993682 },
+        service_radius_km: 10,
+        opening_hours: {},
+        lock_types: [],
+      },
+      {
+        id: 'no-coordinates',
+        city: 'Berlin',
+        postal_code: '10115',
+        opening_hours: {},
+        lock_types: [],
+      },
+    ]
+  })
+
+  it('excludes companies outside their service radius even if city matches', () => {
+    const resultIds = filteredCompanies.value.map((company) => company.id)
+    expect(resultIds).toEqual(['nearby', 'no-coordinates'])
   })
 })
