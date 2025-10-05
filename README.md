@@ -12,6 +12,22 @@ Magikey ist ein webbasiertes Projekt, das auf einem Entwickler‑MacBook entsteh
 
 Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten (z.&nbsp;B. 24/7). Nutzer können Betriebe direkt per Telefon oder ‎Google Maps kontaktieren. Ein verbessertes Design ist geplant.
 
+## Nutzerflows im Überblick
+
+### Für Kund:innen
+
+1. Start auf der Startseite (`/`): Filtersuche nutzen, Notdienst hervorheben und Ergebnisse in Echtzeit ansehen.
+2. Detailansicht (`/details/:id`): Adressen, Öffnungszeiten, Bewertungen sowie Ankunftszeit-Abschätzung prüfen und direkt
+   telefonieren oder per WhatsApp schreiben.
+3. Support & Hilfe (`/support`, `/hilfe`): Hintergrundinfos, Tipps und Kontakt zu Magikey finden.
+
+### Für Unternehmen
+
+1. Einstieg über Registrierung (`/register`) oder Login (`/login`).
+2. Nach der Anmeldung: Nicht verifizierte Firmen landen auf der Prüfstatus-Seite (`/on-hold`), verifizierte im Dashboard (`/dashboard`).
+3. Profilpflege (`/edit`): Öffnungszeiten, Preise, Schlosstypen, Logo und Beschreibung aktualisieren und speichern.
+4. Erfolgsmeldungen & Nächste Schritte (`/success`): Weiterleitung nach Änderungen sowie Hinweis auf offene Aufgaben.
+
 ## Schnellstart
 
 1. Repository klonen und Abhängigkeiten installieren:
