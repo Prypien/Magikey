@@ -124,6 +124,14 @@ function isCompanyPortalRoute(routeName) {
   return routeName === 'dashboard' || routeName === 'verification-hold'
 }
 
+function isCompanyRestrictedRoute(routeName) {
+  return (
+    routeName === 'dashboard' ||
+    routeName === 'verification-hold' ||
+    routeName === 'edit'
+  )
+}
+
 async function determineCompanyPortalTarget(user) {
   if (!user?.uid) {
     return 'dashboard'
@@ -180,6 +188,18 @@ export async function navigationGuard(to, from, next) {
       next({ name: 'home' })
     }
     return
+  }
+
+  if (requiresAuth && isCompanyRestrictedRoute(to.name)) {
+    if (userIsAdmin) {
+      next({ name: 'admin-dashboard' })
+      return
+    }
+
+    if (!userIsCompany) {
+      next({ name: 'home' })
+      return
+    }
   }
 
   if (user && isLoginRoute) {

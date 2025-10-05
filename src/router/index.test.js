@@ -177,6 +177,51 @@ describe('router configuration', () => {
     expect(next).toHaveBeenCalledWith({ name: 'dashboard' })
   })
 
+  it('blocks regular users from accessing company portal routes', async () => {
+    auth.currentUser = { uid: 'user-1' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.USER)
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'dashboard', meta: { requiresAuth: true } },
+      { name: 'home' },
+      next
+    )
+
+    expect(resolveCompanyPortalRouteMock).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalledWith({ name: 'home' })
+  })
+
+  it('prevents regular users from opening the edit route', async () => {
+    auth.currentUser = { uid: 'user-2' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.USER)
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'edit', meta: { requiresAuth: true } },
+      { name: 'home' },
+      next
+    )
+
+    expect(resolveCompanyPortalRouteMock).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalledWith({ name: 'home' })
+  })
+
+  it('routes admins trying to access company pages to the admin dashboard', async () => {
+    auth.currentUser = { uid: 'admin-1' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.ADMIN)
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'dashboard', meta: { requiresAuth: true } },
+      { name: 'home' },
+      next
+    )
+
+    expect(resolveCompanyPortalRouteMock).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalledWith({ name: 'admin-dashboard' })
+  })
+
   it('routes logged in companies away from login to their portal target', async () => {
     auth.currentUser = { uid: 'company-3' }
     getUserRoleMock.mockResolvedValueOnce(USER_ROLES.COMPANY)
