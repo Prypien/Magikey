@@ -81,6 +81,7 @@ import { login as loginService, resetPassword as resetPasswordService } from '@/
 import Button from '@/components/common/Button.vue'
 import Loader from '@/components/common/Loader.vue'
 import { USER_ROLES, getUserRole, setCachedUserRole } from '@/constants/admin'
+import { resolveCompanyPortalRoute } from '@/services/company'
 
 defineProps({
   showCancel: {
@@ -106,8 +107,19 @@ const login = async () => {
     emit('success')
     const role = await getUserRole(credential.user, { forceRefresh: true })
     setCachedUserRole(credential.user?.uid, role)
-    const targetRoute = role === USER_ROLES.ADMIN ? '/admin' : '/dashboard'
-    router.push(targetRoute)
+
+    if (role === USER_ROLES.ADMIN) {
+      router.push({ name: 'admin-dashboard' })
+      return
+    }
+
+    if (role === USER_ROLES.COMPANY) {
+      const routeName = await resolveCompanyPortalRoute(credential.user?.uid)
+      router.push({ name: routeName || 'dashboard' })
+      return
+    }
+
+    router.push({ name: 'home' })
   } catch (e) {
     error.value = e.message
   } finally {
