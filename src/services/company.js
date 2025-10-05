@@ -144,3 +144,28 @@ export async function getCompany(id) {
     return cloneFallbackCompany(id)
   }
 }
+
+function isCompanyVerified(company) {
+  if (!company) return false
+  if (company.verified === true) return true
+  const status = company.verification?.status
+  return status === 'verified'
+}
+
+export async function resolveCompanyPortalRoute(uid) {
+  if (!uid) return 'dashboard'
+  if (!isFirebaseConfigured || !db) return 'dashboard'
+
+  try {
+    const snap = await getDoc(doc(db, 'companies', uid))
+    if (!snap.exists()) {
+      return 'verification-hold'
+    }
+
+    const data = snap.data()
+    return isCompanyVerified(data) ? 'dashboard' : 'verification-hold'
+  } catch (err) {
+    console.error('Fehler beim Prüfen des Firmenstatus:', err)
+    return 'dashboard'
+  }
+}

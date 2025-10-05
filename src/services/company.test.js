@@ -13,7 +13,7 @@ const firestoreMocks = vi.hoisted(() => ({
 vi.mock('@/firebase', () => ({ db: 'db-instance', isFirebaseConfigured: true }))
 vi.mock('firebase/firestore', () => firestoreMocks)
 
-import { getCompanies, getCompany } from './company'
+import { getCompanies, getCompany, resolveCompanyPortalRoute } from './company'
 
 describe('company service', () => {
   let consoleErrorMock
@@ -117,5 +117,46 @@ describe('company service', () => {
     const second = await getCompany('demo-berlin')
 
     expect(second.company_name).toBe('Schlüsselservice Berlin Mitte')
+  })
+
+  describe('resolveCompanyPortalRoute', () => {
+    it('returns dashboard when company is verified', async () => {
+      firestoreMocks.getDoc.mockResolvedValueOnce({
+        exists: () => true,
+        data: () => ({ verified: true, verification: { status: 'verified' } })
+      })
+
+      const route = await resolveCompanyPortalRoute('uid-1')
+
+      expect(firestoreMocks.doc).toHaveBeenCalledWith('db-instance', 'companies', 'uid-1')
+      expect(route).toBe('dashboard')
+    })
+
+    it('returns verification hold when company is not verified', async () => {
+      firestoreMocks.getDoc.mockResolvedValueOnce({
+        exists: () => true,
+        data: () => ({ verified: false, verification: { status: 'pending' } })
+      })
+
+      const route = await resolveCompanyPortalRoute('uid-2')
+
+      expect(route).toBe('verification-hold')
+    })
+
+    it('returns verification hold when company profile is missing', async () => {
+      firestoreMocks.getDoc.mockResolvedValueOnce({ exists: () => false })
+
+      const route = await resolveCompanyPortalRoute('uid-3')
+
+      expect(route).toBe('verification-hold')
+    })
+
+    it('falls back to dashboard on error', async () => {
+      firestoreMocks.getDoc.mockRejectedValueOnce(new Error('firestore down'))
+
+      const route = await resolveCompanyPortalRoute('uid-4')
+
+      expect(route).toBe('dashboard')
+    })
   })
 })
