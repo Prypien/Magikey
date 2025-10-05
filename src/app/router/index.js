@@ -305,17 +305,26 @@ function waitForAuthInit() {
   return new Promise((resolve) => {
     let unsubscribe = () => {}
 
-    const handleResolve = () => {
+    const finalize = () => {
       authReady = true
-      unsubscribe()
+
+      Promise.resolve()
+        .then(() => {
+          unsubscribe()
+        })
+        .catch(() => {
+          unsubscribe()
+        })
+
       resolve()
     }
 
-    unsubscribe = onAuthStateChanged(
-      auth,
-      handleResolve,
-      handleResolve
-    )
+    const handleError = (error) => {
+      console.error('Fehler beim Beobachten des Auth-Status', error)
+      finalize()
+    }
+
+    unsubscribe = onAuthStateChanged(auth, finalize, handleError)
   })
 }
 
