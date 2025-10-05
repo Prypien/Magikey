@@ -7,26 +7,20 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const homeViewSource = readFileSync(resolve(__dirname, '../pages/HomeView.vue'), 'utf8')
 
-describe('HomeView customer and company flows', () => {
-  it('contains dedicated sections for both customer and company journeys', () => {
-    expect(homeViewSource).toMatch(/Für Kund:innen/)
-    expect(homeViewSource).toMatch(/Für Unternehmen/)
+describe('HomeView hero and entry points', () => {
+  it('exposes CTA hooks for the streamlined hero', () => {
+    expect(homeViewSource).toMatch(/data-testid="cta-customer-search"/)
+    expect(homeViewSource).toMatch(/data-testid="cta-company-register-hero"/)
   })
 
-  it('exposes CTA hooks for the major entry points', () => {
-    expect(homeViewSource).toMatch(/data-testid="cta-customer-search"/)
-    expect(homeViewSource).toMatch(/data-testid="cta-customer-support"/)
+  it('keeps company actions available in the sidebar card', () => {
     expect(homeViewSource).toMatch(/data-testid="cta-company-register"/)
     expect(homeViewSource).toMatch(/data-testid="cta-company-login"/)
   })
 
-  it('links the support CTA directly to the support route', () => {
-    const marker = 'data-testid="cta-customer-support"'
-    const markerIndex = homeViewSource.indexOf(marker)
-    expect(markerIndex, 'support CTA marker should exist').toBeGreaterThan(-1)
-
-    const snippet = homeViewSource.slice(Math.max(0, markerIndex - 150), markerIndex + marker.length + 150)
-    expect(snippet).toMatch(/to="\/support"/)
+  it('removes the legacy flow copy to keep the hero concise', () => {
+    expect(homeViewSource).not.toMatch(/Flow für Kund:innen/)
+    expect(homeViewSource).not.toMatch(/Flow für Unternehmen/)
   })
 
   it('navigates company CTA handlers to the correct routes', () => {
