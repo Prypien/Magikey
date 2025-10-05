@@ -171,7 +171,7 @@ import { useReviewStore } from '@/stores/reviews'
 
 const route = useRoute()
 const router = useRouter()
-const companyId = route.params.id
+const companyId = ref(route.params.id ?? '')
 const company = ref(null)
 const isLoading = ref(true)
 const days = DAYS
@@ -183,14 +183,17 @@ const googleReviewsUrl = computed(
 
 const { reviews: magikeyReviews, fetchCompanyReviews } = useReviewStore()
 
-onMounted(async () => {
-  if (!companyId) {
+async function loadCompany(id) {
+  if (!id) {
+    company.value = null
     isLoading.value = false
     return
   }
 
+  isLoading.value = true
+
   try {
-    const data = await getCompany(companyId)
+    const data = await getCompany(id)
     if (data) {
       company.value = data
     } else {
@@ -201,7 +204,22 @@ onMounted(async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+onMounted(() => {
+  loadCompany(companyId.value)
 })
+
+watch(
+  () => route.params.id,
+  (nextId, previousId) => {
+    if (nextId && nextId === previousId) return
+    const normalisedId = nextId ?? ''
+    if (normalisedId === companyId.value && !normalisedId) return
+    companyId.value = normalisedId
+    loadCompany(normalisedId)
+  }
+)
 
 watch(
   () => company.value?.id,
