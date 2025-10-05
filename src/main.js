@@ -1,9 +1,9 @@
 // Einstiegspunkt der Vue-Anwendung
 import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router/index.js'
+import App from './app/App.vue'
+import router from './app/router/index.js'
 // globale Styles laden
-import './theme/index.css'
+import './app/theme/index.css'
 
 // FormKit-Plugin für Formulare registrieren
 import { plugin, defaultConfig } from '@formkit/vue'

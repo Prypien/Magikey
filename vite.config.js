@@ -19,7 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'lucide-vue-next': path.resolve(__dirname, './src/components/icons'),
+      'lucide-vue-next': path.resolve(__dirname, './src/ui/components/icons'),
     },
   },
   build: {

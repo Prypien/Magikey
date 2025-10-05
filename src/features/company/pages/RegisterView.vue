@@ -1,0 +1,401 @@
+<!-- Diese Datei enthält das Registrierungsformular für Firmen. -->
+<template>
+  <section class="page-wrapper">
+    <div class="grid gap-10 xl:grid-cols-[0.9fr,1.1fr]">
+      <div class="glass-card p-8 sm:p-10">
+        <div class="space-y-6">
+          <p class="badge-neutral">
+            <i class="fa fa-key"></i>
+            Werde Problemsolver:in
+          </p>
+          <h1 class="section-heading">Präsentiere deinen Schlüsseldienst auf Magikey</h1>
+          <p class="section-subtitle">
+            Registriere dich kostenfrei, verifiziere dein Unternehmen und erscheine in der Suchergebnisliste der Plattform.
+          </p>
+          <div class="muted-panel space-y-3 text-sm text-slate-600">
+            <p class="font-semibold text-slate-700">Deine Vorteile:</p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fa fa-check text-gold mt-1"></i>
+                <span>Zeige transparente Preise & Leistungen, inklusive Notdienst-Informationen.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa fa-check text-gold mt-1"></i>
+                <span>Erreiche Kund:innen, die gezielt nach vertrauenswürdigen Betrieben suchen.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa fa-check text-gold mt-1"></i>
+                <span>Verwalte Öffnungszeiten, Bilder und Beschreibungen zentral im Dashboard.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card p-8 sm:p-10">
+        <Transition name="fade">
+          <FormKit
+            type="form"
+            :actions="false"
+            @submit="register"
+            :config="{ validationVisibility: 'blur' }"
+            :classes="{ form: 'space-y-6' }"
+          >
+            <div class="grid gap-6 lg:grid-cols-2">
+              <FormKit
+                type="text"
+                name="company_name"
+                label="Firmenname"
+                validation="required"
+                placeholder="z. B. Schlüsseldienst Müller"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="email"
+                name="email"
+                label="E-Mail"
+                validation="required|email"
+                placeholder="beispiel@firma.de"
+                :classes="inputClasses"
+              />
+
+              <PasswordField :classes="inputClasses" />
+
+              <FormKit
+                type="password"
+                name="confirm_password"
+                label="Passwort wiederholen"
+                validation="required|confirm:password"
+                placeholder="Nochmals eingeben"
+                :classes="inputClasses"
+                autocomplete="new-password"
+              />
+
+              <FormKit
+                type="tel"
+                name="phone"
+                label="Telefonnummer"
+                validation="required"
+                placeholder="z. B. 0151 12345678"
+                :classes="inputClasses"
+                help="Diese Nummer nutzen wir für Anrufe und – sofern nicht anders angegeben – auch für WhatsApp."
+              />
+
+              <FormKit
+                type="checkbox"
+                name="has_separate_whatsapp"
+                label="Ich nutze eine andere Nummer für WhatsApp"
+                v-model="hasSeparateWhatsapp"
+                :classes="whatsappToggleClasses"
+                help="Wenn aktiviert, kannst du unten eine abweichende WhatsApp-Nummer eintragen."
+              />
+
+              <FormKit
+                v-if="hasSeparateWhatsapp"
+                type="tel"
+                name="whatsapp"
+                label="Eigene WhatsApp-Nummer"
+                validation="required"
+                placeholder="z. B. +49 151 12345678"
+                :classes="inputClasses"
+                help="Diese Nummer wird ausschließlich für WhatsApp genutzt."
+              />
+
+              <FormKit
+                type="number"
+                name="price"
+                label="Preis (ab)"
+                min="0"
+                step="1"
+                validation="required|min:0"
+                :classes="inputClasses"
+                help="Bitte gib deinen Einstiegspreis an, z. B. für eine einfache Türöffnung."
+              />
+
+              <FormKit
+                type="number"
+                name="service_radius_km"
+                label="Einsatzradius (km)"
+                min="0"
+                step="1"
+                validation="required|min:0"
+                :classes="inputClasses"
+                help="Wie weit fährst du maximal zu Kund:innen? Bitte in Kilometern angeben."
+              />
+
+              <FormKit
+                type="text"
+                name="address"
+                label="Straße und Hausnummer"
+                validation="required"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="text"
+                name="postal_code"
+                label="Postleitzahl"
+                validation="required|length:5"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="text"
+                name="city"
+                label="Ort"
+                validation="required"
+                :classes="inputClasses"
+              />
+
+              <FormKit
+                type="textarea"
+                name="description"
+                label="Beschreibung"
+                placeholder="Beschreibe dein Angebot in ein paar Sätzen"
+                validation="required|length:20,1000"
+                :classes="textareaClasses"
+                help="Dieser Text wird im Profil angezeigt. Mindestens 20 Zeichen."
+              />
+            </div>
+
+            <div class="space-y-4">
+              <label class="label text-slate-700">Schlosstypen</label>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="opt in lockTypeOptions"
+                  :key="opt.value"
+                  type="button"
+                  class="pill-checkbox"
+                  :class="{ 'border-gold bg-gold/20 text-slate-900': lockTypes.includes(opt.value) }"
+                  @click="toggleLockType(opt.value)"
+                >
+                  <span>{{ opt.label }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="font-semibold text-slate-800">Öffnungszeiten</h3>
+              <OpeningHoursForm v-model="openingHours" />
+            </div>
+
+            <div class="space-y-4 rounded-3xl border border-white/70 bg-white/60 p-6 shadow-inner">
+              <FormKit
+                type="checkbox"
+                name="is_247"
+                label="24/7 Notdienst"
+                v-model="is247"
+                :classes="{
+                  outer: 'flex items-center gap-3',
+                  input: 'h-4 w-4 rounded border-slate-300 text-gold focus:ring-gold',
+                  label: 'text-sm font-medium text-slate-600'
+                }"
+              />
+
+              <FormKit
+                v-if="is247"
+                type="number"
+                name="emergency_price"
+                label="Notdienstpreis"
+                validation="required"
+                min="0"
+                :classes="inputClasses"
+              />
+            </div>
+
+            <Button class="w-full">Registrieren</Button>
+          </FormKit>
+        </Transition>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { auth, db, isFirebaseConfigured } from '@/core/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { USER_ROLES, setCachedUserRole } from '@/core/constants/admin'
+import Button from '@/ui/components/common/Button.vue'
+import PasswordField from '@/ui/components/common/PasswordField.vue'
+import OpeningHoursForm from '@/ui/components/company/OpeningHoursForm.vue'
+import { LOCK_TYPE_OPTIONS } from '@/core/constants/lockTypes'
+import { searchLocations } from '@/core/services/location'
+import { sendVerificationEmail } from '@/core/services/auth'
+
+const router = useRouter()
+const is247 = ref(false)
+const hasSeparateWhatsapp = ref(false)
+const openingHours = ref({})
+const lockTypes = ref([])
+const lockTypeOptions = LOCK_TYPE_OPTIONS
+
+const inputClasses = {
+  outer: 'space-y-2',
+  label: 'label text-slate-700',
+  input: 'water-input',
+  help: 'text-xs text-slate-500',
+}
+
+const whatsappToggleClasses = {
+  outer: 'lg:col-span-2 space-y-2',
+  wrapper: 'flex items-center gap-3',
+  input: 'h-4 w-4 rounded border-slate-300 text-gold focus:ring-gold',
+  label: 'text-sm font-medium text-slate-600',
+  help: 'text-xs text-slate-500',
+}
+
+const textareaClasses = {
+  outer: 'space-y-2 lg:col-span-2',
+  label: 'label text-slate-700',
+  input: 'water-textarea min-h-[120px]',
+  help: 'text-xs text-slate-500',
+}
+
+function toggleLockType(value) {
+  if (lockTypes.value.includes(value)) {
+    lockTypes.value = lockTypes.value.filter((item) => item !== value)
+  } else {
+    lockTypes.value = [...lockTypes.value, value]
+  }
+}
+
+
+function normalizeText(value) {
+  return typeof value === 'string' ? value.trim() : value
+}
+
+function normalizeRadius(value) {
+  const radius = Number(value)
+  if (!Number.isFinite(radius) || radius < 0) return 0
+  return radius
+}
+
+function hasValidOpeningHours(hours) {
+  const values = Object.values(hours || {})
+  if (!values.length) return false
+  return values.every((entry) => entry?.open && entry?.close)
+}
+
+function cloneOpeningHours(hours) {
+  try {
+    const hasNativeClone =
+      typeof globalThis !== 'undefined' && typeof globalThis.structuredClone === 'function'
+    if (hasNativeClone) {
+      return globalThis.structuredClone(hours || {})
+    }
+    return JSON.parse(JSON.stringify(hours || {}))
+  } catch (error) {
+    console.warn('Konnte Öffnungszeiten nicht klonen, nutze Fallback.', error)
+    return hours || {}
+  }
+}
+
+function buildGeocodeQuery(form) {
+  const parts = [form.address, form.postal_code, form.city]
+    .map((part) => normalizeText(part))
+    .filter(Boolean)
+  return parts.join(', ')
+}
+
+async function resolveCoordinates(form) {
+  const query = buildGeocodeQuery(form)
+  if (!query) return null
+
+  try {
+    const [result] = await searchLocations(query, { limit: 1 })
+    if (!result) return null
+    if (!Number.isFinite(result.lat) || !Number.isFinite(result.lng)) return null
+    return { lat: result.lat, lng: result.lng }
+  } catch (error) {
+    console.warn('Konnte Koordinaten nicht ermitteln:', error)
+    return null
+  }
+}
+
+const register = async (form) => {
+  if (!isFirebaseConfigured || !auth || !db) {
+    alert('Registrierung ist derzeit nicht verfügbar.')
+    return
+  }
+
+  if (!lockTypes.value.length) {
+    alert('Bitte wähle mindestens einen Schlosstyp aus.')
+    return
+  }
+
+  if (!hasValidOpeningHours(openingHours.value)) {
+    alert('Bitte gib vollständige Öffnungszeiten an (inklusive Öffnungs- und Schließzeiten).')
+    return
+  }
+  try {
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      form.email,
+      form.password
+    )
+    const whatsappNumber = hasSeparateWhatsapp.value ? normalizeText(form.whatsapp || '') : normalizeText(form.phone)
+    const companyRef = doc(db, 'companies', user.uid)
+    const existing = await getDoc(companyRef)
+    const coordinates = await resolveCoordinates(form)
+
+    if (!existing.exists()) {
+      await setDoc(companyRef, {
+        company_name: normalizeText(form.company_name),
+        email: normalizeText(form.email),
+        phone: normalizeText(form.phone),
+        whatsapp: whatsappNumber || '',
+        address: normalizeText(form.address || ''),
+        city: normalizeText(form.city || ''),
+        postal_code: normalizeText(form.postal_code || ''),
+        price: Number(form.price),
+        description: normalizeText(form.description || ''),
+        lock_types: [...lockTypes.value],
+        opening_hours: cloneOpeningHours(openingHours.value),
+        is_247: form.is_247 || false,
+        emergency_price: form.is_247 ? Number(form.emergency_price) : null,
+        service_radius_km: normalizeRadius(form.service_radius_km),
+        coordinates: coordinates || null,
+        created_at: serverTimestamp(),
+        verified: false,
+        verification: {
+          status: 'pending',
+          google_place_url: '',
+          google_reviews_url: '',
+          website_url: '',
+          price_statement: '',
+          association_member: false,
+          register_number: '',
+          assigned_admin: '',
+          last_update: serverTimestamp(),
+        },
+      })
+    }
+    const userRef = doc(db, 'users', user.uid)
+    const userSnap = await getDoc(userRef)
+    const timestamp = serverTimestamp()
+    const rolePayload = {
+      email: normalizeText(form.email),
+      role: USER_ROLES.COMPANY,
+      updated_at: timestamp,
+    }
+    if (!userSnap.exists()) {
+      rolePayload.created_at = timestamp
+    }
+    await setDoc(userRef, rolePayload, { merge: true })
+    setCachedUserRole(user.uid, USER_ROLES.COMPANY, { fetchedAt: Date.now() })
+    await sendVerificationEmail(user)
+    router.push({
+      name: 'success',
+      query: { msg: 'Registrierung erfolgreich! Wir prüfen jetzt dein Profil.', next: '/on-hold' }
+    })
+  } catch (e) {
+    alert('Fehler bei der Registrierung: ' + e.message)
+  }
+}
+
+</script>
+
