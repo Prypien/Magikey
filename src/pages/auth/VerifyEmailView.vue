@@ -20,9 +20,10 @@
             ></lottie-player>
             <h1 class="section-heading">E-Mail bestätigt</h1>
             <p class="section-subtitle">
-              Vielen Dank! Deine Angaben erscheinen nun als verifiziertes Profil. Du kannst dich direkt anmelden.
+              Vielen Dank! Deine E-Mail-Adresse wurde erfolgreich bestätigt. Unser Trust-Team prüft jetzt deine Unternehmensdaten.
+              Du kannst dich im Partnerbereich anmelden, um den aktuellen Status einzusehen.
             </p>
-            <button class="btn" @click="gotoLogin">Weiter zum Login</button>
+            <button class="btn" @click="gotoLogin">Zum Partner-Login</button>
           </div>
         </template>
         <p v-else class="text-red-600">Link ist ungültig oder abgelaufen.</p>
@@ -36,7 +37,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/firebase'
 import { applyActionCode, checkActionCode } from 'firebase/auth'
-import { updateDoc, collection, query, where, getDocs } from 'firebase/firestore'
+import { updateDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
 import Loader from '@/components/common/Loader.vue'
 
 const route = useRoute()
@@ -65,8 +66,32 @@ onMounted(async () => {
     if (email) {
       const q = query(collection(db, 'companies'), where('email', '==', email))
       const snap = await getDocs(q)
-      for (const docSnap of snap.docs) {
-        await updateDoc(docSnap.ref, { verified: true })
+
+      const updatePromises = snap.docs.map((docSnap) => {
+        const data = typeof docSnap.data === 'function' ? docSnap.data() : {}
+        const currentStatus = data?.verification?.status
+
+        const updatePayload = {
+          email_verified: true,
+          email_verified_at: serverTimestamp(),
+        }
+
+        updatePayload['verification.last_update'] = serverTimestamp()
+
+        if (!currentStatus || currentStatus === 'pending') {
+          updatePayload['verification.status'] = 'in_review'
+        }
+
+        return updateDoc(docSnap.ref, updatePayload)
+      })
+
+      if (updatePromises.length) {
+        const results = await Promise.allSettled(updatePromises)
+        results
+          .filter((result) => result.status === 'rejected')
+          .forEach((result) => {
+            console.error('Konnte E-Mail-Verifizierungsstatus nicht aktualisieren', result.reason)
+          })
       }
     }
     success.value = true
@@ -78,7 +103,7 @@ onMounted(async () => {
 })
 
 function gotoLogin() {
-  router.push('/login')
+  router.push({ name: 'login' })
 }
 </script>
 
