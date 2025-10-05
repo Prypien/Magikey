@@ -11,6 +11,7 @@ import HomeView from '@/pages/HomeView.vue'
 import { auth, isFirebaseConfigured } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { USER_ROLES, getUserRole } from '@/constants/admin'
+import { resolveCompanyPortalRoute } from '@/services/company'
 
 // Definierte Routen
 const routes = [
@@ -119,8 +120,26 @@ function waitForAuthInit() {
   })
 }
 
+function isCompanyPortalRoute(routeName) {
+  return routeName === 'dashboard' || routeName === 'verification-hold'
+}
+
+async function determineCompanyPortalTarget(user) {
+  if (!user?.uid) {
+    return 'dashboard'
+  }
+
+  try {
+    const target = await resolveCompanyPortalRoute(user.uid)
+    return target || 'dashboard'
+  } catch (error) {
+    console.error('Fehler beim Bestimmen des Firmenportals:', error)
+    return 'dashboard'
+  }
+}
+
 // Navigation Guard für geschützte Routen
-router.beforeEach(async (to, from, next) => {
+export async function navigationGuard(to, from, next) {
   try {
     await waitForAuthInit()
   } catch (error) {
@@ -135,16 +154,61 @@ router.beforeEach(async (to, from, next) => {
     ? await getUserRole(user, { forceRefresh: requiresAdmin })
     : USER_ROLES.USER
   const userIsAdmin = userRole === USER_ROLES.ADMIN
+  const userIsCompany = userRole === USER_ROLES.COMPANY
+
+  let companyPortalTarget = null
+  const getCompanyPortalTarget = async () => {
+    if (!userIsCompany) {
+      return 'dashboard'
+    }
+    if (!companyPortalTarget) {
+      companyPortalTarget = await determineCompanyPortalTarget(user)
+    }
+    return companyPortalTarget
+  }
 
   if (requiresAuth && !user) {
     next({ name: 'login' })
-  } else if (requiresAdmin && !userIsAdmin) {
-    next({ name: 'dashboard' })
-  } else if (user && isLoginRoute) {
-    next({ name: userIsAdmin ? 'admin-dashboard' : 'dashboard' })
-  } else {
-    next()
+    return
   }
-})
+
+  if (requiresAdmin && !userIsAdmin) {
+    if (userIsCompany && user) {
+      const target = await getCompanyPortalTarget()
+      next({ name: target })
+    } else {
+      next({ name: 'home' })
+    }
+    return
+  }
+
+  if (user && isLoginRoute) {
+    if (userIsAdmin) {
+      next({ name: 'admin-dashboard' })
+      return
+    }
+
+    if (userIsCompany) {
+      const target = await getCompanyPortalTarget()
+      next({ name: target })
+      return
+    }
+
+    next({ name: 'home' })
+    return
+  }
+
+  if (user && userIsCompany && isCompanyPortalRoute(to.name)) {
+    const target = await getCompanyPortalTarget()
+    if (target !== to.name) {
+      next({ name: target })
+      return
+    }
+  }
+
+  next()
+}
+
+router.beforeEach(navigationGuard)
 
 export default router

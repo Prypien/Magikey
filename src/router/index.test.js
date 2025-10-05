@@ -50,13 +50,21 @@ globalThis.window = mockWindow
 globalThis.document = mockDocument
 globalThis.location = mockWindow.location
 
-vi.mock('@/firebase', () => ({
-  auth: { currentUser: null },
-  isFirebaseConfigured: false,
-}))
+const firebaseMock = vi.hoisted(() => ({ auth: { currentUser: null }, isFirebaseConfigured: true }))
+
+vi.mock('@/firebase', () => firebaseMock)
+
+const onAuthStateChangedMock = vi.hoisted(() =>
+  vi.fn((auth, onAuth, onError) => {
+    if (typeof onAuth === 'function') {
+      onAuth()
+    }
+    return vi.fn()
+  })
+)
 
 vi.mock('firebase/auth', () => ({
-  onAuthStateChanged: vi.fn(() => vi.fn()),
+  onAuthStateChanged: onAuthStateChangedMock,
 }))
 
 const getUserRoleMock = vi.hoisted(() => vi.fn(async () => 'user'))
@@ -66,7 +74,17 @@ vi.mock('@/constants/admin', () => ({
   getUserRole: getUserRoleMock,
 }))
 
+const resolveCompanyPortalRouteMock = vi.hoisted(() => vi.fn(async () => 'dashboard'))
+
+vi.mock('@/services/company', () => ({
+  resolveCompanyPortalRoute: resolveCompanyPortalRouteMock,
+}))
+
+import { auth } from '@/firebase'
+import { USER_ROLES } from '@/constants/admin'
+
 let router
+let navigationGuard
 
 function findRoute(name) {
   return router.getRoutes().find((route) => route.name === name)
@@ -74,11 +92,17 @@ function findRoute(name) {
 
 describe('router configuration', () => {
   beforeAll(async () => {
-    router = (await import('./index')).default
+    const routerModule = await import('./index')
+    router = routerModule.default
+    navigationGuard = routerModule.navigationGuard
   })
 
   beforeEach(() => {
     getUserRoleMock.mockClear()
+    resolveCompanyPortalRouteMock.mockClear()
+    auth.currentUser = null
+    getUserRoleMock.mockResolvedValue(USER_ROLES.USER)
+    resolveCompanyPortalRouteMock.mockResolvedValue('dashboard')
   })
 
   afterAll(() => {
@@ -121,5 +145,61 @@ describe('router configuration', () => {
   it('keeps login route publicly accessible', () => {
     const loginRoute = findRoute('login')
     expect(loginRoute?.meta?.requiresAuth).toBeUndefined()
+  })
+
+  it('redirects unverified companies from dashboard to verification hold', async () => {
+    auth.currentUser = { uid: 'company-1' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.COMPANY)
+    resolveCompanyPortalRouteMock.mockResolvedValueOnce('verification-hold')
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'dashboard', meta: { requiresAuth: true } },
+      { name: 'home' },
+      next
+    )
+
+    expect(next).toHaveBeenCalledWith({ name: 'verification-hold' })
+  })
+
+  it('redirects verified companies away from verification hold', async () => {
+    auth.currentUser = { uid: 'company-2' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.COMPANY)
+    resolveCompanyPortalRouteMock.mockResolvedValueOnce('dashboard')
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'verification-hold', meta: { requiresAuth: true } },
+      { name: 'dashboard' },
+      next
+    )
+
+    expect(next).toHaveBeenCalledWith({ name: 'dashboard' })
+  })
+
+  it('routes logged in companies away from login to their portal target', async () => {
+    auth.currentUser = { uid: 'company-3' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.COMPANY)
+    resolveCompanyPortalRouteMock.mockResolvedValueOnce('verification-hold')
+
+    const next = vi.fn()
+    await navigationGuard({ name: 'login', meta: {} }, { name: 'home' }, next)
+
+    expect(next).toHaveBeenCalledWith({ name: 'verification-hold' })
+  })
+
+  it('keeps verified companies on dashboard', async () => {
+    auth.currentUser = { uid: 'company-4' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.COMPANY)
+    resolveCompanyPortalRouteMock.mockResolvedValueOnce('dashboard')
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'dashboard', meta: { requiresAuth: true } },
+      { name: 'home' },
+      next
+    )
+
+    expect(next).toHaveBeenCalledWith()
   })
 })
