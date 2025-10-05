@@ -26,7 +26,7 @@
                 @click="requestEmergencyHelp"
               >
                 <i class="fa fa-bell" aria-hidden="true"></i>
-                Jetzt Hilfe beantragen
+                Ausgeschlossen? Jetzt Notdienst beauftragen!
               </button>
               <p class="text-xs font-medium text-slate-500">
                 Empfohlen: {{ emergencyCompany.company_name }}<span v-if="emergencyRating">
@@ -210,7 +210,25 @@ const emergencyCandidate = computed(() => {
     return basePrice !== null ? basePrice : Number.POSITIVE_INFINITY
   }
 
-  const ranked = companies
+  const supportsHouseLock = (company) => {
+    const lockTypes = company?.lock_types
+    if (Array.isArray(lockTypes)) {
+      return lockTypes.some((type) => typeof type === 'string' && type.trim().toLowerCase() === 'house')
+    }
+    if (typeof lockTypes === 'string') {
+      return lockTypes
+        .split(/[,;\n]/)
+        .map((part) => part.trim().toLowerCase())
+        .filter(Boolean)
+        .includes('house')
+    }
+    return false
+  }
+
+  const relevantCompanies = companies.filter(supportsHouseLock)
+  if (!relevantCompanies.length) return null
+
+  const ranked = relevantCompanies
     .map((company) => ({
       company,
       rating: normalizeRating(company),
