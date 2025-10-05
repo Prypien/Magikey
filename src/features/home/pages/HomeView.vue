@@ -3,99 +3,151 @@
   <!-- Startseite mit Filterleiste und Firmenliste -->
   <div class="space-y-12">
     <section
-      class="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 px-6 py-10 shadow-xl backdrop-blur-sm sm:px-10"
+      class="relative overflow-hidden rounded-3xl border border-white/60 bg-white/85 px-6 py-10 shadow-xl backdrop-blur sm:px-10"
     >
       <div class="absolute -top-24 right-[-20%] h-72 w-72 rounded-full bg-gold/30 blur-3xl"></div>
       <div class="absolute left-[-15%] top-8 hidden h-56 w-56 rounded-full bg-gold/20 blur-3xl md:block"></div>
-      <div class="relative flex flex-col gap-8">
-        <header class="space-y-4">
-          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/70">
-            Schlüsseldienst-Finder
-          </p>
-          <div class="flex flex-wrap items-center gap-3">
+      <div class="relative grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+        <div class="flex flex-col gap-8">
+          <header class="space-y-5">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/70">
+              Schlüsseldienst-Finder
+            </p>
             <h1 class="text-3xl font-semibold text-slate-900 sm:text-4xl">
               {{ headline }}
             </h1>
-            <div
-              v-if="emergencyCompany"
-              class="flex w-full flex-col gap-1 sm:w-auto sm:flex-1 sm:items-end"
-            >
+            <p class="max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              Finde verifizierte Schlüsseldienste in deiner Nähe – transparent, fair und rund um die Uhr verfügbar.
+              Magikey zeigt dir sofort passende Anbieter und hilft im Notfall mit einer direkten Empfehlung.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 sm:text-sm">
+              <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
+                <i class="fa fa-shield-alt"></i>
+                Sicherheit zuerst: geprüfte Unternehmensdaten
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-slate-600">
+                <i class="fa fa-user-check"></i>
+                Nur bestätigte Anbieter werden gelistet
+              </span>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" class="btn" data-testid="cta-customer-search" @click="focusSearchSection">
+                <i class="fa fa-search-location"></i>
+                Zur Suche
+              </button>
               <button
                 type="button"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-5 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
-                @click="requestEmergencyHelp"
+                class="pill-checkbox"
+                data-testid="cta-company-register-hero"
+                @click="goToRegister"
               >
-                <i class="fa fa-bell" aria-hidden="true"></i>
-                Ausgeschlossen? Jetzt Notdienst beauftragen!
+                <i class="fa fa-briefcase"></i>
+                Unternehmen registrieren
               </button>
-              <p class="text-xs font-medium text-slate-500">
-                Empfohlen: {{ emergencyCompany.company_name }}<span v-if="emergencyRating">
-                  · {{ emergencyRating.toFixed(1) }} / 5 ⭐
-                </span>
+            </div>
+          </header>
+
+          <div v-if="activeBadges.length" class="flex flex-wrap gap-2">
+            <span
+              v-for="badge in activeBadges"
+              :key="badge.key"
+              class="group inline-flex items-center gap-2 rounded-full border border-gold/30 bg-white/80 px-3 py-1 text-xs font-medium text-gold shadow-sm backdrop-blur transition hover:border-gold/60"
+            >
+              <span>{{ badge.label }}</span>
+              <button
+                v-if="badge.clear"
+                type="button"
+                class="text-[11px] text-gold/70 transition group-hover:text-gold"
+                @click="badge.clear()"
+              >
+                <span class="sr-only">Filter entfernen</span>
+                ×
+              </button>
+            </span>
+          </div>
+
+          <dl v-if="!loading" class="grid gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
+              <dt class="text-xs uppercase tracking-wide text-slate-500">Anbieter gefunden</dt>
+              <dd class="mt-2 text-2xl font-semibold text-slate-900">
+                {{ filteredCompanies.length }}
+              </dd>
+              <p class="mt-1 text-xs text-slate-500">passend zu deiner Auswahl</p>
+            </div>
+            <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
+              <dt class="text-xs uppercase tracking-wide text-slate-500">Filter aktiv</dt>
+              <dd class="mt-2 text-2xl font-semibold text-slate-900">
+                {{ activeBadges.length }}
+              </dd>
+              <p class="mt-1 text-xs text-slate-500">
+                {{ activeBadges.length ? 'angepasste Kriterien' : 'alle Anbieter im Überblick' }}
               </p>
             </div>
-          </div>
-          <p class="max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
-            Finde vertrauenswürdige Schlüsseldienste in deiner Nähe – transparent, schnell und mit
-            Notdienstoptionen, wenn es eilig ist. Alle Betriebe werden von unserem Trust-Team verifiziert,
-            bevor sie auf Magikey erscheinen.
-          </p>
-          <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 sm:text-sm">
-            <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
-              <i class="fa fa-shield-alt"></i>
-              Sicherheit zuerst: geprüfte Unternehmensdaten
-            </span>
-            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-slate-600">
-              <i class="fa fa-user-check"></i>
-              Nur bestätigte Anbieter werden gelistet
-            </span>
-          </div>
-        </header>
-
-        <div v-if="activeBadges.length" class="flex flex-wrap gap-2">
-          <span
-            v-for="badge in activeBadges"
-            :key="badge.key"
-            class="group inline-flex items-center gap-2 rounded-full border border-gold/30 bg-white/80 px-3 py-1 text-xs font-medium text-gold shadow-sm backdrop-blur transition hover:border-gold/60"
-          >
-            <span>{{ badge.label }}</span>
-            <button
-              v-if="badge.clear"
-              type="button"
-              class="text-[11px] text-gold/70 transition group-hover:text-gold"
-              @click="badge.clear()"
-            >
-              <span class="sr-only">Filter entfernen</span>
-              ×
-            </button>
-          </span>
+            <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
+              <dt class="text-xs uppercase tracking-wide text-slate-500">Letzte Aktualisierung</dt>
+              <dd class="mt-2 text-2xl font-semibold text-slate-900">
+                {{ lastUpdated }}
+              </dd>
+              <p class="mt-1 text-xs text-slate-500">automatisch synchronisiert</p>
+            </div>
+          </dl>
         </div>
 
-        <dl v-if="!loading" class="grid gap-3 sm:grid-cols-3">
-          <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
-            <dt class="text-xs uppercase tracking-wide text-slate-500">Anbieter gefunden</dt>
-            <dd class="mt-2 text-2xl font-semibold text-slate-900">
-              {{ filteredCompanies.length }}
-            </dd>
-            <p class="mt-1 text-xs text-slate-500">passend zu deiner Auswahl</p>
-          </div>
-          <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
-            <dt class="text-xs uppercase tracking-wide text-slate-500">Filter aktiv</dt>
-            <dd class="mt-2 text-2xl font-semibold text-slate-900">
-              {{ activeBadges.length }}
-            </dd>
-            <p class="mt-1 text-xs text-slate-500">
-              {{ activeBadges.length ? 'angepasste Kriterien' : 'alle Anbieter im Überblick' }}
+        <aside class="flex flex-col gap-4">
+          <div class="rounded-2xl border border-red-100 bg-white/90 p-6 shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
+              Notfallmodus
             </p>
+            <h2 class="mt-3 text-xl font-semibold text-slate-900">Soforthilfe bei zugefallenen Türen</h2>
+            <p class="mt-2 text-sm text-slate-600">
+              Wir empfehlen dir den aktuell bestbewerteten 24/7-Dienst aus deiner Suche. Ein Klick bringt dich direkt
+              zum Unternehmensprofil.
+            </p>
+            <p v-if="emergencyCompany" class="mt-4 text-sm font-medium text-slate-700">
+              Empfohlen: {{ emergencyCompany.company_name }}<span v-if="emergencyRating">
+                · {{ emergencyRating.toFixed(1) }} / 5 ⭐
+              </span>
+            </p>
+            <p v-else class="mt-4 text-sm text-slate-500">
+              Wir suchen passende Notdienste für dich …
+            </p>
+            <button
+              type="button"
+              class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-red-600 px-5 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 disabled:cursor-not-allowed disabled:bg-red-400"
+              :disabled="!emergencyCompany"
+              @click="requestEmergencyHelp"
+            >
+              <i class="fa fa-bell" aria-hidden="true"></i>
+              Notdienst jetzt kontaktieren
+            </button>
           </div>
-          <div class="rounded-2xl border border-transparent bg-white/90 p-4 shadow-sm">
-            <dt class="text-xs uppercase tracking-wide text-slate-500">Letzte Aktualisierung</dt>
-            <dd class="mt-2 text-2xl font-semibold text-slate-900">
-              {{ lastUpdated }}
-            </dd>
-            <p class="mt-1 text-xs text-slate-500">automatisch synchronisiert</p>
+
+          <div class="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm">
+            <p class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-600">
+              <i class="fa fa-building"></i>
+              Für Unternehmen
+            </p>
+            <h3 class="mt-3 text-lg font-semibold text-slate-900">Werde Teil von Magikey</h3>
+            <p class="mt-2 text-sm text-slate-600">
+              Registriere deinen Schlüsseldienst, lade Nachweise hoch und erscheine nach der Verifizierung in der Suche.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-3">
+              <button type="button" class="btn" data-testid="cta-company-register" @click="goToRegister">
+                <i class="fa fa-key"></i>
+                Jetzt registrieren
+              </button>
+              <button
+                type="button"
+                class="pill-checkbox"
+                data-testid="cta-company-login"
+                @click="goToLogin"
+              >
+                <i class="fa fa-sign-in-alt"></i>
+                Bereits Partner? Login
+              </button>
+            </div>
           </div>
-        </dl>
+        </aside>
       </div>
     </section>
 
@@ -141,114 +193,7 @@
       </div>
     </section>
 
-    <section class="grid gap-6 lg:grid-cols-2">
-      <article class="glass-card space-y-6 p-6 sm:p-8">
-        <p class="badge-neutral inline-flex items-center gap-2 text-sm text-slate-600">
-          <i class="fa fa-search"></i>
-          Für Kund:innen
-        </p>
-        <div class="space-y-3">
-          <h2 class="text-2xl font-semibold text-slate-900">In drei Schritten zur Hilfe</h2>
-          <p class="text-sm text-slate-600">
-            Nutze Filter für Standort, Preis und Schlosstypen, um sofort passende Angebote zu sehen.
-            Bei Notfällen führen wir dich direkt zum empfohlenen Notdienst.
-          </p>
-        </div>
-        <ul class="space-y-3 text-sm text-slate-600">
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
-              <i class="fa fa-sliders-h text-[0.65rem]"></i>
-            </span>
-            <span>Filtere live nach Öffnungszeiten, Preisen und Schlosstypen.</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
-              <i class="fa fa-map-marker-alt text-[0.65rem]"></i>
-            </span>
-            <span>Vergleiche verifizierte Firmen inklusive Adresse, Bewertungen und Anfahrt.</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
-              <i class="fa fa-bell text-[0.65rem]"></i>
-            </span>
-            <span>Nutze den Notdienst-Button für Soforthilfe bei zugefallenen Türen.</span>
-          </li>
-        </ul>
-        <div class="flex flex-wrap gap-3">
-          <button
-            type="button"
-            class="btn"
-            data-testid="cta-customer-search"
-            @click="focusSearchSection"
-          >
-            <i class="fa fa-search-location"></i>
-            Zur Suche
-          </button>
-          <router-link
-            to="/support"
-            class="pill-checkbox"
-            data-testid="cta-customer-support"
-          >
-            <i class="fa fa-hands-helping"></i>
-            Support &amp; Tipps
-          </router-link>
-        </div>
-      </article>
-
-      <article class="glass-card space-y-6 p-6 sm:p-8">
-        <p class="badge-neutral inline-flex items-center gap-2 text-sm text-slate-600">
-          <i class="fa fa-briefcase"></i>
-          Für Unternehmen
-        </p>
-        <div class="space-y-3">
-          <h2 class="text-2xl font-semibold text-slate-900">Werde sichtbarer für Kund:innen</h2>
-          <p class="text-sm text-slate-600">
-            Registriere deinen Schlüsseldienst kostenlos, lade Nachweise hoch und erscheine
-            nach der Verifizierung in der Suche von Magikey.
-          </p>
-        </div>
-        <ul class="space-y-3 text-sm text-slate-600">
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <i class="fa fa-shield-alt text-[0.65rem]"></i>
-            </span>
-            <span>Profitiere von vertrauensbildenden Verifizierungen durch das Trust-Team.</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <i class="fa fa-pen text-[0.65rem]"></i>
-            </span>
-            <span>Pflege Öffnungszeiten, Preise und Notdienstinformationen zentral im Dashboard.</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <i class="fa fa-users text-[0.65rem]"></i>
-            </span>
-            <span>Erreiche Menschen, die aktiv nach seriösen Schlüsseldiensten suchen.</span>
-          </li>
-        </ul>
-        <div class="flex flex-wrap gap-3">
-          <button
-            type="button"
-            class="btn"
-            data-testid="cta-company-register"
-            @click="goToRegister"
-          >
-            <i class="fa fa-key"></i>
-            Jetzt registrieren
-          </button>
-          <button
-            type="button"
-            class="pill-checkbox"
-            data-testid="cta-company-login"
-            @click="goToLogin"
-          >
-            <i class="fa fa-sign-in-alt"></i>
-            Bereits Partner? Login
-          </button>
-        </div>
-      </article>
-    </section>
+    
   </div>
   <transition name="modal">
     <div
@@ -481,12 +426,16 @@ function requestEmergencyHelp() {
   }
 }
 
-function focusSearchSection() {
+function scrollToSection(section) {
   if (typeof window === 'undefined') return
-  const sectionEl = resultsSection.value
+  const sectionEl = section?.value
   if (sectionEl?.scrollIntoView) {
     sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+}
+
+function focusSearchSection() {
+  scrollToSection(resultsSection)
 }
 
 function goToRegister() {
