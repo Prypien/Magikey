@@ -147,21 +147,19 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="closeIntro"
     >
-      <IntroPopup @close="closeIntro" />
+      <IntroPopup @close="closeIntro" @help="goToSupport" />
     </div>
   </transition>
 </template>
 
 <script setup>
-import { onMounted, defineAsyncComponent, ref, computed } from 'vue'
+import { onMounted, onBeforeUnmount, defineAsyncComponent, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import SearchResults from '@/components/user/SearchResults.vue'
 import Loader from '@/components/common/Loader.vue'
 import IntroPopup from '@/components/user/IntroPopup.vue'
 import { filters, clearFilter } from '@/stores/filters'
 import { useCompanyStore } from '@/stores/company'
-import { auth, isFirebaseConfigured } from '@/firebase'
-import { onAuthStateChanged } from 'firebase/auth'
 import { LOCK_TYPE_LABELS } from '@/constants/lockTypes'
 import { detectCurrentLocation } from '@/services/location'
 
@@ -170,6 +168,8 @@ const NotifyForm = defineAsyncComponent(() => import('@/components/user/NotifyFo
 const router = useRouter()
 const { loading, fetchCompanies, filteredCompanies } = useCompanyStore()
 const showIntro = ref(false)
+let exitIntentBound = false
+let exitIntentTriggered = false
 const INTRO_KEY = 'introShown'
 const euroFormatter = new Intl.NumberFormat('de-DE')
 const lastUpdatedAt = ref(null)
@@ -357,23 +357,7 @@ async function useLocation() {
 
 // Daten initial laden
 onMounted(async () => {
-  if (isFirebaseConfigured) {
-    try {
-      onAuthStateChanged(
-        auth,
-        (user) => {
-          if (!user && !window.sessionStorage.getItem(INTRO_KEY)) showIntro.value = true
-        },
-        (error) => {
-          console.warn('Auth konnte nicht initialisiert werden:', error)
-        }
-      )
-    } catch (error) {
-      console.warn('Registrieren des Auth-Listeners fehlgeschlagen:', error)
-    }
-  } else if (!window.sessionStorage.getItem(INTRO_KEY)) {
-    showIntro.value = true
-  }
+  setupExitIntent()
   useLocation()
   await fetchCompanies()
   lastUpdatedAt.value = new Date()
@@ -381,7 +365,13 @@ onMounted(async () => {
 
 function closeIntro() {
   showIntro.value = false
-  window.sessionStorage.setItem(INTRO_KEY, '1')
+  teardownExitIntent()
+  rememberExitIntent()
+}
+
+function goToSupport() {
+  closeIntro()
+  router.push({ name: 'support' })
 }
 
 function requestEmergencyHelp() {
@@ -391,5 +381,42 @@ function requestEmergencyHelp() {
   if (candidate.id) {
     router.push({ name: 'details', params: { id: candidate.id } })
   }
+}
+
+function setupExitIntent() {
+  if (typeof window === 'undefined' || exitIntentBound || hasSeenExitIntent()) {
+    return
+  }
+
+  document.addEventListener('mouseleave', handleExitIntent)
+  exitIntentBound = true
+}
+
+function teardownExitIntent() {
+  if (!exitIntentBound) return
+  document.removeEventListener('mouseleave', handleExitIntent)
+  exitIntentBound = false
+}
+
+function handleExitIntent(event) {
+  if (exitIntentTriggered || hasSeenExitIntent()) return
+  if (event.clientY > 0) return
+
+  exitIntentTriggered = true
+  teardownExitIntent()
+  showIntro.value = true
+}
+
+onBeforeUnmount(() => {
+  teardownExitIntent()
+})
+
+function hasSeenExitIntent() {
+  return typeof window !== 'undefined' && Boolean(window.sessionStorage.getItem(INTRO_KEY))
+}
+
+function rememberExitIntent() {
+  if (typeof window === 'undefined') return
+  window.sessionStorage.setItem(INTRO_KEY, '1')
 }
 </script>
