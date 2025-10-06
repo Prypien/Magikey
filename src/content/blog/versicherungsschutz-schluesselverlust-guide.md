@@ -4,6 +4,8 @@ excerpt: "Wann die Hausratversicherung zahlt, welche Nachweise du brauchst und w
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsselverlust Versicherung, Hausrat Ansprüche, Selbstbehalt minimieren"
+coverImage: "/Blog%20Bilder/fahrradladen-mit-verkauferin.jpg"
+coverImageAlt: "Beraterin übergibt einem Kunden einen Schlüsselbund und bespricht Versicherungsschutz"
 ---
 
 ## Policen verstehen

@@ -65,6 +65,17 @@
           class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white/85 p-6 shadow-sm transition hover:border-gold/50 hover:shadow-xl"
         >
           <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white via-white to-gold/10 opacity-0 transition group-hover:opacity-100"></div>
+          <figure
+            v-if="post.coverImage"
+            class="-mx-6 -mt-6 mb-6 overflow-hidden border-b border-slate-100/80 bg-slate-100/70"
+          >
+            <img
+              :src="post.coverImage"
+              :alt="post.coverImageAlt || post.title"
+              class="h-48 w-full object-cover transition duration-700 group-hover:scale-[1.02]"
+              loading="lazy"
+            />
+          </figure>
           <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Blog</p>
           <h3 class="mt-3 text-xl font-semibold text-slate-900">{{ post.title }}</h3>
           <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600">{{ post.excerpt }}</p>

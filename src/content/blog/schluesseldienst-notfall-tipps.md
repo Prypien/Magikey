@@ -4,6 +4,8 @@ excerpt: "Wie du im Ernstfall Ruhe bewahrst, faire Preise erkennst und dich opti
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsseldienst Notfall, Türöffnung Tipps, seriöser Schlüsseldienst"
+coverImage: "/Blog%20Bilder/stillleben-mit-metallischem-schlussel.jpg"
+coverImageAlt: "Metallischer Haustürschlüssel liegt griffbereit auf einem warmen Holzuntergrund"
 ---
 
 ## 1. Ruhe bewahren und Situation prüfen

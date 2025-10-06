@@ -4,6 +4,8 @@ excerpt: "Welche Maßnahmen du vor der dunklen Jahreszeit ergreifen solltest, um
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Einbruchschutz Winter, Tür sichern, Außenbeleuchtung Sicherheit"
+coverImage: "/Blog%20Bilder/close-up-mit-einem-vorhangeschloss-der-tur.jpg"
+coverImageAlt: "Verschlossenes Vorhängeschloss sichert eine Holztür an einem frostigen Wintermorgen"
 ---
 
 ## Außenbereich sichtbar halten

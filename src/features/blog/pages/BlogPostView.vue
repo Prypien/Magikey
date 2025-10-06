@@ -26,6 +26,17 @@
         </div>
       </div>
 
+      <figure
+        v-if="post.coverImage"
+        class="relative flex items-center justify-center bg-slate-100/70"
+      >
+        <img
+          :src="post.coverImage"
+          :alt="post.coverImageAlt || post.title"
+          class="aspect-[16/9] w-full object-cover"
+        />
+      </figure>
+
       <div class="space-y-8 px-6 py-10 sm:px-10 sm:py-12">
         <p class="text-base text-slate-600 sm:text-lg">{{ post.excerpt }}</p>
         <div class="blog-content" v-html="post.html"></div>
