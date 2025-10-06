@@ -169,6 +169,7 @@ function createBlogPost(path, raw) {
     readingTime,
     author,
     coverImage: data.coverImage || '',
+    coverImageAlt: data.coverImageAlt || '',
   }
 }
 

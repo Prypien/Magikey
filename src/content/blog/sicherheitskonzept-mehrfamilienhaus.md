@@ -4,6 +4,8 @@ excerpt: "So koordinierst du Bewohner, Hausverwaltung und Dienstleister, um Eing
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Mehrfamilienhaus Sicherheit, Hausverwaltung Checkliste, gemeinsames Sicherheitskonzept"
+coverImage: "/Blog%20Bilder/bauarbeiteranstrichzaun-zu-hause.jpg"
+coverImageAlt: "Handwerker montiert einen Sicherheitsbeschlag an der Eingangstür eines Mehrfamilienhauses"
 ---
 
 ## Verantwortlichkeiten klären

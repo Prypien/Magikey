@@ -4,6 +4,8 @@ excerpt: "Wie du smarte Türschlösser beurteilst, Schwachstellen erkennst und d
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Smart Lock Sicherheit, digitales Türschloss Vergleich, Cybersecurity Haustür"
+coverImage: "/Blog%20Bilder/nahaufnahme-eines-verschlossenen-vorhangeschlosses.jpg"
+coverImageAlt: "Detailaufnahme eines modernen Vorhängeschlosses symbolisiert den Schutz smarter Türsysteme"
 ---
 
 ## Warum smarte Türschlösser boomen

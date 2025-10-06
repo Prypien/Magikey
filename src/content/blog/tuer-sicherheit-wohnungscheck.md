@@ -4,6 +4,8 @@ excerpt: "Praktische Maßnahmen, mit denen du Diebstahl vorbeugst und im Ernstfa
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsselverlust vermeiden, Wohnung sichern, Prävention"
+coverImage: "/Blog%20Bilder/retro-stahl-verzierten-antiken-jahrgang.jpg"
+coverImageAlt: "Detail eines massiven Türbeschlags mit Schlüssel symbolisiert einen gründlichen Wohnungscheck"
 ---
 
 ## Überblick behalten
