@@ -184,6 +184,21 @@ describe('router configuration', () => {
     expect(next).toHaveBeenCalledWith({ name: 'dashboard' })
   })
 
+  it('redirects unverified companies away from edit route', async () => {
+    auth.currentUser = { uid: 'company-5' }
+    getUserRoleMock.mockResolvedValueOnce(USER_ROLES.COMPANY)
+    resolveCompanyPortalRouteMock.mockResolvedValueOnce('verification-hold')
+
+    const next = vi.fn()
+    await navigationGuard(
+      { name: 'edit', meta: { requiresAuth: true } },
+      { name: 'dashboard' },
+      next
+    )
+
+    expect(next).toHaveBeenCalledWith({ name: 'verification-hold' })
+  })
+
   it('blocks regular users from accessing company portal routes', async () => {
     auth.currentUser = { uid: 'user-1' }
     getUserRoleMock.mockResolvedValueOnce(USER_ROLES.USER)

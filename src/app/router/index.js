@@ -408,6 +408,12 @@ export async function navigationGuard(to, from, next) {
       next({ name: 'home' })
       return
     }
+
+    const target = await getCompanyPortalTarget()
+    if (target !== 'dashboard' && target !== to.name) {
+      next({ name: target })
+      return
+    }
   }
 
   if (user && isLoginRoute) {
