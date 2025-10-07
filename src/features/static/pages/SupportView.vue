@@ -4,7 +4,9 @@
       <header class="space-y-4 text-center">
         <h1 class="section-heading">Unterstütze Magikey</h1>
         <p class="section-subtitle">
-          Magikey ist ein unabhängiges Projekt, das faire und transparente Schlüsseldienste sichtbar macht. Mit einem freiwilligen Beitrag hilfst du uns, Entwicklung, Infrastruktur und Support langfristig zu sichern.
+          Magikey ist ein unabhängiges Projekt, das faire und transparente Schlüsseldienste sichtbar macht. Es wurde im Rahmen
+          eines Hochschulprojekts von einem Studenten entwickelt und wird seitdem eigenständig weitergeführt. Mit einem
+          freiwilligen Beitrag hilfst du uns, Entwicklung, Infrastruktur und Support langfristig zu sichern.
         </p>
       </header>
 
@@ -12,7 +14,7 @@
         <article class="muted-panel space-y-3">
           <h2 class="text-lg font-semibold text-slate-900">Warum spenden?</h2>
           <p class="text-sm text-slate-600">
-            Wir finanzieren uns nicht über versteckte Provisionen. Deine Unterstützung ermöglicht es uns, neutrale Informationen bereitzustellen und regionale Betriebe sichtbar zu machen.
+            Wir finanzieren uns nicht über versteckte Provisionen. Deine Unterstützung ermöglicht es uns, neutrale Informationen bereitzustellen und regionale Betriebe sichtbar zu machen – und gibt dem studentischen Entwickler die Möglichkeit, Magikey auch nach dem Projekt eigenständig weiterzuentwickeln.
           </p>
         </article>
 
