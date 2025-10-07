@@ -4,8 +4,8 @@ excerpt: "Wie du im Ernstfall Ruhe bewahrst, faire Preise erkennst und dich opti
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsseldienst Notfall, Türöffnung Tipps, seriöser Schlüsseldienst"
-coverImage: "/Blog%20Bilder/stillleben-mit-metallischem-schlussel.jpg"
-coverImageAlt: "Metallischer Haustürschlüssel liegt griffbereit auf einem warmen Holzuntergrund"
+coverImage: "/Blog%20Bilder/fahrradladen-mit-verkauferin.jpg"
+coverImageAlt: "Schlüsseldienst präsentiert Preisoptionen neben aufgelegten Werkzeugen und Schlüsselringen"
 ---
 
 ## 1. Ruhe bewahren und Situation prüfen
@@ -17,6 +17,8 @@ Auch wenn die Haustür zugefallen ist: Atme einmal tief durch. Prüfe zuerst, ob
 - Notiere dir Uhrzeit und Anlass – das hilft später bei der Dokumentation.
 
 ## 2. Anbieter mit transparenter Preisangabe wählen
+
+![Schlüsseldienst präsentiert Preisoptionen neben aufgelegten Werkzeugen und Schlüsselringen](/Blog%20Bilder/fahrradladen-mit-verkauferin.jpg)
 
 Ein seriöser Schlüsseldienst nennt dir am Telefon einen verbindlichen Preisrahmen inklusive Anfahrtskosten und Zuschlägen.
 

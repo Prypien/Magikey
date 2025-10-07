@@ -10,6 +10,8 @@ coverImageAlt: "Sortierte Sicherheitsschlüssel und Transponder liegen geordnet 
 
 ## Ausgangslage analysieren
 
+![Übersicht über physische und digitale Schlüssel auf einem dunklen Schreibtisch unterstützt die Bestandsaufnahme](/Blog%20Bilder/schlusselsatz-anordnung-stillleben.jpg)
+
 Bevor du in neue Hardware investierst, erstelle eine vollständige Übersicht aller Zutrittspunkte. Dokumentiere, welche Schlüssel, Transponder oder Karten im Umlauf sind und welche Bereiche besonders sensibel sind.
 
 ## Hybride Systeme bewerten

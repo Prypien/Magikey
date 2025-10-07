@@ -10,6 +10,8 @@ coverImageAlt: "Detail eines massiven Türbeschlags mit Schlüssel symbolisiert 
 
 ## Überblick behalten
 
+![Historischer Türbeschlag mit Schlüssel symbolisiert eine sorgfältig geführte Schlüsselliste](/Blog%20Bilder/retro-stahl-verzierten-antiken-jahrgang.jpg)
+
 Bevor es zum Notfall kommt, lohnt sich ein regelmäßiger Sicherheitscheck. Notiere dir, wer einen Schlüssel besitzt, und aktualisiere diese Liste, wenn du Einzug, Auszug oder Renovierungen planst.
 
 ## Sichere Aufbewahrung organisieren
