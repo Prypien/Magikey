@@ -4,13 +4,9 @@ excerpt: "Welche Maßnahmen du vor der dunklen Jahreszeit ergreifen solltest, um
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Einbruchschutz Winter, Tür sichern, Außenbeleuchtung Sicherheit"
-coverImage: "/blog-images/nahaufnahme-eines-verschlossenen-vorhangeschlosses.jpg"
-coverImageAlt: "Verschlossenes Gartentor mit frostigem Vorhängeschloss erinnert an regelmäßige Sicherheitschecks im Winter"
 ---
 
 ## Außenbereich sichtbar halten
-
-![Verschlossenes Gartentor mit frostigem Vorhängeschloss erinnert an regelmäßige Sicherheitschecks im Winter](public/blog-images/bauarbeiteranstrichzaun-zu-hause.jpg)
 
 Die frühe Dunkelheit im Winter macht unbeleuchtete Eingänge attraktiv für Einbrecher. Plane deshalb:
 
