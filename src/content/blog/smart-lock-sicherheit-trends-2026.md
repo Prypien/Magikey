@@ -1,70 +1,88 @@
 ---
-title: "Smart Locks 2026: Sicherheits-Check vor dem Kauf"
-excerpt: "Wie du smarte Türschlösser beurteilst, Schwachstellen erkennst und dein Zuhause vor digitalen Angriffen schützt."
+title: "Smart Locks 2026: Sicherheits-Blueprint für dein Zuhause"
+excerpt: "Nutze diese Vorlage, um Smart-Lock-Projekte planbar zu machen – von der Risikoanalyse über die Installation bis zum laufenden Monitoring."
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Smart Lock Sicherheit, digitales Türschloss Vergleich, Cybersecurity Haustür"
+coverImage: "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1600&q=80"
+coverImageAlt: "Smarte Wohnungstür mit beleuchtetem digitalen Türschloss"
+layout: "blog-template"
+videoUrl: "https://www.youtube.com/embed/3xX2_mJb1P8?rel=0"
+videoTitle: "Smart-Lock Sicherheits-Audit Schritt für Schritt"
+videoCaption: "Im Video zeigt Sicherheitsexperte Tim Gregor, wie du einen Audit-Plan anlegst und typische Schwachstellen sofort erkennst."
+widgetTitle: "Blueprint: Sofort-Check für dein smartes Türschloss"
+widgetSubtitle: "Nutze die Vorlage, um Verantwortlichkeiten festzulegen und alle Prüfungen zu dokumentieren."
+widgetItems: "Risikoanalyse starten|Bewerte Funk- und App-Zugänge nach Angriffsvektoren.;Update-Routine planen|Lege Firmware-Fenster und Verantwortliche pro Standort fest.;Notfallzugang testen|Dokumentiere Backup-Schlüssel, Batterien und autorisierte Personen."
+widgetCtaLabel: "Vorlage als PDF sichern"
+widgetCtaUrl: "https://magikey.de/resources/smart-lock-audit.pdf"
 ---
 
-## Warum smarte Türschlösser boomen
+## Einstieg: Was diese Vorlage liefert
 
-Smarte Türschlösser erleichtern den Alltag, weil sie Zutritt per App, PIN oder biometrischen Daten ermöglichen. Damit der Komfort nicht zulasten der Sicherheit geht, solltest du vor dem Kauf folgende Fragen stellen:
+Der Blueprint fasst alle Prüfbereiche zusammen, die in Kundenprojekten mit Magikey standardmäßig abgefragt werden. Kombiniert mit dem oben verlinkten Video hast du einen praxisnahen Ablauf, den du intern wiederverwenden kannst. Ergänze einfach deine Standorte und Verantwortlichen.
 
-- Welche Verschlüsselung nutzt der Hersteller?
-- Gibt es regelmäßige Firmware-Updates?
-- Werden Zugriffsprotokolle nachvollziehbar gespeichert?
+::: summary "Quick Wins vor dem Projektstart"
+- **Stakeholder klären:** Facility-Management, IT-Security und Hausverwaltung frühzeitig einbinden.
+- **Datenpunkte erfassen:** Türtypen, bestehende Zylinder und Netzwerk-Infrastruktur inventarisieren.
+- **Servicepartner prüfen:** Fachbetriebe aus dem Magikey-Partnernetz nach Zertifizierungen filtern.
+:::
 
-## Sicherheitskriterien für den Kauf
+## Entscheidungs-Checkliste vor dem Kauf
 
-Achte auf Prüfsiegel wie **VdS**, **DIN EN 14846** oder Zertifizierungen von unabhängigen Testlaboren. Sie geben Auskunft über Widerstandsklassen und Manipulationsschutz. Zusätzlich solltest du prüfen, ob das Schloss:
+Sammle alle Produktdaten in einer Tabelle und lege Bewertungskriterien fest. Konzentriere dich auf Verschlüsselung, Schutz vor physischen Angriffen und Update-Politik. Ergänze zusätzlich die Integration in bestehende Systeme wie Alarmanlagen oder Verzeichnisdienste.
 
-1. Eine Notentriegelung bei Stromausfall bietet.
-2. Mit deinem bestehenden Schließzylinder kompatibel ist.
-3. Mehrstufige Authentifizierung für die App verlangt.
+- Dokumentiere **VdS- oder DIN-Zertifikate** mit Gültigkeitsdatum.
+- Frage nach **Sicherheits-Audits** der App und Cloud-Infrastruktur.
+- Prüfe, ob Lieferanten **Bug-Bounty-Programme** führen.
 
-## Schwachstellen frühzeitig erkennen
+::: stat-grid
+- Maximale Offline-Betriebszeit | ≥ 12 Stunden | Definiert, wie lange das Schloss ohne Strom weiterarbeitet.
+- Unterstützte Authentifizierungsfaktoren | Mindestens 2 | Kombination aus App, PIN, Biometrie oder physischem Schlüssel.
+- Ereignisprotokollierung | Exportierbar | Logs sollten als CSV oder JSON gesichert werden können.
+:::
 
-Viele Angriffe erfolgen über unsichere Netzwerke. Setze daher auf ein separates WLAN für Smart-Home-Geräte und halte deine Router-Firmware aktuell. Verwende komplexe Passwörter und aktiviere, wo möglich, eine **2-Faktor-Authentifizierung**.
+## Installationsphase: Zusammenarbeit mit Profis
+
+Plane einen Kick-off mit dem Montagebetrieb und stimme die Dokumentation ab. Nutze Magikey, um Kontakte, Seriennummern und Prüfprotokolle zu hinterlegen. Während der Montagephase sollte eine Testwohnung sämtliche Use Cases simulieren – inklusive Notöffnung.
+
+::: checklist "Abnahmen dokumentieren"
+- [x] Türblatt, Beschläge und Stromversorgung geprüft
+- [x] Zugriffskontrolle mit Testbenutzer:innen simuliert
+- [ ] Notfallkonzept für Ausfälle unterschrieben
+- [ ] Übergabeprotokoll im DMS abgelegt
+:::
+
+## Betrieb & Monitoring im Alltag
+
+Nutze die Wartungsintervalle aus dem Video als Ausgangspunkt und ergänze eigene SLAs. Richte getrennte Netzwerke oder VLANs für IoT-Geräte ein und überwache den Datenverkehr auf Anomalien. Halte Verantwortliche mit kurzen Briefings auf dem Laufenden.
+
+- **Firmware-Patches terminieren:** Nutze Kalender-Reminder pro Standort.
+- **Backup-Batterien lagern:** Einmal im Quartal auf Mindestladung prüfen.
+- **Benutzerrollen auditieren:** Halbjährlich Zugriffsrechte verifizieren.
 
 > Tipp: Hinterlege in Magikey dokumentierte Montagepartner, damit du im Fall einer Störung schnell Unterstützung hast.
 
-## Installation professionell begleiten lassen
+::: timeline
+- Vor dem Roll-out: Sicherheitsanforderungen definieren, Anbieter vergleichen, Proof-of-Concept anfordern.
+- Während der Einrichtung: Fachbetrieb koordinieren, Protokolle testen, Notfallzugänge dokumentieren.
+- Im Regelbetrieb: Updates einspielen, Log-Daten prüfen, jährliche Penetrationstests planen.
+:::
 
-Selbst montierte Smart Locks können ungewollte Lücken hinterlassen. Lasse daher einen zertifizierten Fachbetrieb die Installation prüfen. Dieser kontrolliert:
+## Compliance & Dokumentation
 
-- Die Justierung des Türblatts.
-- Den Schutz gegen Aufbohren.
-- Die Integration in bestehende Alarmanlagen.
+Halte fest, welche Datenschutz- und Arbeitsrechtsthemen betroffen sind. Für Mietobjekte empfiehlt sich eine schriftliche Information an Bewohner:innen, inklusive Ansprechpartner:in und Support-Zeiten. Bewahre alle Nachweise zentral auf – idealerweise versioniert.
 
-## Update-Strategie einplanen
+```text
+Pflichtdokumente:
+- Datenschutzhinweise für Bewohner:innen
+- Wartungs- und Auditprotokolle
+- Ansprechpartner:innen-Liste inklusive Eskalationsstufen
+```
 
-Lege im Kalender feste Termine für Firmware-Checks fest und informiere alle Mitbewohner über neue Codes oder digitale Schlüssel. Sichere alte Zugänge sofort und dokumentiere Änderungen in einem Passwort-Manager.
+## Download & Weiterführung
 
-Mit einem klaren Sicherheitskonzept profitierst du von smarten Funktionen, ohne Kompromisse beim Einbruchschutz einzugehen.
+Passe die PDF-Vorlage auf deine Bedürfnisse an und verknüpfe sie mit Magikey-Workflows. So stellst du sicher, dass jeder neue Standort automatisch alle Sicherheitskriterien erfüllt. Wenn du Feedback zur Vorlage hast, melde dich direkt im Support-Chat – wir erweitern die Checklisten gerne.
 
 ---
 
-::: summary "Smart-Lock Essentials"
-- **Zertifikate prüfen:** Nur geprüfte Produkte mit manipulationssicheren Zylindern einsetzen.
-- **Updates planen:** Firmware- und App-Pflege fest im Kalender verankern.
-- **Netzwerk härten:** Separates WLAN, starke Passwörter und 2FA als Pflicht.
-:::
-
-::: stat-grid
-- Empfohlene Update-Frequenz | alle 30–45 Tage | Hersteller-Hinweise regelmäßig checken und automatisierte Benachrichtigungen aktivieren
-- Unterstützte Authentifizierungsfaktoren | ≥2 | Kombination aus App, PIN, Biometrie oder physischem Schlüssel wählen
-- Reaktionszeit Support | <12 Stunden | SLA von Premium-Anbietern für kritische Störungen vergleichen
-:::
-
-::: checklist "Security by Design"
-- [x] Verschlüsselung und Zertifikate vor dem Kauf geprüft
-- [x] Eigenes WLAN bzw. VLAN für Smart-Home-Geräte eingerichtet
-- [ ] Backup-Schlüssel sicher hinterlegt und dokumentiert
-- [ ] Notfallplan für Offline-Szenarien mit allen Bewohnern geteilt
-:::
-
-::: timeline
-- Vor dem Kauf: Sicherheitsanforderungen definieren, Hersteller vergleichen, Servicepartner auswählen.
-- Während der Installation: Fachbetrieb hinzuziehen, Protokolle testen, Nutzerrollen anlegen.
-- Im Betrieb: Updates einspielen, Log-Daten prüfen und halbjährlich Penetrationstests simulieren.
-:::
+Bleibe informiert, indem du regelmäßige Lessons Learned dokumentierst und das Video-Update im Quartal wiederholst. So bleibt dein Smart-Lock-Rollout stabil und revisionssicher.

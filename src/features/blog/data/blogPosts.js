@@ -82,6 +82,21 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;')
 }
 
+function stripHtml(text) {
+  return `${text}`.replace(/<[^>]*>/g, '')
+}
+
+function slugifyHeading(text) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/&[a-z0-9#]+;/gi, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-')
+}
+
 function transformInline(text) {
   let result = escapeHtml(text)
 
@@ -231,6 +246,127 @@ function renderSpecialBlock(type, title, content) {
     default:
       return renderCallout(normalisedType, title, content)
   }
+}
+
+function buildTemplateWidget(data) {
+  const title = data.widgetTitle ? transformInline(data.widgetTitle) : ''
+  const subtitle = data.widgetSubtitle ? transformInline(data.widgetSubtitle) : ''
+  const rawItems = data.widgetItems
+    ? `${data.widgetItems}`
+        .split(';')
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    : []
+
+  const items = rawItems
+    .map((entry) => entry.split('|'))
+    .map(([headline = '', description = '']) => ({
+      headline: transformInline(headline.trim()),
+      description: transformInline(description.trim()),
+    }))
+
+  const ctaLabel = data.widgetCtaLabel ? transformInline(data.widgetCtaLabel) : ''
+  const ctaUrl = data.widgetCtaUrl ? escapeHtml(decodeHtmlEntities(data.widgetCtaUrl)) : ''
+
+  if (!title && !subtitle && !items.length && !ctaLabel) {
+    return ''
+  }
+
+  const itemsHtml = items
+    .map(
+      (item) => `
+        <li class="blog-template-widget-item">
+          <p class="blog-template-widget-headline">${item.headline}</p>
+          <p class="blog-template-widget-description">${item.description}</p>
+        </li>
+      `,
+    )
+    .join('')
+
+  const ctaHtml = ctaLabel && ctaUrl
+    ? `<a class="blog-template-widget-cta" href="${ctaUrl}" target="_blank" rel="noopener">${ctaLabel}</a>`
+    : ''
+
+  return `
+    <section class="blog-template-widget">
+      ${title ? `<h3 class="blog-template-widget-title">${title}</h3>` : ''}
+      ${subtitle ? `<p class="blog-template-widget-subtitle">${subtitle}</p>` : ''}
+      ${itemsHtml ? `<ul class="blog-template-widget-list">${itemsHtml}</ul>` : ''}
+      ${ctaHtml}
+    </section>
+  `
+}
+
+function buildTemplateLayout(html, data) {
+  const headingSlugCounts = new Map()
+  const headings = []
+
+  const enhancedHtml = html.replace(/<h([2-3])>([\s\S]*?)<\/h\1>/g, (match, level, inner) => {
+    const rawText = decodeHtmlEntities(stripHtml(inner))
+    const baseSlug = slugifyHeading(rawText) || `abschnitt-${headings.length + 1}`
+    const count = headingSlugCounts.get(baseSlug) ?? 0
+    const slug = count ? `${baseSlug}-${count + 1}` : baseSlug
+    headingSlugCounts.set(baseSlug, count + 1)
+
+    headings.push({
+      level: Number(level),
+      id: slug,
+      label: rawText,
+    })
+
+    return `<h${level} id="${slug}">${inner}</h${level}>`
+  })
+
+  const tocItems = headings
+    .map((heading) => {
+      const safeLabel = escapeHtml(heading.label)
+      return `
+        <li class="blog-template-toc-item blog-template-toc-item--level-${heading.level}">
+          <a href="#${heading.id}">${safeLabel}</a>
+        </li>
+      `
+    })
+    .join('')
+
+  const tocHtml = tocItems
+    ? `<ol class="blog-template-toc-list">${tocItems}</ol>`
+    : '<p class="blog-template-toc-empty">Gliedere den Beitrag mit Zwischenüberschriften, damit das Inhaltsverzeichnis entsteht.</p>'
+
+  const videoUrl = data.videoUrl ? `${data.videoUrl}`.trim() : ''
+  const safeVideoUrl = videoUrl ? escapeHtml(decodeHtmlEntities(videoUrl)) : ''
+  const rawVideoTitle = data.videoTitle || data.title || 'Video'
+  const safeVideoTitle = escapeHtml(decodeHtmlEntities(rawVideoTitle))
+  const videoCaption = data.videoCaption ? transformInline(data.videoCaption) : ''
+
+  const videoSection = safeVideoUrl
+    ? `
+      <section class="blog-template-embed">
+        <div class="blog-template-embed-wrapper">
+          <iframe src="${safeVideoUrl}" title="${safeVideoTitle}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        ${videoCaption ? `<p class="blog-template-embed-caption">${videoCaption}</p>` : ''}
+      </section>
+    `
+    : ''
+
+  const widgetHtml = buildTemplateWidget(data)
+
+  return `
+    <div class="blog-template-frame">
+      <aside class="blog-template-sidebar">
+        <div class="blog-template-sidebar-inner">
+          <p class="blog-template-sidebar-label">Magikey Framework</p>
+          <h2 class="blog-template-toc-title">Inhalt</h2>
+          ${tocHtml}
+          ${widgetHtml}
+        </div>
+      </aside>
+      <article class="blog-template-main">
+        ${videoSection}
+        ${enhancedHtml}
+      </article>
+    </div>
+  `
 }
 
 function renderMarkdown(markdown) {
@@ -421,7 +557,9 @@ function createBlogPost(path, raw) {
   const isoDate = date ? date.toISOString() : ''
   const excerpt = data.excerpt || content.split(/\n\n/)[0].replace(/[#*`>-]/g, '').trim()
   const keywords = normaliseKeywords(data.keywords)
-  const html = renderMarkdown(content)
+  const rawHtml = renderMarkdown(content)
+  const layout = data.layout ? `${data.layout}`.trim().toLowerCase() : ''
+  const html = layout === 'blog-template' ? buildTemplateLayout(rawHtml, data) : rawHtml
   const readingTime = calculateReadingTime(content)
 
   return {
