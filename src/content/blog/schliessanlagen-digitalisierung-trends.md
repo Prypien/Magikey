@@ -35,3 +35,30 @@ Auch die beste Software ersetzt keine geprüften Schließzylinder. Plane regelm�
 ## Rollout strukturiert planen
 
 Erstelle einen Projektplan mit Pilotphase, Schulung und Support-Konzept. Kommuniziere klar, wie verlorene Medien gemeldet werden und welche Kontaktpersonen bei Störungen helfen. So gelingt die Digitalisierung ohne Sicherheitskompromisse.
+
+---
+
+::: summary "Keyfacts 2026"
+- **Hybride Pflicht:** Digitale Verwaltung plus geprüfte Mechanik bleiben Standard.
+- **Compliance Druck:** Audits verlangen nachvollziehbare Berechtigungs-Historien.
+- **Benutzerzentrierung:** Schulungen und klare Prozesse verhindern Fehlbedienung.
+:::
+
+::: stat-grid
+- Medieninventur | 2–3 Tage | Typischer Aufwand für Gebäude mit bis zu 150 Zutrittspunkten
+- Digitale Lizenzkosten | 2–4 € pro Nutzer | Monatlicher Richtwert für mandantenfähige Plattformen
+- Audit-Zyklus | 6 Monate | Empfohlener Abstand für Berechtigungs-Reviews laut BSI-Empfehlung
+:::
+
+::: checklist "Projekt-Steuerung"
+- [x] Zutrittspunkte und Nutzerrollen vollständig erfasst
+- [x] Integrationsschnittstellen (HR, Zeiterfassung) geprüft
+- [ ] Schulungspaket für Mitarbeitende freigegeben
+- [ ] Notfallprozess für verlorene Medien getestet
+:::
+
+::: timeline
+- Analysephase: Bestandsaufnahme, Risiko- und Datenschutzbewertung abschließen.
+- Pilotbetrieb: Max. 10 % der Türen mit Hybridlösung ausstatten und Feedback einsammeln.
+- Rollout & Betrieb: Restliche Standorte migrieren, Monitoring und Support dauerhaft etablieren.
+:::

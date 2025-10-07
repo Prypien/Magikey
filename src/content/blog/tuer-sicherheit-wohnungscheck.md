@@ -33,3 +33,30 @@ Fotografiere Rechnungen, Garantien und Schließpläne und lege sie in einem vers
 Halte in der Magikey App fest, welche Anbieter du bevorzugst. Ergänze dort wichtige Informationen wie Ansprechpartner, Zugangscodes oder Besonderheiten des Hauses. Teile diesen Notfallplan mit allen Personen, die in deinem Haushalt leben.
 
 Mit einem klaren System vermeidest du Stresssituationen – und wenn doch einmal etwas passiert, bist du mit wenigen Klicks vorbereitet.
+
+---
+
+::: summary "Wohnungs-Quick-Guard"
+- **Inventur pflegen:** Schlüsselvergabe protokollieren und regelmäßig abgleichen.
+- **Aufbewahrung sichern:** Tresor, vertrauenswürdige Kontakte und Magikey-Favoriten kombinieren.
+- **Digital vorbereitet:** Dokumente verschlüsseln, Updates und 2FA für smarte Geräte nutzen.
+:::
+
+::: stat-grid
+- Schlüsselinventur | alle 6 Monate | Checkliste im Kalender hinterlegen und nach Umzügen sofort aktualisieren
+- Dokumenten-Backup | 2 Speicherorte | Kombination aus verschlüsselter Cloud und lokalem Datenträger
+- Notfallkette | 3 Schritte | Schlüsseldienst kontaktieren, Identität nachweisen, Versicherung informieren
+:::
+
+::: checklist "Vorbereitung im Alltag"
+- [x] Schlüsselverzeichnis inklusive Nachschlüssel gepflegt
+- [x] Notfallkontakte in Magikey gespeichert
+- [ ] Cloud-Ordner mit Rechnungen und Plänen verschlüsselt
+- [ ] Notfallkarte mit Kontaktdaten im Portemonnaie hinterlegt
+:::
+
+::: timeline
+- Monat 1: Inventur erstellen, Tresor installieren und Magikey-Profile anlegen.
+- Monat 3: Smarte Geräte updaten, 2FA prüfen und Zugänge testen.
+- Im Notfall: Anbieter aus Magikey wählen, Identität sichern, Versicherung informieren.
+:::

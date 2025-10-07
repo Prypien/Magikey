@@ -102,9 +102,135 @@ function transformInline(text) {
   )
   result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+  result = result.replace(/~~([^~]+)~~/g, '<del>$1</del>')
   result = result.replace(/`([^`]+)`/g, '<code>$1</code>')
 
   return result
+}
+
+function renderStatGrid(content) {
+  const entries = content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  if (!entries.length) {
+    return ''
+  }
+
+  const cards = entries
+    .map((line) => line.replace(/^[-*]\s*/, ''))
+    .map((line) => line.split('|').map((part) => part.trim()))
+    .map(([label = '', value = '', description = '']) => {
+      const safeLabel = transformInline(label)
+      const safeValue = transformInline(value)
+      const safeDescription = transformInline(description)
+      return `
+        <article class="md-stat">
+          <p class="md-stat-label">${safeLabel}</p>
+          <p class="md-stat-value">${safeValue}</p>
+          <p class="md-stat-description">${safeDescription}</p>
+        </article>
+      `
+    })
+    .join('')
+
+  return `<div class="md-stat-grid">${cards}</div>`
+}
+
+function renderTimeline(content) {
+  const entries = content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  if (!entries.length) {
+    return ''
+  }
+
+  const items = entries
+    .map((line) => line.replace(/^[-*]\s*/, ''))
+    .map((line) => {
+      const [milestone, ...rest] = line.split(':')
+      const headline = transformInline(milestone || '')
+      const body = transformInline(rest.join(':').trim())
+      return `
+        <li class="md-timeline-item">
+          <div class="md-timeline-dot"></div>
+          <div class="md-timeline-content">
+            <p class="md-timeline-headline">${headline}</p>
+            <p class="md-timeline-body">${body}</p>
+          </div>
+        </li>
+      `
+    })
+    .join('')
+
+  return `<ol class="md-timeline">${items}</ol>`
+}
+
+function renderChecklist(content) {
+  const entries = content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  if (!entries.length) {
+    return ''
+  }
+
+  const items = entries
+    .map((line) => line.replace(/^[-*]\s*/, ''))
+    .map((line) => {
+      const match = /^\[([ xX])\]\s*(.*)$/.exec(line)
+      const checked = match ? match[1].toLowerCase() === 'x' : false
+      const contentText = match ? match[2] : line
+      const safeContent = transformInline(contentText)
+      return `
+        <li class="md-checklist-item${checked ? ' md-checklist-item--checked' : ''}">
+          <span class="md-checklist-box" aria-hidden="true">${checked ? '✓' : ''}</span>
+          <span class="md-checklist-text">${safeContent}</span>
+        </li>
+      `
+    })
+    .join('')
+
+  return `<ul class="md-checklist">${items}</ul>`
+}
+
+function renderCallout(type, title, content) {
+  const innerHtml = content ? renderMarkdown(content) : ''
+  const safeTitle = title ? transformInline(title) : ''
+  const modifier = type.toLowerCase()
+  return `
+    <section class="md-callout md-callout-${modifier}">
+      ${safeTitle ? `<header class="md-callout-title">${safeTitle}</header>` : ''}
+      <div class="md-callout-content">${innerHtml}</div>
+    </section>
+  `
+}
+
+function renderSpecialBlock(type, title, content) {
+  const normalisedType = type.toLowerCase()
+
+  switch (normalisedType) {
+    case 'stat-grid':
+    case 'stats':
+      return renderStatGrid(content)
+    case 'timeline':
+      return renderTimeline(content)
+    case 'checklist':
+      return renderChecklist(content)
+    case 'summary':
+    case 'info':
+    case 'tip':
+    case 'warning':
+    case 'success':
+    case 'note':
+    case 'danger':
+    default:
+      return renderCallout(normalisedType, title, content)
+  }
 }
 
 function renderMarkdown(markdown) {
@@ -112,6 +238,10 @@ function renderMarkdown(markdown) {
   const html = []
   let inList = false
   let listType = null
+  let inCodeBlock = false
+  let codeLanguage = ''
+  let codeBuffer = []
+  let specialBlock = null
 
   const closeList = () => {
     if (inList) {
@@ -121,24 +251,97 @@ function renderMarkdown(markdown) {
     }
   }
 
+  const flushCodeBlock = () => {
+    if (!inCodeBlock) {
+      return
+    }
+    const code = codeBuffer.join('\n')
+    const escaped = escapeHtml(code)
+    const languageClass = codeLanguage ? ` class="language-${codeLanguage}"` : ''
+    html.push(`<pre><code${languageClass}>${escaped}</code></pre>`)
+    inCodeBlock = false
+    codeLanguage = ''
+    codeBuffer = []
+  }
+
+  const closeSpecialBlock = () => {
+    if (!specialBlock) {
+      return
+    }
+    const rendered = renderSpecialBlock(
+      specialBlock.type,
+      specialBlock.title,
+      specialBlock.lines.join('\n'),
+    )
+    if (rendered) {
+      html.push(rendered)
+    }
+    specialBlock = null
+  }
+
   for (const rawLine of lines) {
     const line = rawLine.trimEnd()
+    const trimmed = line.trim()
 
-    if (!line.trim()) {
+    if (specialBlock) {
+      if (trimmed === ':::') {
+        closeSpecialBlock()
+        continue
+      }
+      specialBlock.lines.push(rawLine)
+      continue
+    }
+
+    if (inCodeBlock) {
+      if (trimmed === '```') {
+        flushCodeBlock()
+        continue
+      }
+      codeBuffer.push(rawLine)
+      continue
+    }
+
+    if (!trimmed) {
       closeList()
       html.push('')
       continue
     }
 
-    if (/^#{1,6}\s+/.test(line)) {
+    const codeMatch = /^```(\w+)?/.exec(trimmed)
+    if (codeMatch) {
       closeList()
-      const level = Math.min(line.match(/^#+/)[0].length, 6)
-      const content = transformInline(line.replace(/^#{1,6}\s+/, ''))
+      inCodeBlock = true
+      codeLanguage = codeMatch[1] || ''
+      codeBuffer = []
+      continue
+    }
+
+    if (/^---+$/.test(trimmed)) {
+      closeList()
+      html.push('<hr />')
+      continue
+    }
+
+    const specialMatch = /^:::\s*([a-z0-9-]+)(?:\s+(.+))?$/i.exec(trimmed)
+    if (specialMatch) {
+      closeList()
+      specialBlock = {
+        type: specialMatch[1],
+        title: specialMatch[2] ? specialMatch[2].replace(/^['"]|['"]$/g, '') : '',
+        lines: [],
+      }
+      continue
+    }
+
+    if (/^#{1,6}\s+/.test(trimmed)) {
+      closeList()
+      const level = Math.min(trimmed.match(/^#+/)[0].length, 6)
+      const content = transformInline(trimmed.replace(/^#{1,6}\s+/, ''))
       html.push(`<h${level}>${content}</h${level}>`)
       continue
     }
 
-    const listMatch = /^([*\-]|\d+\.)\s+(.+)$/.exec(line)
+    const listMatch = /^([*\-]|\d+\.)\s+(.+)$/.exec(trimmed)
     if (listMatch) {
       const [, marker, item] = listMatch
       const currentType = marker.endsWith('.') ? 'ol' : 'ul'
@@ -152,22 +355,34 @@ function renderMarkdown(markdown) {
         listType = currentType
         html.push(`<${currentType}>`)
       }
-      html.push(`<li>${transformInline(item)}</li>`)
+
+      const taskMatch = /^\[([ xX])\]\s*(.*)$/.exec(item)
+      if (taskMatch) {
+        const checked = taskMatch[1].toLowerCase() === 'x'
+        const content = transformInline(taskMatch[2])
+        html.push(
+          `<li class="md-task${checked ? ' md-task--checked' : ''}"><span class="md-task-box" aria-hidden="true">${checked ? '✓' : ''}</span><span class="md-task-label">${content}</span></li>`,
+        )
+      } else {
+        html.push(`<li>${transformInline(item)}</li>`)
+      }
       continue
     }
 
-    if (line.startsWith('> ')) {
+    if (trimmed.startsWith('> ')) {
       closeList()
-      const content = transformInline(line.slice(2))
+      const content = transformInline(trimmed.slice(2))
       html.push(`<blockquote>${content}</blockquote>`)
       continue
     }
 
     closeList()
-    html.push(`<p>${transformInline(line)}</p>`)
+    html.push(`<p>${transformInline(trimmed)}</p>`)
   }
 
   closeList()
+  flushCodeBlock()
+  closeSpecialBlock()
 
   return html.join('\n')
 }

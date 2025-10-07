@@ -42,3 +42,30 @@ Nur mit einer vollständigen Rechnung kannst du später eventuelle Ansprüche ge
 Nach dem Einsatz ist vor dem Einsatz: Hinterlege einen Ersatzschlüssel bei einer vertrauten Person oder nutze einen gesicherten Schlüsseltresor. In der Magikey App kannst du bevorzugte Anbieter speichern, sodass du im Ernstfall schnell reagieren kannst.
 
 Bleibe gelassen – mit guter Vorbereitung und den richtigen Informationen bist du für jeden Schlüsseldienst-Notfall gewappnet.
+
+---
+
+::: summary "Das Wichtigste in Kürze"
+- **Ruhe bewahren:** Erst Lage checken, bevor du kostenpflichtige Hilfe beauftragst.
+- **Kosten im Blick behalten:** Preise vorab bestätigen lassen, insbesondere Zuschläge.
+- **Nachbereitung ernst nehmen:** Rechnung und Dokumentation direkt sichern.
+:::
+
+::: checklist "Notfall-Check vor Ort"
+- [x] Situation analysiert und alternative Zugänge geprüft
+- [x] Ausweisdokument oder Zeugen organisiert
+- [ ] Fixpreis oder Preisrahmen vom Dienstleister schriftlich bestätigen lassen
+- [ ] Nachkontrolle mit Notizen in Magikey festhalten
+:::
+
+::: stat-grid
+- Durchschnittliche Anfahrtszeit | 25 Minuten | Erfahrungswert in urbanen Regionen laut Kundenfeedback
+- Faire Tagestarife | 110–160 € | inkl. Anfahrt für einfache Türöffnungen werktags tagsüber
+- Zuschläge bei Nacht & Wochenende | +30–100 % | differenziert nach Bundesland und Uhrzeit
+:::
+
+::: timeline
+- Vor dem Anruf: Nachbarschaft informieren, Ausweis bereitlegen und Magikey Favoritenliste öffnen.
+- Während des Einsatzes: Identität nachweisen, Öffnung dokumentieren und auf transparente Preisnennung achten.
+- Nach dem Einsatz: Rechnung prüfen, Feedback geben und Präventionsmaßnahmen (Ersatzschlüssel) planen.
+:::
