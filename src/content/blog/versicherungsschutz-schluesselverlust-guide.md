@@ -4,8 +4,6 @@ excerpt: "Wann die Hausratversicherung zahlt, welche Nachweise du brauchst und w
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsselverlust Versicherung, Hausrat Ansprüche, Selbstbehalt minimieren"
-coverImage: "/blog-images/stillleben-mit-metallischem-schlussel.jpg"
-coverImageAlt: "Schlüsselbund liegt auf Unterlagen und erinnert daran, Belege für die Versicherung sorgfältig zu sichern"
 ---
 
 ## Policen verstehen
@@ -13,8 +11,6 @@ coverImageAlt: "Schlüsselbund liegt auf Unterlagen und erinnert daran, Belege f
 Prüfe zuerst, ob deine Hausratversicherung den Verlust von Wohnungs- und Haustürschlüsseln abdeckt. Manche Tarife schließen auch Dienstschlüssel oder Schlüssel zu Gemeinschaftsanlagen ein. Wichtig ist der Höchstbetrag, der für den Austausch einer Schließanlage übernommen wird.
 
 ## Nachweise sammeln
-
-![Schlüsselbund liegt auf Unterlagen und erinnert daran, Belege für die Versicherung sorgfältig zu sichern](/blog-images/stillleben-mit-metallischem-schlussel.jpg)
 
 Dokumentiere den Verlust so detailliert wie möglich:
 

@@ -4,13 +4,9 @@ excerpt: "Wie du smarte Türschlösser beurteilst, Schwachstellen erkennst und d
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Smart Lock Sicherheit, digitales Türschloss Vergleich, Cybersecurity Haustür"
-coverImage: "/blog-images/close-up-mit-einem-vorhangeschloss-der-tur.jpg"
-coverImageAlt: "Detail eines modernen Türschlosses, das mit einem Smartphone verbunden werden kann"
 ---
 
 ## Warum smarte Türschlösser boomen
-
-![Detail eines modernen Türschlosses, das mit einem Smartphone verbunden werden kann](/blog-images/close-up-mit-einem-vorhangeschloss-der-tur.jpg)
 
 Smarte Türschlösser erleichtern den Alltag, weil sie Zutritt per App, PIN oder biometrischen Daten ermöglichen. Damit der Komfort nicht zulasten der Sicherheit geht, solltest du vor dem Kauf folgende Fragen stellen:
 

@@ -4,13 +4,9 @@ excerpt: "Praktische Maßnahmen, mit denen du Diebstahl vorbeugst und im Ernstfa
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsselverlust vermeiden, Wohnung sichern, Prävention"
-coverImage: "/blog-images/retro-stahl-verzierten-antiken-jahrgang.jpg"
-coverImageAlt: "Detail eines massiven Türbeschlags mit Schlüssel symbolisiert einen gründlichen Wohnungscheck"
 ---
 
 ## Überblick behalten
-
-![Historischer Türbeschlag mit Schlüssel symbolisiert eine sorgfältig geführte Schlüsselliste](/blog-images/retro-stahl-verzierten-antiken-jahrgang.jpg)
 
 Bevor es zum Notfall kommt, lohnt sich ein regelmäßiger Sicherheitscheck. Notiere dir, wer einen Schlüssel besitzt, und aktualisiere diese Liste, wenn du Einzug, Auszug oder Renovierungen planst.
 
