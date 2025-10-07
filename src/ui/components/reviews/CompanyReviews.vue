@@ -48,7 +48,8 @@
             title="Google Bewertungen"
           ></iframe>
           <p v-else class="p-6 text-sm text-slate-600">
-            Die Google-Bewertungen können hier aktuell nicht angezeigt werden. Öffne sie direkt bei Google.
+            Die Google-Bewertungen können hier aktuell nicht angezeigt werden. Öffne sie direkt bei Google oder nutze den Link
+            aus „Teilen → Link kopieren“ beziehungsweise den Einbettungscode aus „Teilen → In Karte einbetten“.
           </p>
         </div>
       </article>
@@ -216,8 +217,10 @@ function resolveGoogleEmbedUrl(reviewsUrl, placeUrl) {
   const candidate = (reviewsUrl || '').trim() || (placeUrl || '').trim()
   if (!candidate) return ''
 
+  let parsed
+
   try {
-    const parsed = new URL(candidate)
+    parsed = new URL(candidate)
     const host = parsed.hostname
     const isMapsHost = /(^|\.)maps\.google\./.test(host)
 
@@ -243,6 +246,14 @@ function resolveGoogleEmbedUrl(reviewsUrl, placeUrl) {
     console.warn('Konnte Google-URL nicht verarbeiten:', err)
   }
 
+  const cid = extractCidFromGoogleUrl(candidate)
+  if (cid) {
+    const embed = new URL('https://www.google.com/maps')
+    embed.searchParams.set('cid', cid)
+    embed.searchParams.set('output', 'embed')
+    return embed.toString()
+  }
+
   return ''
 }
 
@@ -250,6 +261,22 @@ function normalizeExternalGoogleUrl(reviewsUrl, placeUrl) {
   const candidate = (reviewsUrl || '').trim() || (placeUrl || '').trim()
   if (!candidate) return ''
   return candidate
+}
+
+function extractCidFromGoogleUrl(url) {
+  if (typeof url !== 'string') return ''
+  if (!/\.google\./.test(url)) return ''
+
+  const match = url.match(/:0x([0-9a-f]+)/i)
+  if (!match) return ''
+
+  try {
+    return BigInt(`0x${match[1]}`).toString(10)
+  } catch (err) {
+    console.warn('Konnte Google-CID nicht berechnen:', err)
+  }
+
+  return ''
 }
 </script>
 
