@@ -83,6 +83,9 @@ VITE_PAYPAL_ME_URL=<paypal-me-link>
 ```
 
 Weitere Details zur Datenstruktur findest du in [docs/firestore.md](docs/firestore.md).
+Hinweise zum Einrichten und Troubleshooting des Mailversands findest du in
+[docs/functions-config.md](docs/functions-config.md) sowie in
+[docs/email-troubleshooting.md](docs/email-troubleshooting.md).
 
 Die Sicherheitsregeln für Firestore und Storage liegen in den Dateien
 `firestore.rules` und `storage.rules`. Sie werden über die
