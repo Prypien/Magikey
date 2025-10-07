@@ -4,7 +4,7 @@ excerpt: "Nutze diese Vorlage, um Smart-Lock-Projekte planbar zu machen – von 
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Smart Lock Sicherheit, digitales Türschloss Vergleich, Cybersecurity Haustür"
-coverImage: "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1600&q=80"
+coverImage: "/public/blog-images/close-up-mit-einem-vorhaengeschloss-der-tur.jpg"
 coverImageAlt: "Smarte Wohnungstür mit beleuchtetem digitalen Türschloss"
 layout: "blog-template"
 videoUrl: "https://www.youtube.com/embed/3xX2_mJb1P8?rel=0"
@@ -16,6 +16,14 @@ widgetItems: "Risikoanalyse starten|Bewerte Funk- und App-Zugänge nach Angriffs
 widgetCtaLabel: "Vorlage als PDF sichern"
 widgetCtaUrl: "https://magikey.de/resources/smart-lock-audit.pdf"
 ---
+
+<!-- HERO-BILD (aus /public/blog-images) -->
+<figure class="blog-hero">
+  <img src="/blog-images/close-up-mit-einem-vorhaengeschloss.jpg"
+       alt="Detailansicht eines modernen Türschlosses"
+       loading="eager" />
+  <figcaption>Von der Risikoanalyse bis zum Monitoring: So setzt du Smart-Locks sicher auf.</figcaption>
+</figure>
 
 <div class="blog-lede">
   <p class="blog-lede-eyebrow">Smart-Lock Fahrplan 2026</p>
@@ -56,95 +64,58 @@ widgetCtaUrl: "https://magikey.de/resources/smart-lock-audit.pdf"
 ## Einstieg: Was diese Vorlage liefert
 
 ### So arbeitest du mit Blueprint &amp; Video
-
-Der Blueprint fasst alle Prüfbereiche zusammen, die in Kundenprojekten mit Magikey standardmäßig abgefragt werden. Kombiniert mit dem oben verlinkten Video hast du einen praxisnahen Ablauf, den du intern wiederverwenden kannst. Ergänze einfach deine Standorte und Verantwortlichen – du kannst jede Zeile kommentieren und mit Aufgaben in Magikey verknüpfen.
+Der Blueprint fasst alle Prüfbereiche zusammen, die in Kundenprojekten mit Magikey standardmäßig abgefragt werden. Ergänze Standorte & Verantwortliche – jede Zeile ist kommentierbar und mit Aufgaben verknüpfbar.
 
 ### Quick Wins vor dem Projektstart
-
 ::: summary "Checklistenspitzen proaktiv planen"
-- **Stakeholder klären:** Facility-Management, IT-Security und Hausverwaltung frühzeitig einbinden.
-- **Datenpunkte erfassen:** Türtypen, bestehende Zylinder und Netzwerk-Infrastruktur inventarisieren.
-- **Servicepartner prüfen:** Fachbetriebe aus dem Magikey-Partnernetz nach Zertifizierungen filtern.
+- **Stakeholder klären:** FM, IT-Security, Hausverwaltung früh einbinden.
+- **Datenpunkte erfassen:** Türtypen, Zylinder, Netzwerk-Infrastruktur inventarisieren.
+- **Servicepartner prüfen:** Magikey-Partner nach Zertifizierungen filtern.
 :::
 
 ## Entscheidungs-Checkliste vor dem Kauf
 
 ### Sicherheitskriterien, die du abhakst
-
-Sammle alle Produktdaten in einer Tabelle und lege Bewertungskriterien fest. Konzentriere dich auf Verschlüsselung, Schutz vor physischen Angriffen und Update-Politik. Ergänze zusätzlich die Integration in bestehende Systeme wie Alarmanlagen oder Verzeichnisdienste. Ein Ampelsystem pro Hersteller hilft, Abhängigkeiten schnell sichtbar zu machen.
-
-- Dokumentiere **VdS- oder DIN-Zertifikate** mit Gültigkeitsdatum.
-- Frage nach **Sicherheits-Audits** der App und Cloud-Infrastruktur.
-- Prüfe, ob Lieferanten **Bug-Bounty-Programme** führen.
+- **Zertifikate dokumentieren:** VdS/DIN inkl. Gültigkeit.
+- **App/Cloud-Security:** Nach **Audits** fragen.
+- **Responsible Disclosure:** Führen die Anbieter ein **Bug-Bounty**?
 
 ### Kennzahlen im Vergleich
-
 ::: stat-grid
-- Maximale Offline-Betriebszeit | ≥ 12 Stunden | Definiert, wie lange das Schloss ohne Strom weiterarbeitet.
-- Unterstützte Authentifizierungsfaktoren | Mindestens 2 | Kombination aus App, PIN, Biometrie oder physischem Schlüssel.
-- Ereignisprotokollierung | Exportierbar | Logs sollten als CSV oder JSON gesichert werden können.
+- Maximale Offline-Betriebszeit | ≥ 12 Stunden | Betrieb ohne Netz/Strom.
+- Authentifizierungsfaktoren | ≥ 2 | App, PIN, Biometrie, physischer Schlüssel.
+- Ereignisprotokollierung | Exportierbar | CSV/JSON-Logs.
 :::
 
 ## Installationsphase: Zusammenarbeit mit Profis
 
 ### Abnahmen smart steuern
-
-Plane einen Kick-off mit dem Montagebetrieb und stimme die Dokumentation ab. Nutze Magikey, um Kontakte, Seriennummern und Prüfprotokolle zu hinterlegen. Während der Montagephase sollte eine Testwohnung sämtliche Use Cases simulieren – inklusive Notöffnung. Dokumentiere Abweichungen direkt in der Vorlage, damit die Abnahme nicht zur Nachtschicht wird.
+Kick-off mit Montagebetrieb, Testwohnung für alle Use-Cases inkl. Notöffnung, Abweichungen direkt dokumentieren.
 
 ### Übergabe dokumentieren
-
 ::: checklist "Abnahmen dokumentieren"
-- [x] Türblatt, Beschläge und Stromversorgung geprüft
+- [x] Türblatt, Beschläge, Stromversorgung geprüft
 - [x] Zugriffskontrolle mit Testbenutzer:innen simuliert
-- [ ] Notfallkonzept für Ausfälle unterschrieben
+- [ ] Notfallkonzept unterschrieben
 - [ ] Übergabeprotokoll im DMS abgelegt
 :::
 
 ## Betrieb & Monitoring im Alltag
 
-### Rituale für dein Team
-
-Nutze die Wartungsintervalle aus dem Video als Ausgangspunkt und ergänze eigene SLAs. Richte getrennte Netzwerke oder VLANs für IoT-Geräte ein und überwache den Datenverkehr auf Anomalien. Halte Verantwortliche mit kurzen Briefings auf dem Laufenden und verknüpfe Tickets mit den jeweiligen Schlossstandorten.
-
-- **Firmware-Patches terminieren:** Nutze Kalender-Reminder pro Standort.
-- **Backup-Batterien lagern:** Einmal im Quartal auf Mindestladung prüfen.
-- **Benutzerrollen auditieren:** Halbjährlich Zugriffsrechte verifizieren.
-
-### Evergreen-Überblick behalten
-
-> Tipp: Hinterlege in Magikey dokumentierte Montagepartner, damit du im Fall einer Störung schnell Unterstützung hast.
+- **Firmware-Patches:** je Standort terminieren.
+- **Backup-Batterien:** quartalsweise prüfen.
+- **Rollen & Rechte:** halbjährlich auditieren.
+> Tipp: Montagepartner in Magikey hinterlegen – Beschleunigt Störungsbehebung.
 
 ::: timeline
-- Vor dem Roll-out: Sicherheitsanforderungen definieren, Anbieter vergleichen, Proof-of-Concept anfordern.
-- Während der Einrichtung: Fachbetrieb koordinieren, Protokolle testen, Notfallzugänge dokumentieren.
-- Im Regelbetrieb: Updates einspielen, Log-Daten prüfen, jährliche Penetrationstests planen.
+- Vor dem Roll-out: Anforderungen, Anbieter-Vergleich, PoC.
+- Einrichtung: Fachbetrieb koordinieren, Protokolle testen, Notfallzugänge.
+- Regelbetrieb: Updates, Logs prüfen, jährliche Pentests.
 :::
 
 ## Compliance & Dokumentation
-
-### Pflichtnachweise im Überblick
-
-Halte fest, welche Datenschutz- und Arbeitsrechtsthemen betroffen sind. Für Mietobjekte empfiehlt sich eine schriftliche Information an Bewohner:innen, inklusive Ansprechpartner:in und Support-Zeiten. Bewahre alle Nachweise zentral auf – idealerweise versioniert und mit Freigabehistorie.
-
 ```text
 Pflichtdokumente:
 - Datenschutzhinweise für Bewohner:innen
 - Wartungs- und Auditprotokolle
-- Ansprechpartner:innen-Liste inklusive Eskalationsstufen
-```
-
-## Download & Weiterführung
-
-### Nächste Schritte mit dem Blueprint
-
-Passe die PDF-Vorlage auf deine Bedürfnisse an und verknüpfe sie mit Magikey-Workflows. So stellst du sicher, dass jeder neue Standort automatisch alle Sicherheitskriterien erfüllt. Wenn du Feedback zur Vorlage hast, melde dich direkt im Support-Chat – wir erweitern die Checklisten gerne.
-
-## Bonus: Workshop-Agenda für den Projektstart
-
-- **Tag 1 – Lagebild & Assets:** Inventur, Risiko-Mapping, Abgleich mit Facility-Management.
-- **Tag 2 – Technik & Tests:** Komponenten freigeben, Pilotwohnung aufsetzen, Rollback-Szenarien üben.
-- **Tag 3 – Betrieb & Reporting:** KPIs festlegen, Verantwortliche onboarden, Dokumentationspaket finalisieren.
-
----
-
-Bleibe informiert, indem du regelmäßige Lessons Learned dokumentierst und das Video-Update im Quartal wiederholst. So bleibt dein Smart-Lock-Rollout stabil und revisionssicher.
+- Ansprechpartner:innen mit Eskalationsstufen
