@@ -51,8 +51,8 @@
               </p>
 
               <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <button type="button" class="link-btn" @click="emitClose">
-                  Abbrechen
+                <button type="button" class="link-btn" @click="handleLinkButton">
+                  {{ linkButtonLabel }}
                 </button>
                 <button type="submit" class="btn" :disabled="sending">
                   <Loader v-if="sending" :size="16" />
@@ -80,7 +80,7 @@ const props = defineProps({
   action: { type: String, default: 'call' },
 })
 
-const emit = defineEmits(['close', 'submitted'])
+const emit = defineEmits(['close', 'submitted', 'skip'])
 
 const email = ref('')
 const sending = ref(false)
@@ -91,6 +91,13 @@ const primaryLabel = computed(() => {
   if (props.action === 'whatsapp') return 'Review-Bogen anfordern & WhatsApp öffnen'
   if (props.action === 'call') return 'Review-Bogen anfordern & anrufen'
   return 'Review-Bogen anfordern'
+})
+
+const isContactAction = computed(() => props.action === 'call' || props.action === 'whatsapp')
+
+const linkButtonLabel = computed(() => {
+  if (!isContactAction.value) return 'Abbrechen'
+  return props.action === 'call' ? 'Ohne Bewertungsbogen anrufen' : 'Ohne Bewertungsbogen schreiben'
 })
 
 watch(
@@ -132,6 +139,13 @@ async function submit() {
 
 function emitClose() {
   emit('close')
+}
+
+function handleLinkButton() {
+  if (isContactAction.value) {
+    emit('skip')
+  }
+  emitClose()
 }
 </script>
 

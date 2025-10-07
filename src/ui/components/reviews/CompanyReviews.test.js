@@ -9,6 +9,9 @@ describe('CompanyReviews', () => {
       render() {
         return h(CompanyReviews, {
           googleReviewsUrl: 'https://maps.google.com/?cid=123#reviews',
+          googlePlaceUrl: 'https://maps.google.com/?cid=123',
+          googleRating: 4.7,
+          googleReviewCount: 213,
           magikeyReviews: [
             {
               id: 'r1',

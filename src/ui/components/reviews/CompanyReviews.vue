@@ -9,11 +9,27 @@
 
     <div class="grid gap-6 md:grid-cols-2">
       <article class="space-y-4 rounded-3xl border border-white/70 bg-white/70 p-6 shadow-inner">
-        <div class="flex items-center justify-between gap-4">
-          <h3 class="text-lg font-semibold text-slate-900">Google Bewertungen</h3>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="space-y-1">
+            <h3 class="text-lg font-semibold text-slate-900">Google Bewertungen</h3>
+            <div v-if="hasGoogleSummary" class="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+              <template v-if="googleRatingLabel">
+                <div v-if="googleRatingStars.length" class="flex items-center gap-1 text-amber-500" aria-hidden="true">
+                  <i
+                    v-for="(icon, index) in googleRatingStars"
+                    :key="index"
+                    class="fa"
+                    :class="icon"
+                  ></i>
+                </div>
+                <span class="font-semibold text-slate-900">{{ googleRatingLabel }}</span>
+              </template>
+              <span v-if="googleReviewCountLabel">({{ googleReviewCountLabel }})</span>
+            </div>
+          </div>
           <a
-            v-if="googleReviewsUrl"
-            :href="googleReviewsUrl"
+            v-if="googleExternalUrl"
+            :href="googleExternalUrl"
             target="_blank"
             rel="noopener"
             class="text-sm font-medium text-emerald-600 hover:text-emerald-700"
@@ -23,8 +39,8 @@
         </div>
         <div class="overflow-hidden rounded-2xl border border-white/60 bg-white/60">
           <iframe
-            v-if="googleReviewsUrl"
-            :src="googleReviewsUrl"
+            v-if="googleEmbedUrl"
+            :src="googleEmbedUrl"
             class="h-[420px] w-full"
             allowfullscreen
             loading="lazy"
@@ -32,7 +48,7 @@
             title="Google Bewertungen"
           ></iframe>
           <p v-else class="p-6 text-sm text-slate-600">
-            Für dieses Unternehmen sind aktuell keine Google-Bewertungen hinterlegt.
+            Die Google-Bewertungen können hier aktuell nicht angezeigt werden. Öffne sie direkt bei Google.
           </p>
         </div>
       </article>
@@ -81,11 +97,36 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  googlePlaceUrl: {
+    type: String,
+    default: '',
+  },
+  googleRating: {
+    type: [Number, String],
+    default: null,
+  },
+  googleReviewCount: {
+    type: [Number, String],
+    default: null,
+  },
   magikeyReviews: {
     type: Array,
     default: () => [],
   },
 })
+
+const googleEmbedUrl = computed(() => resolveGoogleEmbedUrl(props.googleReviewsUrl, props.googlePlaceUrl))
+const googleExternalUrl = computed(() => normalizeExternalGoogleUrl(props.googleReviewsUrl, props.googlePlaceUrl))
+
+const normalizedGoogleRating = computed(() => normalizeRating(props.googleRating))
+const googleRatingLabel = computed(() => formatRatingLabel(normalizedGoogleRating.value))
+
+const normalizedGoogleReviewCount = computed(() => normalizeReviewCount(props.googleReviewCount))
+const googleReviewCountLabel = computed(() => formatReviewCountLabel(normalizedGoogleReviewCount.value))
+
+const hasGoogleSummary = computed(() => normalizedGoogleRating.value !== null || normalizedGoogleReviewCount.value !== null)
+
+const googleRatingStars = computed(() => buildStarIcons(normalizedGoogleRating.value))
 
 const formattedMagikeyReviews = computed(() =>
   props.magikeyReviews.map((review, index) => {
@@ -120,15 +161,110 @@ function normalizeDate(value) {
   }
   return ''
 }
+
+function normalizeRating(value) {
+  if (value === null || value === undefined || value === '') return null
+  const source = typeof value === 'string' ? value.replace(',', '.').trim() : value
+  const number = Number.parseFloat(source)
+  if (!Number.isFinite(number)) return null
+  const clamped = Math.max(0, Math.min(5, number))
+  return clamped
+}
+
+function formatRatingLabel(value) {
+  if (value === null) return ''
+  const decimals = Number.isInteger(value) ? 0 : 1
+  return new Intl.NumberFormat('de-DE', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: 1,
+  }).format(value)
+}
+
+function normalizeReviewCount(value) {
+  if (value === null || value === undefined || value === '') return null
+  let source = value
+  if (typeof source === 'string') {
+    source = source.replace(/[^0-9-]/g, '')
+  }
+  const number = Number.parseInt(source, 10)
+  if (!Number.isFinite(number) || number < 0) return null
+  return number
+}
+
+function formatReviewCountLabel(value) {
+  if (value === null) return ''
+  return `${value} Bewertung${value === 1 ? '' : 'en'}`
+}
+
+function buildStarIcons(rating) {
+  if (rating === null) return []
+  const icons = []
+  for (let i = 0; i < 5; i += 1) {
+    const diff = rating - i
+    if (diff >= 0.75) {
+      icons.push('fa-star')
+    } else if (diff >= 0.25) {
+      icons.push('fa-star-half-o')
+    } else {
+      icons.push('fa-star-o')
+    }
+  }
+  return icons
+}
+
+function resolveGoogleEmbedUrl(reviewsUrl, placeUrl) {
+  const candidate = (reviewsUrl || '').trim() || (placeUrl || '').trim()
+  if (!candidate) return ''
+
+  try {
+    const parsed = new URL(candidate)
+    const host = parsed.hostname
+    const isMapsHost = /(^|\.)maps\.google\./.test(host)
+
+    if (isMapsHost) {
+      if (parsed.pathname === '/' && parsed.searchParams.has('cid')) {
+        const embed = new URL(`${parsed.protocol}//${parsed.hostname}/maps`)
+        embed.searchParams.set('cid', parsed.searchParams.get('cid') || '')
+        embed.searchParams.set('output', 'embed')
+        return embed.toString()
+      }
+
+      if (parsed.pathname === '/maps') {
+        const embed = new URL(parsed.toString())
+        embed.searchParams.set('output', 'embed')
+        return embed.toString()
+      }
+    }
+
+    if (host === 'www.google.com' && parsed.pathname.startsWith('/maps/embed')) {
+      return parsed.toString()
+    }
+  } catch (err) {
+    console.warn('Konnte Google-URL nicht verarbeiten:', err)
+  }
+
+  return ''
+}
+
+function normalizeExternalGoogleUrl(reviewsUrl, placeUrl) {
+  const candidate = (reviewsUrl || '').trim() || (placeUrl || '').trim()
+  if (!candidate) return ''
+  return candidate
+}
 </script>
 
 <style scoped>
 .fa-star,
-.fa-star-o {
+.fa-star-o,
+.fa-star-half-o {
   color: rgb(245 158 11 / 1);
 }
 
 .fa-star-o {
   opacity: 0.25;
+}
+
+.fa-star-half-o {
+  opacity: 0.75;
 }
 </style>

@@ -91,32 +91,23 @@
             </div>
 
             <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
-              <a
+              <button
                 v-if="phoneLink"
-                :href="phoneLink"
+                type="button"
                 class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
+                @click="startContact('call')"
               >
                 <i class="fa fa-phone"></i>
                 Jetzt anrufen
-              </a>
-              <a
+              </button>
+              <button
                 v-if="whatsappLink"
-                :href="whatsappLink"
-                target="_blank"
-                rel="noopener"
+                type="button"
                 class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
+                @click="startContact('whatsapp')"
               >
                 <i class="fa fa-whatsapp"></i>
                 Über WhatsApp schreiben
-              </a>
-            </div>
-            <div class="text-center text-sm text-slate-600">
-              <button
-                type="button"
-                class="inline-flex items-center gap-2 font-semibold text-slate-600 underline hover:text-slate-800"
-                @click="openReview('feedback')"
-              >
-                Feedback geben
               </button>
             </div>
           </div>
@@ -136,6 +127,9 @@
         <CompanyReviews
           class="mt-10"
           :google-reviews-url="googleReviewsUrl"
+          :google-place-url="googlePlaceUrl"
+          :google-rating="googleRating"
+          :google-review-count="googleReviewCount"
           :magikey-reviews="magikeyReviews"
         />
       </div>
@@ -154,6 +148,7 @@
     :action="pendingAction"
     @close="closeReviewModal"
     @submitted="handleReviewSubmitted"
+    @skip="handleReviewSkipped"
   />
 </template>
 
@@ -176,10 +171,12 @@ const company = ref(null)
 const isLoading = ref(true)
 const days = DAYS
 const showReviewModal = ref(false)
-const pendingAction = ref('feedback')
-const googleReviewsUrl = computed(
-  () => company.value?.verification?.google_reviews_url ?? ''
-)
+const pendingAction = ref('call')
+const googleReviewsUrl = computed(() => company.value?.verification?.google_reviews_url ?? '')
+const googlePlaceUrl = computed(() => company.value?.verification?.google_place_url ?? '')
+
+const googleRating = computed(() => extractRating(company.value))
+const googleReviewCount = computed(() => extractReviewCount(company.value))
 
 const { reviews: magikeyReviews, fetchCompanyReviews } = useReviewStore()
 
@@ -286,7 +283,7 @@ const whatsappLink = computed(() => {
   return normalized ? `https://wa.me/${normalized}` : ''
 })
 
-function openReview(action = 'feedback') {
+function startContact(action = 'call') {
   pendingAction.value = action
   showReviewModal.value = true
 }
@@ -298,11 +295,13 @@ function closeReviewModal() {
 function handleReviewSubmitted() {
   const action = pendingAction.value
   showReviewModal.value = false
-  if (action === 'call' && phoneLink.value) {
-    window.location.href = phoneLink.value
-  } else if (action === 'whatsapp' && whatsappLink.value) {
-    window.open(whatsappLink.value, '_blank', 'noopener')
-  }
+  contactCompany(action)
+}
+
+function handleReviewSkipped() {
+  const action = pendingAction.value
+  showReviewModal.value = false
+  contactCompany(action)
 }
 
 function dayStatus(day) {
@@ -326,4 +325,54 @@ const lockTypes = computed(() =>
     label: LOCK_TYPE_LABELS[t] || t
   }))
 )
+
+function contactCompany(action) {
+  if (action === 'call' && phoneLink.value) {
+    window.location.href = phoneLink.value
+  } else if (action === 'whatsapp' && whatsappLink.value) {
+    window.open(whatsappLink.value, '_blank', 'noopener')
+  }
+}
+
+function extractRating(current) {
+  if (!current) return null
+  const candidates = [
+    current.verification?.google_rating,
+    current.google_rating,
+    current.rating,
+    current.average_rating,
+    current.avg_rating,
+    current.magikey_rating,
+  ]
+  for (const value of candidates) {
+    const cleaned = typeof value === 'string' ? value.replace(',', '.').trim() : value
+    const number = Number.parseFloat(cleaned)
+    if (Number.isFinite(number)) {
+      return Math.max(0, Math.min(5, number))
+    }
+  }
+  return null
+}
+
+function extractReviewCount(current) {
+  if (!current) return null
+  const candidates = [
+    current.verification?.google_review_count,
+    current.google_review_count,
+    current.review_count,
+    current.rating_count,
+    current.reviews_count,
+  ]
+  for (const value of candidates) {
+    let normalizedValue = value
+    if (typeof normalizedValue === 'string') {
+      normalizedValue = normalizedValue.replace(/[^0-9-]/g, '')
+    }
+    const number = Number.parseInt(normalizedValue, 10)
+    if (Number.isFinite(number) && number >= 0) {
+      return number
+    }
+  }
+  return null
+}
 </script>
