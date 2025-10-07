@@ -984,7 +984,7 @@ loadCompanies()
 
 .dashboard-sidebar {
   position: sticky;
-  top: 1.5rem;
+  top: calc(var(--app-header-height) + 1.5rem);
   align-self: flex-start;
   display: flex;
   flex-direction: column;
