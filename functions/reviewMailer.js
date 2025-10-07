@@ -40,11 +40,17 @@ async function sendReviewEmail(payload, options = {}) {
   const reviewsConfig = config.reviews
   const mailjetConfig = config.mailjet
 
-  if (!reviewsConfig.sender_email) {
-    throw new Error('reviews.sender_email not configured')
-  }
-  if (!mailjetConfig.api_key || !mailjetConfig.api_secret) {
-    throw new Error('Mailjet API credentials not configured. Set mailjet.api_key and mailjet.api_secret.')
+  const missingConfig = []
+  if (!mailjetConfig.api_key) missingConfig.push('mailjet.api_key')
+  if (!mailjetConfig.api_secret) missingConfig.push('mailjet.api_secret')
+  if (!reviewsConfig.sender_email) missingConfig.push('reviews.sender_email')
+
+  if (missingConfig.length) {
+    const required = missingConfig.join(', ')
+    throw new Error(
+      `Missing Mailjet/Firebase config: ${required}. ` +
+        'Run "firebase functions:config:set" with the values described in docs/functions-config.md.'
+    )
   }
 
   const requestId = payload.requestId || ''
