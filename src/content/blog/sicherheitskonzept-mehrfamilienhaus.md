@@ -37,3 +37,31 @@ Richte eine digitale Pinnwand oder App ein, über die Reparaturen gemeldet und S
 ## Dokumentation pflegen
 
 Halte alle Maßnahmen in einem Sicherheitsordner fest: Verträge, Prüfzertifikate und Kontaktdaten. So behältst du die Kontrolle über Zuständigkeiten und Fristen.
+
+---
+
+::: summary "Hausgemeinschaft auf einen Blick"
+- **Klare Rollen:** Verwaltung koordiniert, Bewohner melden – Zuständigkeiten schriftlich fixieren.
+- **Technik-Mix:** Mechanischer Basisschutz plus digitale Zutrittslösungen minimieren Schwachstellen.
+- **Transparente Kommunikation:** Updates, Wartungstermine und Notfallkontakte zentral teilen.
+:::
+
+::: stat-grid
+- Wartungsfenster | 2x pro Jahr | Regelmäßige Prüfung von Schließtechnik, Beleuchtung und Gegensprechanlagen
+- Notfallkontakte | 3 Kernpartner | Schlüsseldienst, Elektriker, Sicherheitstechnik im Magikey-Adressbuch hinterlegen
+- Reaktionszeit Hausverwaltung | <24 Stunden | Verbindlicher SLA für sicherheitsrelevante Meldungen
+:::
+
+::: checklist "Gemeinschaftsaufgaben"
+- [x] Sicherheitsordnung im Hausflur und digital veröffentlicht
+- [x] Schlüsselbestände und Zutrittsrechte dokumentiert
+- [ ] Schulungstermin für neue Bewohner angesetzt
+- [ ] Feedbackrunde nach jedem Sicherheitsvorfall ausgewertet
+:::
+
+::: timeline
+- Quartal 1: Sicherheitsanalyse durchführen und Maßnahmenplan beschließen.
+- Quartal 2: Technik-Updates (Zylinder, Gegensprechanlagen, Beleuchtung) umsetzen.
+- Quartal 3: Kommunikations- und Workshop-Formate testen und optimieren.
+- Quartal 4: Jahresreview inklusive Budget- und Partnerplanung einplanen.
+:::

@@ -37,3 +37,30 @@ Hinterlege bei Magikey deine bevorzugten Schlüsseldienste für die Wintermonate
 > Extra-Tipp: Prüfe jährlich die Batterien von Alarmanlagen, Smart Locks und Bewegungsmeldern, damit sie bei Minusgraden zuverlässig funktionieren.
 
 Ein strukturierter Winter-Check sorgt dafür, dass du die gemütliche Jahreszeit entspannt genießen kannst.
+
+---
+
+::: summary "Winter-Quick-Wins"
+- **Licht anpassen:** Sensoren und Zeitschaltuhren schaffen sichtbare Aktivität.
+- **Mechanik verstärken:** Riegel und Pilzkopfverriegelungen machen Türen widerstandsfähig.
+- **Netzwerk nutzen:** Absprachen mit Nachbarn schrecken Gelegenheitsdiebe ab.
+:::
+
+::: stat-grid
+- Optimale Beleuchtungsdauer | 6–8 Stunden | Zeitschaltuhren simulieren Anwesenheit zwischen Dämmerung und Mitternacht
+- Check der Türsicherheit | 30 Minuten | Sichtprüfung von Beschlägen, Schließblechen und Riegeln pro Zugang
+- Versicherung aktualisieren | 1x jährlich | Policenwert und Inventarliste auf den neuesten Stand bringen
+:::
+
+::: checklist "Deine Winterroutine"
+- [x] Außenbeleuchtung auf Bewegungsmelder umgestellt
+- [x] Tür- und Fensterbeschläge überprüft
+- [ ] Ersatzschlüssel sicher hinterlegt und dokumentiert
+- [ ] Alarm- und Smart-Home-Geräte auf Batteriestand geprüft
+:::
+
+::: timeline
+- 4 Wochen vor Winterbeginn: Beleuchtung, Sensoren und Kameras testen.
+- 1 Woche vor Urlaubsantritt: Nachbarschaft informieren und Briefkastenservice organisieren.
+- Während der Wintermonate: Monatliche Sichtkontrolle der Sicherungstechnik einplanen.
+:::

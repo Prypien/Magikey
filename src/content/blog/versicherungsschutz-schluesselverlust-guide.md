@@ -33,3 +33,30 @@ Hole über Magikey mehrere Angebote von zertifizierten Fachbetrieben ein. Prüfe
 ## Prävention hilft sparen
 
 Lege Reserveschlüssel nur bei vertrauenswürdigen Personen ab und nutze GPS-Tracker für Schlüsselbunde mit hoher Priorität. Eine konsequente Dokumentation deiner Schlüsselwege reduziert Streitfälle mit Versicherungen.
+
+---
+
+::: summary "Versicherung im Griff"
+- **Tarife prüfen:** Höchstbeträge und eingeschlossene Schlüsselarten kennen.
+- **Nachweise sammeln:** Verlustprotokoll, Polizeimeldung, Rechnungen digital ablegen.
+- **Kosten vergleichen:** Angebote via Magikey sichern und Selbstbehalt optimieren.
+:::
+
+::: stat-grid
+- Durchschnittlicher Erstattungshöchstbetrag | 5.000–15.000 € | Spannbreite deutscher Hausratversicherungen für Schließanlagentausch
+- Empfohlene Meldefrist | 48 Stunden | Versicherer verlangen meist unverzügliche Schadensmeldung
+- Zusatzschutz Kosten | 15–30 € jährlich | Optionaler Baustein für Dienst- oder Generalschlüssel
+:::
+
+::: checklist "Unterlagen-Workflow"
+- [x] Versicherungsschein und Bedingungen griffbereit
+- [x] Rechnungen und Sicherungskarten digitalisiert
+- [ ] Polizeianzeige bei Verlust vorbereitet (Formular/Onlinezugang gespeichert)
+- [ ] Kontaktliste von Vermieter, Verwaltung und Magikey-Partnern aktualisiert
+:::
+
+::: timeline
+- Sofort nach Verlust: Fundort prüfen, Polizei informieren, Vermieter kontaktieren.
+- Innerhalb von 24 Stunden: Schaden der Versicherung melden, Kostenvoranschläge anfordern.
+- Nach Freigabe: Austausch beauftragen, Rechnung einreichen und Dokumentation abschließen.
+:::

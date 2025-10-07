@@ -41,3 +41,30 @@ Selbst montierte Smart Locks können ungewollte Lücken hinterlassen. Lasse dahe
 Lege im Kalender feste Termine für Firmware-Checks fest und informiere alle Mitbewohner über neue Codes oder digitale Schlüssel. Sichere alte Zugänge sofort und dokumentiere Änderungen in einem Passwort-Manager.
 
 Mit einem klaren Sicherheitskonzept profitierst du von smarten Funktionen, ohne Kompromisse beim Einbruchschutz einzugehen.
+
+---
+
+::: summary "Smart-Lock Essentials"
+- **Zertifikate prüfen:** Nur geprüfte Produkte mit manipulationssicheren Zylindern einsetzen.
+- **Updates planen:** Firmware- und App-Pflege fest im Kalender verankern.
+- **Netzwerk härten:** Separates WLAN, starke Passwörter und 2FA als Pflicht.
+:::
+
+::: stat-grid
+- Empfohlene Update-Frequenz | alle 30–45 Tage | Hersteller-Hinweise regelmäßig checken und automatisierte Benachrichtigungen aktivieren
+- Unterstützte Authentifizierungsfaktoren | ≥2 | Kombination aus App, PIN, Biometrie oder physischem Schlüssel wählen
+- Reaktionszeit Support | <12 Stunden | SLA von Premium-Anbietern für kritische Störungen vergleichen
+:::
+
+::: checklist "Security by Design"
+- [x] Verschlüsselung und Zertifikate vor dem Kauf geprüft
+- [x] Eigenes WLAN bzw. VLAN für Smart-Home-Geräte eingerichtet
+- [ ] Backup-Schlüssel sicher hinterlegt und dokumentiert
+- [ ] Notfallplan für Offline-Szenarien mit allen Bewohnern geteilt
+:::
+
+::: timeline
+- Vor dem Kauf: Sicherheitsanforderungen definieren, Hersteller vergleichen, Servicepartner auswählen.
+- Während der Installation: Fachbetrieb hinzuziehen, Protokolle testen, Nutzerrollen anlegen.
+- Im Betrieb: Updates einspielen, Log-Daten prüfen und halbjährlich Penetrationstests simulieren.
+:::
