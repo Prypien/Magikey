@@ -4,13 +4,13 @@ excerpt: "Welche Schritte Facility Manager jetzt planen sollten, um hybride Schl
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schließanlage digitalisieren, Zutrittskontrolle Trends, Facility Management Sicherheit"
-coverImage: "/Blog%20Bilder/schlusselsatz-anordnung-stillleben.jpg"
+coverImage: "/blog-images/schlusselsatz-anordnung-stillleben.jpg"
 coverImageAlt: "Sortierte Sicherheitsschlüssel und Transponder liegen geordnet auf dunkler Oberfläche"
 ---
 
 ## Ausgangslage analysieren
 
-![Übersicht über physische und digitale Schlüssel auf einem dunklen Schreibtisch unterstützt die Bestandsaufnahme](/Blog%20Bilder/schlusselsatz-anordnung-stillleben.jpg)
+![Übersicht über physische und digitale Schlüssel auf einem dunklen Schreibtisch unterstützt die Bestandsaufnahme](/blog-images/schlusselsatz-anordnung-stillleben.jpg)
 
 Bevor du in neue Hardware investierst, erstelle eine vollständige Übersicht aller Zutrittspunkte. Dokumentiere, welche Schlüssel, Transponder oder Karten im Umlauf sind und welche Bereiche besonders sensibel sind.
 

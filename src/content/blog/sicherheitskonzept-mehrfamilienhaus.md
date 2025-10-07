@@ -4,7 +4,7 @@ excerpt: "So koordinierst du Bewohner, Hausverwaltung und Dienstleister, um Eing
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Mehrfamilienhaus Sicherheit, Hausverwaltung Checkliste, gemeinsames Sicherheitskonzept"
-coverImage: "/Blog%20Bilder/bauarbeiteranstrichzaun-zu-hause.jpg"
+coverImage: "/blog-images/bauarbeiteranstrichzaun-zu-hause.jpg"
 coverImageAlt: "Handwerker montiert einen Sicherheitsbeschlag an der Eingangstür eines Mehrfamilienhauses"
 ---
 
@@ -14,7 +14,7 @@ Starte mit einem Runden Tisch zwischen Eigentümern, Verwaltung und Mietern. Leg
 
 ## Zugangspunkte priorisieren
 
-![Hausverwaltung prüft gemeinsam mit einem Monteur den Eingangsbereich eines Mehrfamilienhauses](/Blog%20Bilder/bauarbeiteranstrichzaun-zu-hause.jpg)
+![Hausverwaltung prüft gemeinsam mit einem Monteur den Eingangsbereich eines Mehrfamilienhauses](/blog-images/bauarbeiteranstrichzaun-zu-hause.jpg)
 
 Erstelle einen Gebäudeplan und markiere:
 
