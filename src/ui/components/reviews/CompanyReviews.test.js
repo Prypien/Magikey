@@ -36,4 +36,18 @@ describe('CompanyReviews', () => {
     const normalizedHtml = html.replace(/data-v-[0-9a-f]+/g, 'data-v-xxxx')
     expect(normalizedHtml).toMatchSnapshot()
   })
+
+  it('derives an embeddable URL from a Google Maps place link with hex CID', async () => {
+    const app = createSSRApp({
+      render() {
+        return h(CompanyReviews, {
+          googlePlaceUrl:
+            'https://www.google.com/maps/place/Beispielunternehmen/@52.52,13.405,15z/data=!3m1!4b1!4m6!3m5!1s0x47a84e972b98136d:0x29c431787c5136d9!8m2!3d52.52!4d13.405!16s%2Fg%2F11c4wfp15b?entry=ttu',
+        })
+      },
+    })
+
+    const html = await renderToString(app)
+    expect(html).toContain('src="https://www.google.com/maps?cid=3009584844541867737&amp;output=embed"')
+  })
 })
