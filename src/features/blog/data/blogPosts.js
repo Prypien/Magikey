@@ -25,6 +25,46 @@ function parseFrontMatter(raw) {
   return { data, content: content.trim() }
 }
 
+function getBaseUrl() {
+  if (typeof import.meta !== 'undefined' && import.meta.env && typeof import.meta.env.BASE_URL === 'string') {
+    return import.meta.env.BASE_URL || '/'
+  }
+  return '/'
+}
+
+function decodeHtmlEntities(text) {
+  return `${text}`
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+}
+
+function resolveAssetUrl(url) {
+  if (!url) {
+    return ''
+  }
+
+  const trimmed = `${url}`.trim()
+  if (!trimmed) {
+    return ''
+  }
+
+  if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(trimmed) || trimmed.startsWith('data:')) {
+    return trimmed
+  }
+
+  const baseUrl = getBaseUrl()
+  const normalisedBase = baseUrl ? baseUrl.replace(/\/+$/, '/') : '/'
+
+  if (trimmed.startsWith('/')) {
+    return `${normalisedBase}${trimmed.replace(/^\/+/, '')}`
+  }
+
+  return `${normalisedBase}${trimmed}`
+}
+
 function toDate(value) {
   if (!value) {
     return null
@@ -45,8 +85,21 @@ function escapeHtml(text) {
 function transformInline(text) {
   let result = escapeHtml(text)
 
-  result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => `<img src="${url}" alt="${alt}" loading="lazy" />`)
-  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => `<a href="${url}" target="_blank" rel="noopener">${label}</a>`)
+  result = result.replace(
+    /!\[([^\]]*)\]\(([^)]+)\)/g,
+    (_, alt, url) => {
+      const resolvedUrl = escapeHtml(resolveAssetUrl(decodeHtmlEntities(url)))
+      return `<img src="${resolvedUrl}" alt="${alt}" loading="lazy" />`
+    },
+  )
+  result = result.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    (_, label, url) => {
+      const decodedUrl = decodeHtmlEntities(url)
+      const safeUrl = escapeHtml(decodedUrl)
+      return `<a href="${safeUrl}" target="_blank" rel="noopener">${label}</a>`
+    },
+  )
   result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>')
   result = result.replace(/`([^`]+)`/g, '<code>$1</code>')
@@ -168,7 +221,7 @@ function createBlogPost(path, raw) {
     keywords,
     readingTime,
     author,
-    coverImage: data.coverImage || '',
+    coverImage: resolveAssetUrl(data.coverImage || ''),
     coverImageAlt: data.coverImageAlt || '',
   }
 }
