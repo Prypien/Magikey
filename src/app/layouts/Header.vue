@@ -111,7 +111,7 @@
 
 <script setup>
 // Reaktives State-Management und Lifecycle-Hooks
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 // Firebase-Dienste
 import { auth, db, isFirebaseConfigured } from '@/core/firebase'
@@ -149,6 +149,14 @@ let resizeObserver = null
 let unsubscribeAuth = null
 // zeigt, ob die Ansicht mobil ist
 const isAuthenticated = computed(() => Boolean(currentUser.value))
+
+function broadcastHeaderHeight(height) {
+  const roundedHeight = Math.round(height)
+  emit('update-height', roundedHeight)
+  if (typeof document !== 'undefined') {
+    document.documentElement.style.setProperty('--app-header-height', `${roundedHeight}px`)
+  }
+}
 
 // Menü ein- oder ausblenden
 function toggleOverlay() {
@@ -197,11 +205,24 @@ onMounted(() => {
     }
   }
   if (headerRef.value) {
-    emit('update-height', headerRef.value.offsetHeight)
-    resizeObserver = new window.ResizeObserver((entries) => {
-      emit('update-height', entries[0].contentRect.height)
+    const headerEl = headerRef.value
+    const measure = () => {
+      const { height } = headerEl.getBoundingClientRect()
+      if (height > 0) {
+        broadcastHeaderHeight(height)
+      }
+    }
+
+    nextTick(measure)
+
+    resizeObserver = new window.ResizeObserver(() => {
+      if (typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(measure)
+      } else {
+        measure()
+      }
     })
-    resizeObserver.observe(headerRef.value)
+    resizeObserver.observe(headerEl)
   }
 })
 

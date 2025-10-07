@@ -14,11 +14,13 @@
   --fk-color-checked: var(--fk-color-primary);
   --fk-color-border-focus: var(--fk-color-primary);
   --fk-color-input-selection: rgba(217, 169, 8, 0.25);
+  --app-header-height: 88px;
 }
 
 @layer base {
   html {
     font-family: 'Montserrat', sans-serif;
+    scroll-padding-top: calc(var(--app-header-height, 88px) + 1.5rem);
   }
   body {
     @apply text-black;
