@@ -14,6 +14,8 @@ Starte mit einem Runden Tisch zwischen Eigentümern, Verwaltung und Mietern. Leg
 
 ## Zugangspunkte priorisieren
 
+![Hausverwaltung prüft gemeinsam mit einem Monteur den Eingangsbereich eines Mehrfamilienhauses](/Blog%20Bilder/bauarbeiteranstrichzaun-zu-hause.jpg)
+
 Erstelle einen Gebäudeplan und markiere:
 
 - Haupteingänge und Hintertüren.
