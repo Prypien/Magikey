@@ -4,7 +4,7 @@ excerpt: "Wann die Hausratversicherung zahlt, welche Nachweise du brauchst und w
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsselverlust Versicherung, Hausrat Ansprüche, Selbstbehalt minimieren"
-coverImage: "/Blog%20Bilder/stillleben-mit-metallischem-schlussel.jpg"
+coverImage: "/blog-images/stillleben-mit-metallischem-schlussel.jpg"
 coverImageAlt: "Schlüsselbund liegt auf Unterlagen und erinnert daran, Belege für die Versicherung sorgfältig zu sichern"
 ---
 
@@ -14,7 +14,7 @@ Prüfe zuerst, ob deine Hausratversicherung den Verlust von Wohnungs- und Haust�
 
 ## Nachweise sammeln
 
-![Schlüsselbund liegt auf Unterlagen und erinnert daran, Belege für die Versicherung sorgfältig zu sichern](/Blog%20Bilder/stillleben-mit-metallischem-schlussel.jpg)
+![Schlüsselbund liegt auf Unterlagen und erinnert daran, Belege für die Versicherung sorgfältig zu sichern](/blog-images/stillleben-mit-metallischem-schlussel.jpg)
 
 Dokumentiere den Verlust so detailliert wie möglich:
 

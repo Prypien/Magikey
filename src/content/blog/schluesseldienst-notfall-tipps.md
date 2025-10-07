@@ -4,7 +4,7 @@ excerpt: "Wie du im Ernstfall Ruhe bewahrst, faire Preise erkennst und dich opti
 date: "2025-12-06"
 author: "Jen Preißer"
 keywords: "Schlüsseldienst Notfall, Türöffnung Tipps, seriöser Schlüsseldienst"
-coverImage: "/Blog%20Bilder/fahrradladen-mit-verkauferin.jpg"
+coverImage: "/blog-images/fahrradladen-mit-verkauferin.jpg"
 coverImageAlt: "Schlüsseldienst präsentiert Preisoptionen neben aufgelegten Werkzeugen und Schlüsselringen"
 ---
 
@@ -18,7 +18,7 @@ Auch wenn die Haustür zugefallen ist: Atme einmal tief durch. Prüfe zuerst, ob
 
 ## 2. Anbieter mit transparenter Preisangabe wählen
 
-![Schlüsseldienst präsentiert Preisoptionen neben aufgelegten Werkzeugen und Schlüsselringen](/Blog%20Bilder/fahrradladen-mit-verkauferin.jpg)
+![Schlüsseldienst präsentiert Preisoptionen neben aufgelegten Werkzeugen und Schlüsselringen](/blog-images/fahrradladen-mit-verkauferin.jpg)
 
 Ein seriöser Schlüsseldienst nennt dir am Telefon einen verbindlichen Preisrahmen inklusive Anfahrtskosten und Zuschlägen.
 
