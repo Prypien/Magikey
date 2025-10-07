@@ -10,7 +10,7 @@ coverImageAlt: "Verschlossenes Gartentor mit frostigem Vorhängeschloss erinnert
 
 ## Außenbereich sichtbar halten
 
-![Verschlossenes Gartentor mit frostigem Vorhängeschloss erinnert an regelmäßige Sicherheitschecks im Winter](/blog-images/nahaufnahme-eines-verschlossenen-vorhangeschlosses.jpg)
+![Verschlossenes Gartentor mit frostigem Vorhängeschloss erinnert an regelmäßige Sicherheitschecks im Winter](public/blog-images/bauarbeiteranstrichzaun-zu-hause.jpg)
 
 Die frühe Dunkelheit im Winter macht unbeleuchtete Eingänge attraktiv für Einbrecher. Plane deshalb:
 
