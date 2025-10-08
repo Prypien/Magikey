@@ -40,6 +40,27 @@
                     </span>
                   </div>
                 </div>
+
+                <div v-if="hasContactOptions" class="flex flex-wrap justify-center gap-3 text-sm">
+                  <button
+                    v-if="phoneLink"
+                    type="button"
+                    class="btn flex items-center gap-2"
+                    @click="startContact('call')"
+                  >
+                    <i class="fa fa-phone"></i>
+                    {{ phoneActionLabel }}
+                  </button>
+                  <button
+                    v-if="whatsappLink"
+                    type="button"
+                    class="btn flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600"
+                    @click="startContact('whatsapp')"
+                  >
+                    <i class="fa fa-whatsapp"></i>
+                    {{ whatsappActionLabel }}
+                  </button>
+                </div>
               </div>
 
               <div class="grid gap-3 sm:grid-cols-2">
@@ -103,87 +124,7 @@
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
               ></iframe>
-
-              <div
-                v-if="hasContactOptions"
-                class="pointer-events-none absolute inset-x-4 top-4 flex flex-col gap-3 rounded-3xl border border-white/80 bg-white/90 p-4 text-sm text-slate-600 shadow-xl backdrop-blur sm:inset-auto sm:right-4 sm:top-4 sm:w-60 lg:hidden"
-              >
-                <div class="pointer-events-auto space-y-3 text-center">
-                  <div class="space-y-1">
-                    <span class="badge-neutral inline-flex items-center gap-1 text-xs font-medium text-slate-600">
-                      <i class="fa fa-bolt text-gold"></i>
-                      Direktkontakt
-                    </span>
-                    <h3 class="text-base font-semibold text-slate-900">Schnell Hilfe bekommen</h3>
-                    <p>Starte sofort einen Anruf oder schreib per WhatsApp.</p>
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <button
-                      v-if="phoneLink"
-                      type="button"
-                      class="btn flex w-full items-center justify-center gap-2"
-                      @click="startContact('call')"
-                    >
-                      <i class="fa fa-phone"></i>
-                      {{ phoneActionLabel }}
-                    </button>
-                    <button
-                      v-if="whatsappLink"
-                      type="button"
-                      class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600"
-                      @click="startContact('whatsapp')"
-                    >
-                      <i class="fa fa-whatsapp"></i>
-                      {{ whatsappActionLabel }}
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
-
-          </div>
-
-          <div
-            v-if="hasContactOptions"
-            class="pointer-events-none hidden lg:block lg:absolute lg:right-0 lg:top-0 lg:h-full lg:translate-x-[calc(100%+1.5rem)]"
-          >
-            <div class="pointer-events-auto sticky top-6 w-64">
-              <div
-                class="space-y-3 rounded-3xl border border-white/80 bg-white/90 p-4 text-sm text-slate-600 shadow-xl backdrop-blur"
-              >
-                <div class="space-y-1 text-center">
-                  <span class="badge-neutral inline-flex items-center gap-1 text-xs font-medium text-slate-600">
-                    <i class="fa fa-bolt text-gold"></i>
-                    Direktkontakt
-                  </span>
-                  <h3 class="text-base font-semibold text-slate-900">Schnell Hilfe bekommen</h3>
-                  <p>Starte sofort einen Anruf oder schreib per WhatsApp.</p>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                  <button
-                    v-if="phoneLink"
-                    type="button"
-                    class="btn flex w-full items-center justify-center gap-2"
-                    @click="startContact('call')"
-                  >
-                    <i class="fa fa-phone"></i>
-                    {{ phoneActionLabel }}
-                  </button>
-                  <button
-                    v-if="whatsappLink"
-                    type="button"
-                    class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600"
-                    @click="startContact('whatsapp')"
-                  >
-                    <i class="fa fa-whatsapp"></i>
-                    {{ whatsappActionLabel }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <CompanyReviews
@@ -201,14 +142,6 @@
       </div>
     </div>
   </section>
-
-  <FloatingContactBubble
-    v-if="hasContactOptions"
-    :has-options="hasContactOptions"
-    :phone-label="phoneActionLabel"
-    :whatsapp-label="whatsappActionLabel"
-    @select="startContact"
-  />
 
   <ReviewRequestModal
     v-if="company"
@@ -233,7 +166,6 @@ import TrackingRequestPanel from '@/ui/components/tracking/TrackingRequestPanel.
 import ReviewRequestModal from '@/ui/components/reviews/ReviewRequestModal.vue'
 import CompanyReviews from '@/ui/components/reviews/CompanyReviews.vue'
 import { useReviewStore } from '@/core/stores/reviews'
-import FloatingContactBubble from '@/ui/components/user/FloatingContactBubble.vue'
 
 const route = useRoute()
 const router = useRouter()
