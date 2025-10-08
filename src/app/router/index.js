@@ -275,21 +275,40 @@ const router = createRouter({
   routes,
 })
 
+function buildFullUrl(to) {
+  if (typeof window === 'undefined' || !window.location) {
+    return undefined
+  }
+
+  const baseOrigin = window.location.origin || ''
+  const targetPath = to?.fullPath ?? '/'
+
+  try {
+    return new URL(targetPath || '/', baseOrigin).toString()
+  } catch (error) {
+    console.error('Fehler beim Ermitteln der kanonischen URL', error)
+
+    const normalizedPath = targetPath?.startsWith('/') ? targetPath : `/${targetPath || ''}`
+    return `${baseOrigin}${normalizedPath}`
+  }
+}
+
+export function applySeoForRoute(to) {
+  const seoSource = typeof to?.meta?.seo === 'function' ? to.meta.seo(to) : to?.meta?.seo
+  const seoDefinition = (seoSource && typeof seoSource === 'object') ? { ...seoSource } : {}
+  const fullUrl = buildFullUrl(to)
+  const canonical = seoDefinition.canonical ?? fullUrl ?? seoDefinition.url
+
+  applySeoMeta({
+    ...seoDefinition,
+    url: fullUrl ?? seoDefinition.url,
+    canonical,
+  })
+}
+
 router.afterEach((to) => {
   try {
-    const seoDefinition = typeof to.meta?.seo === 'function' ? to.meta.seo(to) : to.meta?.seo
-
-    let fullUrl
-    if (typeof window !== 'undefined' && window.location) {
-      try {
-        fullUrl = new URL(to.fullPath || '/', window.location.origin).toString()
-      } catch (error) {
-        console.error('Fehler beim Ermitteln der kanonischen URL', error)
-        fullUrl = `${window.location.origin}${to.fullPath || ''}`
-      }
-    }
-
-    applySeoMeta({ ...seoDefinition, url: fullUrl, canonical: seoDefinition?.canonical || fullUrl })
+    applySeoForRoute(to)
   } catch (error) {
     console.error('Fehler beim Anwenden der SEO-Metadaten', error)
   }
