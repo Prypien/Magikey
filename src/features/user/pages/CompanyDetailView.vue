@@ -126,7 +126,7 @@
                       @click="startContact('call')"
                     >
                       <i class="fa fa-phone"></i>
-                      Jetzt anrufen
+                      {{ phoneActionLabel }}
                     </button>
                     <button
                       v-if="whatsappLink"
@@ -135,7 +135,7 @@
                       @click="startContact('whatsapp')"
                     >
                       <i class="fa fa-whatsapp"></i>
-                      Über WhatsApp schreiben
+                      {{ whatsappActionLabel }}
                     </button>
                   </div>
                 </div>
@@ -169,7 +169,7 @@
                     @click="startContact('call')"
                   >
                     <i class="fa fa-phone"></i>
-                    Jetzt anrufen
+                    {{ phoneActionLabel }}
                   </button>
                   <button
                     v-if="whatsappLink"
@@ -178,7 +178,7 @@
                     @click="startContact('whatsapp')"
                   >
                     <i class="fa fa-whatsapp"></i>
-                    Über WhatsApp schreiben
+                    {{ whatsappActionLabel }}
                   </button>
                 </div>
               </div>
@@ -201,6 +201,14 @@
       </div>
     </div>
   </section>
+
+  <FloatingContactBubble
+    v-if="hasContactOptions"
+    :has-options="hasContactOptions"
+    :phone-label="phoneActionLabel"
+    :whatsapp-label="whatsappActionLabel"
+    @select="startContact"
+  />
 
   <ReviewRequestModal
     v-if="company"
@@ -225,6 +233,7 @@ import TrackingRequestPanel from '@/ui/components/tracking/TrackingRequestPanel.
 import ReviewRequestModal from '@/ui/components/reviews/ReviewRequestModal.vue'
 import CompanyReviews from '@/ui/components/reviews/CompanyReviews.vue'
 import { useReviewStore } from '@/core/stores/reviews'
+import FloatingContactBubble from '@/ui/components/user/FloatingContactBubble.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -346,6 +355,18 @@ const whatsappLink = computed(() => {
 })
 
 const hasContactOptions = computed(() => Boolean(phoneLink.value || whatsappLink.value))
+
+const phoneActionLabel = computed(() => {
+  if (!phoneLink.value) return ''
+  const number = company.value?.phone?.toString().trim()
+  return number ? `Anrufen (${number})` : 'Jetzt anrufen'
+})
+
+const whatsappActionLabel = computed(() => {
+  if (!whatsappLink.value) return ''
+  const number = company.value?.whatsapp?.toString().trim()
+  return number ? `WhatsApp (${number})` : 'Über WhatsApp schreiben'
+})
 
 function startContact(action = 'call') {
   pendingAction.value = action
