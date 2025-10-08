@@ -57,6 +57,12 @@ globalThis.window = mockWindow
 globalThis.document = mockDocument
 globalThis.location = mockWindow.location
 
+const applySeoMetaMock = vi.hoisted(() => vi.fn())
+
+vi.mock('@/core/seo', () => ({
+  applySeoMeta: applySeoMetaMock,
+}))
+
 const firebaseMock = vi.hoisted(() => ({ auth: { currentUser: null }, isFirebaseConfigured: true }))
 
 vi.mock('@/core/firebase', () => firebaseMock)
@@ -92,6 +98,7 @@ import { USER_ROLES } from '@/core/constants/admin'
 
 let router
 let navigationGuard
+let applySeoForRoute
 
 function findRoute(name) {
   return router.getRoutes().find((route) => route.name === name)
@@ -102,11 +109,13 @@ describe('router configuration', () => {
     const routerModule = await import('./index')
     router = routerModule.default
     navigationGuard = routerModule.navigationGuard
+    applySeoForRoute = routerModule.applySeoForRoute
   })
 
   beforeEach(() => {
     getUserRoleMock.mockClear()
     resolveCompanyPortalRouteMock.mockClear()
+    applySeoMetaMock.mockClear()
     auth.currentUser = null
     getUserRoleMock.mockResolvedValue(USER_ROLES.USER)
     resolveCompanyPortalRouteMock.mockResolvedValue('dashboard')
@@ -268,5 +277,15 @@ describe('router configuration', () => {
     )
 
     expect(next).toHaveBeenCalledWith()
+  })
+
+  it('applies SEO defaults when no definition is provided', () => {
+    applySeoForRoute({ meta: {}, fullPath: '/demo' })
+
+    expect(applySeoMetaMock).toHaveBeenCalledTimes(1)
+    expect(applySeoMetaMock).toHaveBeenCalledWith({
+      url: 'http://localhost/demo',
+      canonical: 'http://localhost/demo',
+    })
   })
 })
