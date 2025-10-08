@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
+import vitePrerender from 'vite-plugin-prerender'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -14,6 +15,10 @@ export default defineConfig({
           isCustomElement: tag => tag === 'lottie-player',
         },
       },
+    }),
+    vitePrerender({
+      staticDir: path.resolve(__dirname, 'dist'),
+      routes: ['/', '/partner', '/blog', '/impressum', '/datenschutz'],
     }),
   ],
   resolve: {
