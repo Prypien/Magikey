@@ -275,21 +275,34 @@ const router = createRouter({
   routes,
 })
 
+function resolveFullUrl(fullPath) {
+  if (typeof window === 'undefined' || !window.location?.origin) {
+    return fullPath || '/'
+  }
+
+  try {
+    return new URL(fullPath || '/', window.location.origin).toString()
+  } catch (error) {
+    console.error('Fehler beim Ermitteln der kanonischen URL', error)
+    const origin = window.location.origin
+    const rawPath = typeof fullPath === 'string' ? fullPath : ''
+    const needsSlash = rawPath && !rawPath.startsWith('/') && !rawPath.startsWith('?')
+    const path = needsSlash ? `/${rawPath}` : rawPath
+    return `${origin}${path}`
+  }
+}
+
 router.afterEach((to) => {
   try {
-    const seoDefinition = typeof to.meta?.seo === 'function' ? to.meta.seo(to) : to.meta?.seo
+    const rawSeoMeta = typeof to.meta?.seo === 'function' ? to.meta.seo(to) : to.meta?.seo
+    const seoDefinition = rawSeoMeta && typeof rawSeoMeta === 'object' ? { ...rawSeoMeta } : {}
+    const fullUrl = resolveFullUrl(to.fullPath)
 
-    let fullUrl
-    if (typeof window !== 'undefined' && window.location) {
-      try {
-        fullUrl = new URL(to.fullPath || '/', window.location.origin).toString()
-      } catch (error) {
-        console.error('Fehler beim Ermitteln der kanonischen URL', error)
-        fullUrl = `${window.location.origin}${to.fullPath || ''}`
-      }
-    }
-
-    applySeoMeta({ ...seoDefinition, url: fullUrl, canonical: seoDefinition?.canonical || fullUrl })
+    applySeoMeta({
+      ...seoDefinition,
+      url: seoDefinition.url || fullUrl,
+      canonical: seoDefinition.canonical || fullUrl,
+    })
   } catch (error) {
     console.error('Fehler beim Anwenden der SEO-Metadaten', error)
   }
@@ -307,24 +320,19 @@ function waitForAuthInit() {
 
     const finalize = () => {
       authReady = true
-
-      Promise.resolve()
-        .then(() => {
-          unsubscribe()
-        })
-        .catch(() => {
-          unsubscribe()
-        })
-
+      unsubscribe()
+      unsubscribe = () => {}
       resolve()
     }
 
-    const handleError = (error) => {
-      console.error('Fehler beim Beobachten des Auth-Status', error)
-      finalize()
-    }
-
-    unsubscribe = onAuthStateChanged(auth, finalize, handleError)
+    unsubscribe = onAuthStateChanged(
+      auth,
+      finalize,
+      (error) => {
+        console.error('Fehler beim Beobachten des Auth-Status', error)
+        finalize()
+      }
+    )
   })
 }
 
@@ -341,12 +349,13 @@ function isCompanyRestrictedRoute(routeName) {
 }
 
 async function determineCompanyPortalTarget(user) {
-  if (!user?.uid) {
+  const uid = user?.uid
+  if (!uid) {
     return 'dashboard'
   }
 
   try {
-    const target = await resolveCompanyPortalRoute(user.uid)
+    const target = await resolveCompanyPortalRoute(uid)
     return target || 'dashboard'
   } catch (error) {
     console.error('Fehler beim Bestimmen des Firmenportals:', error)
@@ -372,15 +381,15 @@ export async function navigationGuard(to, from, next) {
   const userIsAdmin = userRole === USER_ROLES.ADMIN
   const userIsCompany = userRole === USER_ROLES.COMPANY
 
-  let companyPortalTarget = null
+  let companyPortalTargetPromise = null
   const getCompanyPortalTarget = async () => {
     if (!userIsCompany) {
       return 'dashboard'
     }
-    if (!companyPortalTarget) {
-      companyPortalTarget = await determineCompanyPortalTarget(user)
+    if (!companyPortalTargetPromise) {
+      companyPortalTargetPromise = determineCompanyPortalTarget(user)
     }
-    return companyPortalTarget
+    return companyPortalTargetPromise
   }
 
   if (requiresAuth && !user) {

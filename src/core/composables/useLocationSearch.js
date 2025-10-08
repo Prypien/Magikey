@@ -1,4 +1,3 @@
-/* global setTimeout, clearTimeout, AbortController */
 // Gemeinsamer Hook für die Standortsuche in Desktop- und Mobilansicht.
 import { ref, watch } from 'vue'
 import { filters } from '@/core/stores/filters'
