@@ -1,5 +1,3 @@
-/* global fetch */
-
 function resolveFunctionUrl() {
   const rawCustomUrl = (import.meta.env?.VITE_FUNCTION_URL ?? '').toString().trim()
   if (rawCustomUrl) return rawCustomUrl
