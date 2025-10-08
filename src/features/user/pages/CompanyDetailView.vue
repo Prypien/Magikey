@@ -38,6 +38,26 @@
                     Verifiziert
                   </span>
                 </div>
+                <div class="flex flex-col gap-3 pt-3 sm:flex-row sm:flex-wrap sm:justify-center">
+                  <button
+                    v-if="phoneLink"
+                    type="button"
+                    class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
+                    @click="startContact('call')"
+                  >
+                    <i class="fa fa-phone"></i>
+                    Jetzt anrufen
+                  </button>
+                  <button
+                    v-if="whatsappLink"
+                    type="button"
+                    class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
+                    @click="startContact('whatsapp')"
+                  >
+                    <i class="fa fa-whatsapp"></i>
+                    Über WhatsApp schreiben
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -88,27 +108,6 @@
 
             <div class="rounded-3xl border border-white/70 bg-white/70 p-5 shadow-inner">
               <TrackingRequestPanel :company="company" />
-            </div>
-
-            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
-              <button
-                v-if="phoneLink"
-                type="button"
-                class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
-                @click="startContact('call')"
-              >
-                <i class="fa fa-phone"></i>
-                Jetzt anrufen
-              </button>
-              <button
-                v-if="whatsappLink"
-                type="button"
-                class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
-                @click="startContact('whatsapp')"
-              >
-                <i class="fa fa-whatsapp"></i>
-                Über WhatsApp schreiben
-              </button>
             </div>
           </div>
 
