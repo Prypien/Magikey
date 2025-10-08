@@ -223,6 +223,26 @@ describe('router configuration', () => {
     expect(next).toHaveBeenCalledWith({ name: 'home' })
   })
 
+  it('falls back to customer role when role lookup fails', async () => {
+    auth.currentUser = { uid: 'user-3' }
+    getUserRoleMock.mockRejectedValueOnce(new Error('network down'))
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const next = vi.fn()
+    await expect(
+      navigationGuard({ name: 'dashboard', meta: { requiresAuth: true } }, { name: 'home' }, next)
+    ).resolves.toBeUndefined()
+
+    expect(resolveCompanyPortalRouteMock).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalledWith({ name: 'home' })
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Fehler beim Bestimmen der Nutzerrolle',
+      expect.any(Error)
+    )
+
+    consoleErrorSpy.mockRestore()
+  })
+
   it('prevents regular users from opening the edit route', async () => {
     auth.currentUser = { uid: 'user-2' }
     getUserRoleMock.mockResolvedValueOnce(USER_ROLES.USER)

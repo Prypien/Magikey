@@ -347,16 +347,15 @@ function waitForAuthInit() {
   })
 }
 
+const COMPANY_PORTAL_ROUTES = new Set(['dashboard', 'verification-hold'])
+const COMPANY_RESTRICTED_ROUTES = new Set([...COMPANY_PORTAL_ROUTES, 'edit'])
+
 function isCompanyPortalRoute(routeName) {
-  return routeName === 'dashboard' || routeName === 'verification-hold'
+  return COMPANY_PORTAL_ROUTES.has(routeName)
 }
 
 function isCompanyRestrictedRoute(routeName) {
-  return (
-    routeName === 'dashboard' ||
-    routeName === 'verification-hold' ||
-    routeName === 'edit'
-  )
+  return COMPANY_RESTRICTED_ROUTES.has(routeName)
 }
 
 async function determineCompanyPortalTarget(user) {
@@ -381,13 +380,24 @@ export async function navigationGuard(to, from, next) {
     console.error('Fehler beim Initialisieren der Authentifizierung', error)
   }
 
+  const routeName = to.name
+  const requiresAuth = Boolean(to.meta?.requiresAuth)
+  const requiresAdmin = Boolean(to.meta?.requiresAdmin)
+  const isLoginRoute = routeName === 'login'
+  const restrictedCompanyRoute = isCompanyRestrictedRoute(routeName)
+  const portalRoute = isCompanyPortalRoute(routeName)
   const user = isFirebaseConfigured ? auth.currentUser : null
-  const requiresAuth = isFirebaseConfigured && to.meta.requiresAuth
-  const requiresAdmin = isFirebaseConfigured && to.meta.requiresAdmin
-  const isLoginRoute = to.name === 'login'
-  const userRole = user
-    ? await getUserRole(user, { forceRefresh: requiresAdmin })
-    : USER_ROLES.USER
+
+  let userRole = USER_ROLES.USER
+
+  if (user && (requiresAuth || requiresAdmin || isLoginRoute || restrictedCompanyRoute || portalRoute)) {
+    try {
+      userRole = await getUserRole(user, { forceRefresh: requiresAdmin })
+    } catch (error) {
+      console.error('Fehler beim Bestimmen der Nutzerrolle', error)
+      userRole = USER_ROLES.USER
+    }
+  }
   const userIsAdmin = userRole === USER_ROLES.ADMIN
   const userIsCompany = userRole === USER_ROLES.COMPANY
 
@@ -417,7 +427,7 @@ export async function navigationGuard(to, from, next) {
     return
   }
 
-  if (requiresAuth && isCompanyRestrictedRoute(to.name)) {
+  if (requiresAuth && restrictedCompanyRoute) {
     if (userIsAdmin) {
       next({ name: 'admin-dashboard' })
       return
@@ -429,7 +439,7 @@ export async function navigationGuard(to, from, next) {
     }
 
     const target = await getCompanyPortalTarget()
-    if (target !== 'dashboard' && target !== to.name) {
+    if (target !== 'dashboard' && target !== routeName) {
       next({ name: target })
       return
     }
@@ -451,9 +461,9 @@ export async function navigationGuard(to, from, next) {
     return
   }
 
-  if (user && userIsCompany && isCompanyPortalRoute(to.name)) {
+  if (user && userIsCompany && portalRoute) {
     const target = await getCompanyPortalTarget()
-    if (target !== to.name) {
+    if (target !== routeName) {
       next({ name: target })
       return
     }
