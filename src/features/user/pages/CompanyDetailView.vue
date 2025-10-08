@@ -8,106 +8,151 @@
       </button>
 
       <div v-if="company" class="glass-card p-8 sm:p-10">
-        <div class="grid gap-10 lg:grid-cols-[1.15fr,0.85fr]">
-          <div class="space-y-6">
-            <div class="flex flex-col items-center gap-4 text-center">
-              <div class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
-                <img
-                  :src="company.logo_url || '/logo.png'"
-                  alt="Firmenlogo"
-                  class="h-full w-full object-cover"
+        <div class="relative">
+          <div class="grid gap-10 lg:grid-cols-[1.15fr,0.85fr] lg:items-start">
+            <div class="space-y-6">
+              <div class="flex flex-col items-center gap-4 text-center">
+                <div class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
+                  <img
+                    :src="company.logo_url || '/logo.png'"
+                    alt="Firmenlogo"
+                    class="h-full w-full object-cover"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <h1 class="section-heading text-3xl">{{ company.company_name || 'Unbekannt' }}</h1>
+                  <p class="section-subtitle">{{ fullAddress }}</p>
+                  <div class="flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+                    <span
+                      class="badge-neutral"
+                      :class="isOpen ? 'text-emerald-600 border-emerald-200' : 'text-slate-500'"
+                    >
+                      <i class="fa" :class="isOpen ? 'fa-door-open' : 'fa-clock'" />
+                      {{ openStatus }}
+                    </span>
+                    <span v-if="company.is_247" class="pill-checkbox border-gold bg-gold/20 text-slate-900">
+                      <i class="fa fa-moon"></i>
+                      24/7 Notdienst
+                    </span>
+                    <span v-if="company.verified" class="pill-checkbox border-emerald-200 bg-emerald-50 text-emerald-600">
+                      <i class="fa fa-check-circle"></i>
+                      Verifiziert
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
+                <DataRow label="WhatsApp" :value="company.whatsapp || 'Keine Nummer'" />
+                <DataRow label="Preis" :value="company.price ? `ab ${company.price} €` : 'auf Anfrage'" />
+                <DataRow
+                  v-if="company.is_247 && company.emergency_price"
+                  label="Notdienstpreis"
+                  :value="`${company.emergency_price} €`"
                 />
               </div>
-              <div class="space-y-2">
-                <h1 class="section-heading text-3xl">{{ company.company_name || 'Unbekannt' }}</h1>
-                <p class="section-subtitle">{{ fullAddress }}</p>
-                <div class="flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
-                  <span
-                    class="badge-neutral"
-                    :class="isOpen ? 'text-emerald-600 border-emerald-200' : 'text-slate-500'"
+
+              <div class="space-y-4">
+                <h2 class="text-lg font-semibold text-slate-900">Öffnungszeiten</h2>
+                <div class="grid gap-2 rounded-3xl border border-white/70 bg-white/70 p-4 shadow-inner">
+                  <div
+                    v-for="day in days"
+                    :key="day"
+                    class="flex items-center justify-between rounded-2xl border border-white/60 bg-white/60 px-4 py-2 text-sm"
+                    :class="dayStatus(day)"
                   >
-                    <i class="fa" :class="isOpen ? 'fa-door-open' : 'fa-clock'" />
-                    {{ openStatus }}
-                  </span>
-                  <span v-if="company.is_247" class="pill-checkbox border-gold bg-gold/20 text-slate-900">
-                    <i class="fa fa-moon"></i>
-                    24/7 Notdienst
-                  </span>
-                  <span v-if="company.verified" class="pill-checkbox border-emerald-200 bg-emerald-50 text-emerald-600">
-                    <i class="fa fa-check-circle"></i>
-                    Verifiziert
+                    <span class="font-medium text-slate-700">{{ dayLabel(day) }}</span>
+                    <span class="text-slate-600">{{ formatTimeRange(company.opening_hours?.[day]) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <h2 class="text-lg font-semibold text-slate-900">Beschreibung</h2>
+                <p class="text-sm text-slate-600">{{ company.description || 'Keine Beschreibung' }}</p>
+              </div>
+
+              <div v-if="lockTypes.length" class="space-y-3">
+                <h2 class="text-lg font-semibold text-slate-900">Kompatible Schlösser</h2>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="(lt, idx) in lockTypes"
+                    :key="idx"
+                    class="pill-checkbox"
+                  >
+                    <span class="text-lg">{{ lt.icon }}</span>
+                    <span>{{ lt.label }}</span>
                   </span>
                 </div>
               </div>
+
+              <div class="rounded-3xl border border-white/70 bg-white/70 p-5 shadow-inner">
+                <TrackingRequestPanel :company="company" />
+              </div>
             </div>
 
-            <div class="grid gap-3 sm:grid-cols-2">
-              <DataRow label="Telefon" :value="company.phone || 'Keine Nummer'" />
-              <DataRow label="WhatsApp" :value="company.whatsapp || 'Keine Nummer'" />
-              <DataRow label="Preis" :value="company.price ? `ab ${company.price} €` : 'auf Anfrage'" />
-              <DataRow
-                v-if="company.is_247 && company.emergency_price"
-                label="Notdienstpreis"
-                :value="`${company.emergency_price} €`"
-              />
-            </div>
+            <div
+              class="relative min-h-[18rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner"
+            >
+              <iframe
+                class="h-full w-full"
+                :src="mapUrl"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
 
-            <div class="space-y-4">
-              <h2 class="text-lg font-semibold text-slate-900">Öffnungszeiten</h2>
-              <div class="grid gap-2 rounded-3xl border border-white/70 bg-white/70 p-4 shadow-inner">
-                <div
-                  v-for="day in days"
-                  :key="day"
-                  class="flex items-center justify-between rounded-2xl border border-white/60 bg-white/60 px-4 py-2 text-sm"
-                  :class="dayStatus(day)"
-                >
-                  <span class="font-medium text-slate-700">{{ dayLabel(day) }}</span>
-                  <span class="text-slate-600">{{ formatTimeRange(company.opening_hours?.[day]) }}</span>
+              <div
+                v-if="hasContactOptions"
+                class="pointer-events-none absolute inset-x-4 top-4 flex flex-col gap-3 rounded-3xl border border-white/80 bg-white/90 p-4 text-sm text-slate-600 shadow-xl backdrop-blur sm:inset-auto sm:right-4 sm:top-4 sm:w-60 lg:hidden"
+              >
+                <div class="pointer-events-auto space-y-3 text-center">
+                  <div class="space-y-1">
+                    <span class="badge-neutral inline-flex items-center gap-1 text-xs font-medium text-slate-600">
+                      <i class="fa fa-bolt text-gold"></i>
+                      Direktkontakt
+                    </span>
+                    <h3 class="text-base font-semibold text-slate-900">Schnell Hilfe bekommen</h3>
+                    <p>Starte sofort einen Anruf oder schreib per WhatsApp.</p>
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <button
+                      v-if="phoneLink"
+                      type="button"
+                      class="btn flex w-full items-center justify-center gap-2"
+                      @click="startContact('call')"
+                    >
+                      <i class="fa fa-phone"></i>
+                      Jetzt anrufen
+                    </button>
+                    <button
+                      v-if="whatsappLink"
+                      type="button"
+                      class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600"
+                      @click="startContact('whatsapp')"
+                    >
+                      <i class="fa fa-whatsapp"></i>
+                      Über WhatsApp schreiben
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="space-y-3">
-              <h2 class="text-lg font-semibold text-slate-900">Beschreibung</h2>
-              <p class="text-sm text-slate-600">{{ company.description || 'Keine Beschreibung' }}</p>
-            </div>
-
-            <div v-if="lockTypes.length" class="space-y-3">
-              <h2 class="text-lg font-semibold text-slate-900">Kompatible Schlösser</h2>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="(lt, idx) in lockTypes"
-                  :key="idx"
-                  class="pill-checkbox"
-                >
-                  <span class="text-lg">{{ lt.icon }}</span>
-                  <span>{{ lt.label }}</span>
-                </span>
-              </div>
-            </div>
-
-            <div class="rounded-3xl border border-white/70 bg-white/70 p-5 shadow-inner">
-              <TrackingRequestPanel :company="company" />
             </div>
 
           </div>
 
-          <div class="relative min-h-[18rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
-            <iframe
-              class="h-full w-full"
-              :src="mapUrl"
-              style="border:0;"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
-
-            <div
-              v-if="phoneLink || whatsappLink"
-              class="pointer-events-none absolute inset-x-4 top-4 flex flex-col gap-3 rounded-3xl border border-white/80 bg-white/90 p-4 text-sm text-slate-600 shadow-xl backdrop-blur sm:inset-auto sm:right-4 sm:top-4 sm:w-60"
-            >
-              <div class="pointer-events-auto space-y-3 text-center">
-                <div class="space-y-1">
+          <div
+            v-if="hasContactOptions"
+            class="pointer-events-none hidden lg:block lg:absolute lg:right-0 lg:top-0 lg:h-full lg:translate-x-[calc(100%+1.5rem)]"
+          >
+            <div class="pointer-events-auto sticky top-6 w-64">
+              <div
+                class="space-y-3 rounded-3xl border border-white/80 bg-white/90 p-4 text-sm text-slate-600 shadow-xl backdrop-blur"
+              >
+                <div class="space-y-1 text-center">
                   <span class="badge-neutral inline-flex items-center gap-1 text-xs font-medium text-slate-600">
                     <i class="fa fa-bolt text-gold"></i>
                     Direktkontakt
@@ -299,6 +344,8 @@ const whatsappLink = computed(() => {
   const normalized = raw.toString().replace(/[^0-9]/g, '')
   return normalized ? `https://wa.me/${normalized}` : ''
 })
+
+const hasContactOptions = computed(() => Boolean(phoneLink.value || whatsappLink.value))
 
 function startContact(action = 'call') {
   pendingAction.value = action
