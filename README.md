@@ -51,6 +51,19 @@ Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten 
 
    Die Anwendung ist danach unter <http://localhost:5173> erreichbar.
 
+4. **Optionale Beispieldaten für den Firestore-Emulator:**
+
+   ```bash
+   cd functions
+   npm install
+   firebase emulators:start --only firestore
+   # In einem zweiten Terminal
+   FIRESTORE_EMULATOR_HOST=localhost:8080 npm run seed:companies
+   ```
+
+   Anschließend stehen im Emulator drei verifizierte Demo-Unternehmen bereit,
+   die über das Frontend abgerufen werden können.
+
 ## Projektstruktur
 
 Der Code ist in `src` organisiert. Wichtige Unterordner:

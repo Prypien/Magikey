@@ -116,7 +116,7 @@
             </div>
 
             <div
-              class="relative min-h-[22rem] sm:min-h-[26rem] lg:min-h-[32rem] xl:min-h-[38rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner"
+              class="relative min-h-[28rem] sm:min-h-[34rem] lg:min-h-[44rem] xl:min-h-[52rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner"
             >
               <iframe
                 class="absolute inset-0 h-full w-full"
