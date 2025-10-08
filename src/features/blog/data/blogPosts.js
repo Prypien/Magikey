@@ -477,7 +477,7 @@ function renderMarkdown(markdown) {
       continue
     }
 
-    const listMatch = /^([*\-]|\d+\.)\s+(.+)$/.exec(trimmed)
+    const listMatch = /^([*-]|\d+\.)\s+(.+)$/.exec(trimmed)
     if (listMatch) {
       const [, marker, item] = listMatch
       const currentType = marker.endsWith('.') ? 'ol' : 'ul'
