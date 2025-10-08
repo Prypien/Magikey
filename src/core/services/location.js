@@ -1,4 +1,3 @@
-/* global fetch, URLSearchParams, navigator */
 // Dienstfunktionen für Standort- und Ortssuche.
 import { getPostalFromCoords } from '@/core/firebase/functions'
 
