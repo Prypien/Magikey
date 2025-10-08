@@ -162,6 +162,7 @@ import TrackingRequestPanel from '@/ui/components/tracking/TrackingRequestPanel.
 import ReviewRequestModal from '@/ui/components/reviews/ReviewRequestModal.vue'
 import CompanyReviews from '@/ui/components/reviews/CompanyReviews.vue'
 import { useReviewStore } from '@/core/stores/reviews'
+import { extractRating, extractReviewCount } from '@/core/utils/reviews'
 
 const route = useRoute()
 const router = useRouter()
@@ -333,45 +334,4 @@ function contactCompany(action) {
   }
 }
 
-function extractRating(current) {
-  if (!current) return null
-  const candidates = [
-    current.verification?.google_rating,
-    current.google_rating,
-    current.rating,
-    current.average_rating,
-    current.avg_rating,
-    current.magikey_rating,
-  ]
-  for (const value of candidates) {
-    const cleaned = typeof value === 'string' ? value.replace(',', '.').trim() : value
-    const number = Number.parseFloat(cleaned)
-    if (Number.isFinite(number)) {
-      return Math.max(0, Math.min(5, number))
-    }
-  }
-  return null
-}
-
-function extractReviewCount(current) {
-  if (!current) return null
-  const candidates = [
-    current.verification?.google_review_count,
-    current.google_review_count,
-    current.review_count,
-    current.rating_count,
-    current.reviews_count,
-  ]
-  for (const value of candidates) {
-    let normalizedValue = value
-    if (typeof normalizedValue === 'string') {
-      normalizedValue = normalizedValue.replace(/[^0-9-]/g, '')
-    }
-    const number = Number.parseInt(normalizedValue, 10)
-    if (Number.isFinite(number) && number >= 0) {
-      return number
-    }
-  }
-  return null
-}
 </script>
