@@ -9,7 +9,9 @@
 
       <div v-if="company" class="glass-card p-8 sm:p-10">
         <div class="relative">
-          <div class="grid gap-10 lg:grid-cols-[1.15fr,0.85fr] lg:items-start">
+          <div
+            class="grid gap-10 lg:grid-cols-[minmax(0,1fr),minmax(0,1fr)] xl:grid-cols-[minmax(0,0.95fr),minmax(0,1.05fr)] lg:items-start"
+          >
             <div class="space-y-6">
               <div class="flex flex-col items-center gap-4 text-center">
                 <div class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
@@ -114,10 +116,10 @@
             </div>
 
             <div
-              class="relative min-h-[18rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner"
+              class="relative min-h-[22rem] sm:min-h-[26rem] lg:min-h-[32rem] xl:min-h-[38rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner"
             >
               <iframe
-                class="h-full w-full"
+                class="absolute inset-0 h-full w-full"
                 :src="mapUrl"
                 style="border:0;"
                 allowfullscreen=""
@@ -289,17 +291,11 @@ const whatsappLink = computed(() => {
 
 const hasContactOptions = computed(() => Boolean(phoneLink.value || whatsappLink.value))
 
-const phoneActionLabel = computed(() => {
-  if (!phoneLink.value) return ''
-  const number = company.value?.phone?.toString().trim()
-  return number ? `Anrufen (${number})` : 'Jetzt anrufen'
-})
+const phoneActionLabel = computed(() => (phoneLink.value ? 'Jetzt anrufen' : ''))
 
-const whatsappActionLabel = computed(() => {
-  if (!whatsappLink.value) return ''
-  const number = company.value?.whatsapp?.toString().trim()
-  return number ? `WhatsApp (${number})` : 'Über WhatsApp schreiben'
-})
+const whatsappActionLabel = computed(() =>
+  whatsappLink.value ? 'Über WhatsApp schreiben' : ''
+)
 
 function startContact(action = 'call') {
   pendingAction.value = action
