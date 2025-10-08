@@ -90,29 +90,9 @@
               <TrackingRequestPanel :company="company" />
             </div>
 
-            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
-              <button
-                v-if="phoneLink"
-                type="button"
-                class="btn flex w-full items-center justify-center gap-2 sm:w-auto"
-                @click="startContact('call')"
-              >
-                <i class="fa fa-phone"></i>
-                Jetzt anrufen
-              </button>
-              <button
-                v-if="whatsappLink"
-                type="button"
-                class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
-                @click="startContact('whatsapp')"
-              >
-                <i class="fa fa-whatsapp"></i>
-                Über WhatsApp schreiben
-              </button>
-            </div>
           </div>
 
-          <div class="min-h-[18rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
+          <div class="relative min-h-[18rem] overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-inner">
             <iframe
               class="h-full w-full"
               :src="mapUrl"
@@ -121,6 +101,43 @@
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
             ></iframe>
+
+            <div
+              v-if="phoneLink || whatsappLink"
+              class="pointer-events-none absolute inset-x-4 top-4 flex flex-col gap-3 rounded-3xl border border-white/80 bg-white/90 p-4 text-sm text-slate-600 shadow-xl backdrop-blur sm:inset-auto sm:right-4 sm:top-4 sm:w-60"
+            >
+              <div class="pointer-events-auto space-y-3 text-center">
+                <div class="space-y-1">
+                  <span class="badge-neutral inline-flex items-center gap-1 text-xs font-medium text-slate-600">
+                    <i class="fa fa-bolt text-gold"></i>
+                    Direktkontakt
+                  </span>
+                  <h3 class="text-base font-semibold text-slate-900">Schnell Hilfe bekommen</h3>
+                  <p>Starte sofort einen Anruf oder schreib per WhatsApp.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <button
+                    v-if="phoneLink"
+                    type="button"
+                    class="btn flex w-full items-center justify-center gap-2"
+                    @click="startContact('call')"
+                  >
+                    <i class="fa fa-phone"></i>
+                    Jetzt anrufen
+                  </button>
+                  <button
+                    v-if="whatsappLink"
+                    type="button"
+                    class="btn flex w-full items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600"
+                    @click="startContact('whatsapp')"
+                  >
+                    <i class="fa fa-whatsapp"></i>
+                    Über WhatsApp schreiben
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
