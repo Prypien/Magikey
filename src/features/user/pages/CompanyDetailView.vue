@@ -125,16 +125,17 @@
                 referrerpolicy="no-referrer-when-downgrade"
               ></iframe>
             </div>
-        </div>
+          </div>
 
-        <CompanyReviews
-          class="mt-10"
-          :google-reviews-url="googleReviewsUrl"
-          :google-place-url="googlePlaceUrl"
-          :google-rating="googleRating"
-          :google-review-count="googleReviewCount"
-          :magikey-reviews="magikeyReviews"
-        />
+          <CompanyReviews
+            class="mt-10"
+            :google-reviews-url="googleReviewsUrl"
+            :google-place-url="googlePlaceUrl"
+            :google-rating="googleRating"
+            :google-review-count="googleReviewCount"
+            :magikey-reviews="magikeyReviews"
+          />
+        </div>
       </div>
       <div v-else-if="!isLoading" class="glass-card p-8 text-center text-slate-600">
         <h1 class="section-heading mb-2 text-2xl">Firma nicht gefunden</h1>
