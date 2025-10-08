@@ -217,6 +217,8 @@ import { useCompanyStore } from '@/core/stores/company'
 import { LOCK_TYPE_LABELS } from '@/core/constants/lockTypes'
 import { detectCurrentLocation } from '@/core/services/location'
 import { hasLockType } from '@/core/utils/lockTypes'
+import { parseEuroAmount } from '@/core/utils/price'
+import { extractRating } from '@/core/utils/reviews'
 
 const NotifyForm = defineAsyncComponent(() => import('@/ui/components/user/NotifyForm.vue'))
 
@@ -234,36 +236,18 @@ const emergencyCandidate = computed(() => {
   const companies = filteredCompanies.value || []
   if (!companies.length) return null
 
-  function normalizeRating(company) {
-    const possibleValues = [
-      company?.magikey_rating,
-      company?.magikeyRating,
-      company?.rating,
-      company?.average_rating,
-      company?.avg_rating,
-      company?.reviews?.magikey_avg,
-      company?.reviews?.magikeyRating,
-    ]
-
-    for (const value of possibleValues) {
-      const parsed = Number(value)
-      if (Number.isFinite(parsed)) {
-        return Math.max(0, Math.min(5, parsed))
-      }
-    }
-    return null
-  }
-
-  function toNumber(value) {
-    const parsed = Number(value)
-    return Number.isFinite(parsed) ? parsed : null
-  }
-
   function getComparablePrice(company) {
-    const emergencyPrice = toNumber(company?.emergency_price)
-    if (emergencyPrice !== null) return emergencyPrice
-    const basePrice = toNumber(company?.price)
-    return basePrice !== null ? basePrice : Number.POSITIVE_INFINITY
+    const emergencyPrice = parseEuroAmount(company?.emergency_price)
+    if (Number.isFinite(emergencyPrice) && emergencyPrice > 0) {
+      return emergencyPrice
+    }
+
+    const basePrice = parseEuroAmount(company?.price)
+    if (Number.isFinite(basePrice) && basePrice >= 0) {
+      return basePrice
+    }
+
+    return Number.POSITIVE_INFINITY
   }
 
   const supportsHouseLock = (company) => hasLockType(company?.lock_types, 'house')
@@ -274,7 +258,7 @@ const emergencyCandidate = computed(() => {
   const ranked = relevantCompanies
     .map((company) => ({
       company,
-      rating: normalizeRating(company),
+      rating: extractRating(company),
       is247: company?.is_247 ? 1 : 0,
       comparablePrice: getComparablePrice(company),
     }))
