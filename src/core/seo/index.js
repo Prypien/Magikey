@@ -81,12 +81,37 @@ function ensureLinkTag(rel, href) {
   }
 }
 
-function sanitizeText(value) {
-  if (typeof value !== 'string') {
-    return value
+function toPlainText(value) {
+  if (value == null) {
+    return ''
   }
 
-  return value.replace(/\s+/g, ' ').trim()
+  if (Array.isArray(value)) {
+    return value
+      .map((entry) => toPlainText(entry))
+      .filter((entry) => entry.length > 0)
+      .join(', ')
+  }
+
+  if (value instanceof Date) {
+    const timestamp = value.getTime()
+    return Number.isFinite(timestamp) ? value.toISOString() : ''
+  }
+
+  if (typeof value === 'object') {
+    return ''
+  }
+
+  return String(value)
+}
+
+function sanitizeText(value) {
+  const text = toPlainText(value)
+  if (!text) {
+    return text
+  }
+
+  return text.replace(/\s+/g, ' ').trim()
 }
 
 export function applySeoMeta(input = {}) {

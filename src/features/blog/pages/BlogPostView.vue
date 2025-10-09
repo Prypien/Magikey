@@ -130,6 +130,23 @@ const route = useRoute()
 const allPosts = computed(() => getBlogPosts())
 const post = computed(() => findBlogPost(`${route.params.slug ?? ''}`))
 
+const seoKeywords = computed(() => {
+  const keywords = post.value?.keywords
+
+  if (Array.isArray(keywords)) {
+    return keywords
+      .map((keyword) => `${keyword}`.trim())
+      .filter(Boolean)
+      .join(', ')
+  }
+
+  if (typeof keywords === 'string') {
+    return keywords.trim()
+  }
+
+  return ''
+})
+
 const suggestedPosts = computed(() =>
   allPosts.value.filter((entry) => entry.slug !== post.value?.slug).slice(0, 2)
 )
@@ -149,7 +166,7 @@ watchEffect(() => {
     title: `${post.value.title} | Magikey Blog`,
     description: post.value.excerpt,
     ogImage: post.value.coverImage || DEFAULT_SEO.ogImage,
-    keywords: post.value.keywords.join(', '),
+    keywords: seoKeywords.value,
     ogType: 'article',
     articlePublishedTime: post.value.isoDate,
     articleModifiedTime: post.value.isoDate,
