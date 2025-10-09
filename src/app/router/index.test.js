@@ -308,4 +308,24 @@ describe('router configuration', () => {
       canonical: 'http://localhost/demo',
     })
   })
+
+  it('prefers explicit url and canonical definitions over inferred values', () => {
+    applySeoForRoute({
+      meta: {
+        seo: {
+          title: 'Individuelle Seite',
+          url: 'https://magikey.app/locksmiths/best-practices',
+          canonical: 'https://magikey.app/locksmiths/best-practices',
+        },
+      },
+      fullPath: '/locksmiths/best-practices?ref=campaign',
+    })
+
+    expect(applySeoMetaMock).toHaveBeenCalledTimes(1)
+    expect(applySeoMetaMock).toHaveBeenCalledWith({
+      title: 'Individuelle Seite',
+      url: 'https://magikey.app/locksmiths/best-practices',
+      canonical: 'https://magikey.app/locksmiths/best-practices',
+    })
+  })
 })
