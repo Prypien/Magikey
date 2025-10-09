@@ -212,7 +212,7 @@ import { useRouter } from 'vue-router'
 import SearchResults from '@/ui/components/user/SearchResults.vue'
 import Loader from '@/ui/components/common/Loader.vue'
 import IntroPopup from '@/ui/components/user/IntroPopup.vue'
-import { filters, clearFilter } from '@/core/stores/filters'
+import { filters, clearFilter, DEFAULT_PRICE_RANGE } from '@/core/stores/filters'
 import { useCompanyStore } from '@/core/stores/company'
 import { LOCK_TYPE_LABELS } from '@/core/constants/lockTypes'
 import { detectCurrentLocation } from '@/core/services/location'
@@ -231,6 +231,29 @@ const INTRO_KEY = 'introShown'
 const euroFormatter = new Intl.NumberFormat('de-DE')
 const lastUpdatedAt = ref(null)
 const resultsSection = ref(null)
+const [defaultPriceMin, defaultPriceMax] = DEFAULT_PRICE_RANGE
+
+const locationBadgeLabel = computed(() => {
+  const metaLabel = filters.locationMeta?.label
+  if (typeof metaLabel === 'string' && metaLabel.trim()) {
+    return metaLabel.trim()
+  }
+
+  const rawValue = `${filters.location ?? ''}`.trim()
+  if (!rawValue) return ''
+
+  const postalDigits = rawValue.replace(/\D/g, '')
+  const cityPart = rawValue.replace(/[0-9]/g, ' ').replace(/\s+/g, ' ').trim()
+
+  if (postalDigits && cityPart) {
+    return `${postalDigits} ${cityPart}`.trim()
+  }
+
+  if (postalDigits) return postalDigits
+  if (cityPart) return cityPart
+
+  return rawValue
+})
 
 const emergencyCandidate = computed(() => {
   const companies = filteredCompanies.value || []
@@ -285,38 +308,47 @@ const emergencyCompany = computed(() => emergencyCandidate.value?.company ?? nul
 const emergencyRating = computed(() => emergencyCandidate.value?.rating ?? null)
 
 const headline = computed(() => {
-  let text = 'Finde deinen Schlüsseldienst'
+  const locationLabel = locationBadgeLabel.value
+  let base = 'Finde deinen Schlüsseldienst'
 
-  if (filters.location) {
-    text = `Schlüsseldienste in ${filters.location}`
+  if (locationLabel) {
+    base = `Schlüsseldienste in ${locationLabel}`
   } else if (filters.lockTypes.length) {
     const labels = filters.lockTypes
       .map((t) => LOCK_TYPE_LABELS[t] || t)
       .slice(0, 2)
       .join(', ')
-    text = `Expert:innen für ${labels}`
-    if (filters.lockTypes.length > 2) text += ' & mehr'
+    base = `Expert:innen für ${labels}`
+    if (filters.lockTypes.length > 2) base += ' & mehr'
   }
+
+  const qualifiers = []
 
   if (filters.openNow) {
-    text += filters.location ? ' – jetzt geöffnet' : ' – jetzt geöffnet'
+    qualifiers.push('jetzt geöffnet')
   }
 
-  if (filters.price[1] < 1000) {
-    text += ` bis ${euroFormatter.format(filters.price[1])} €`
+  const maxPrice = Number(filters.price?.[1])
+  if (Number.isFinite(maxPrice) && maxPrice < defaultPriceMax) {
+    qualifiers.push(`bis ${euroFormatter.format(maxPrice)} €`)
   }
 
-  return text
+  if (qualifiers.length === 0) {
+    return base
+  }
+
+  return `${base} – ${qualifiers.join(' · ')}`
 })
 
 const activeBadges = computed(() => {
   const badges = []
 
-  if (filters.location) {
+  const locationLabel = locationBadgeLabel.value
+  if (locationLabel) {
     badges.push({
       key: 'location',
-      label: filters.locationMeta?.label || `PLZ ${filters.location}`,
-      clear: () => clearFilter('location')
+      label: locationLabel,
+      clear: () => clearFilter('location'),
     })
   }
 
@@ -324,16 +356,22 @@ const activeBadges = computed(() => {
     badges.push({
       key: 'openNow',
       label: 'Jetzt geöffnet',
-      clear: () => clearFilter('openNow')
+      clear: () => clearFilter('openNow'),
     })
   }
 
-  const priceActive = filters.price[0] !== 0 || filters.price[1] !== 1000
+  const priceMin = Number(filters.price?.[0])
+  const priceMax = Number(filters.price?.[1])
+  const priceActive =
+    (Number.isFinite(priceMin) ? priceMin : defaultPriceMin) !== defaultPriceMin ||
+    (Number.isFinite(priceMax) ? priceMax : defaultPriceMax) !== defaultPriceMax
   if (priceActive) {
     badges.push({
       key: 'price',
-      label: `Preis ${euroFormatter.format(filters.price[0])}€ – ${euroFormatter.format(filters.price[1])}€`,
-      clear: () => clearFilter('price')
+      label: `Preis ${euroFormatter.format(Number.isFinite(priceMin) ? priceMin : defaultPriceMin)}€ – ${
+        euroFormatter.format(Number.isFinite(priceMax) ? priceMax : defaultPriceMax)
+      }€`,
+      clear: () => clearFilter('price'),
     })
   }
 
