@@ -325,26 +325,22 @@ function waitForAuthInit() {
   return new Promise((resolve) => {
     let unsubscribe = () => {}
 
-    const finalize = () => {
+    const cleanup = () => {
       authReady = true
-
-      Promise.resolve()
-        .then(() => {
-          unsubscribe()
-        })
-        .catch(() => {
-          unsubscribe()
-        })
-
+      try {
+        unsubscribe()
+      } catch (error) {
+        console.error('Fehler beim Entfernen des Auth-Listeners', error)
+      }
       resolve()
     }
 
     const handleError = (error) => {
       console.error('Fehler beim Beobachten des Auth-Status', error)
-      finalize()
+      cleanup()
     }
 
-    unsubscribe = onAuthStateChanged(auth, finalize, handleError)
+    unsubscribe = onAuthStateChanged(auth, cleanup, handleError)
   })
 }
 
@@ -382,16 +378,29 @@ export async function navigationGuard(to, from, next) {
   }
 
   const routeName = to.name
-  const requiresAuth = Boolean(to.meta?.requiresAuth)
-  const requiresAdmin = Boolean(to.meta?.requiresAdmin)
+  const routeMeta = to.meta ?? {}
+  const requiresAuth = Boolean(routeMeta.requiresAuth)
+  const requiresAdmin = Boolean(routeMeta.requiresAdmin)
   const isLoginRoute = routeName === 'login'
   const restrictedCompanyRoute = isCompanyRestrictedRoute(routeName)
   const portalRoute = isCompanyPortalRoute(routeName)
   const user = isFirebaseConfigured ? auth.currentUser : null
 
+  const redirectTo = (name) => {
+    next({ name })
+  }
+
+  if ((requiresAuth || requiresAdmin) && !user) {
+    redirectTo('login')
+    return
+  }
+
+  const needsRoleLookup =
+    Boolean(user) && (requiresAuth || requiresAdmin || isLoginRoute || restrictedCompanyRoute || portalRoute)
+
   let userRole = USER_ROLES.USER
 
-  if (user && (requiresAuth || requiresAdmin || isLoginRoute || restrictedCompanyRoute || portalRoute)) {
+  if (needsRoleLookup) {
     try {
       userRole = await getUserRole(user, { forceRefresh: requiresAdmin })
     } catch (error) {
@@ -399,73 +408,69 @@ export async function navigationGuard(to, from, next) {
       userRole = USER_ROLES.USER
     }
   }
+
   const userIsAdmin = userRole === USER_ROLES.ADMIN
   const userIsCompany = userRole === USER_ROLES.COMPANY
 
   let companyPortalTarget = null
-  const getCompanyPortalTarget = async () => {
-    if (!userIsCompany) {
+  const resolveCompanyPortalTargetOnce = async () => {
+    if (!userIsCompany || !user) {
       return 'dashboard'
     }
+
     if (!companyPortalTarget) {
       companyPortalTarget = await determineCompanyPortalTarget(user)
     }
+
     return companyPortalTarget
   }
 
-  if (requiresAuth && !user) {
-    next({ name: 'login' })
-    return
-  }
-
   if (requiresAdmin && !userIsAdmin) {
-    if (userIsCompany && user) {
-      const target = await getCompanyPortalTarget()
-      next({ name: target })
+    if (userIsCompany) {
+      redirectTo(await resolveCompanyPortalTargetOnce())
     } else {
-      next({ name: 'home' })
+      redirectTo('home')
     }
     return
   }
 
-  if (requiresAuth && restrictedCompanyRoute) {
+  if (restrictedCompanyRoute) {
     if (userIsAdmin) {
-      next({ name: 'admin-dashboard' })
+      redirectTo('admin-dashboard')
       return
     }
 
     if (!userIsCompany) {
-      next({ name: 'home' })
+      redirectTo('home')
       return
     }
 
-    const target = await getCompanyPortalTarget()
+    const target = await resolveCompanyPortalTargetOnce()
     if (target !== 'dashboard' && target !== routeName) {
-      next({ name: target })
+      redirectTo(target)
       return
     }
   }
 
   if (user && isLoginRoute) {
     if (userIsAdmin) {
-      next({ name: 'admin-dashboard' })
+      redirectTo('admin-dashboard')
       return
     }
 
     if (userIsCompany) {
-      const target = await getCompanyPortalTarget()
-      next({ name: target })
+      redirectTo(await resolveCompanyPortalTargetOnce())
       return
     }
 
-    next({ name: 'home' })
+    redirectTo('home')
     return
   }
 
-  if (user && userIsCompany && portalRoute) {
-    const target = await getCompanyPortalTarget()
+  if (userIsCompany && portalRoute) {
+    const target = await resolveCompanyPortalTargetOnce()
     if (target !== routeName) {
-      next({ name: target })
+      redirectTo(target)
       return
     }
   }
