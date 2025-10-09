@@ -218,6 +218,8 @@ export const filteredCompanies = computed(() => {
   const referenceCoords = hasLocationCoords ? { lat: locationLat, lng: locationLng } : null
   const lockTypeFilter = new Set(normaliseLockTypeList(filters.lockTypes))
   const priceRange = normalisePriceRange(filters.price)
+  const priceFilterActive =
+    priceRange.min > DEFAULT_PRICE_RANGE[0] || priceRange.max < DEFAULT_PRICE_RANGE[1]
 
   return companies.value.filter((company) => {
     if (!matchesLocation(company, locationFilter, referenceCoords)) {
@@ -234,7 +236,7 @@ export const filteredCompanies = computed(() => {
       if (price < priceRange.min || price > priceRange.max) {
         return false
       }
-    } else if (priceRange.min > 0) {
+    } else if (priceFilterActive) {
       return false
     }
 

@@ -232,6 +232,21 @@ const euroFormatter = new Intl.NumberFormat('de-DE')
 const lastUpdatedAt = ref(null)
 const resultsSection = ref(null)
 const [defaultPriceMin, defaultPriceMax] = DEFAULT_PRICE_RANGE
+const priceRange = computed(() => {
+  const rawMin = Number(filters.price?.[0])
+  const rawMax = Number(filters.price?.[1])
+  const min = Number.isFinite(rawMin) ? rawMin : defaultPriceMin
+  const max = Number.isFinite(rawMax) ? rawMax : defaultPriceMax
+
+  if (min > max) {
+    return { min: max, max: min }
+  }
+
+  return { min, max }
+})
+const isPriceFilterActive = computed(
+  () => priceRange.value.min !== defaultPriceMin || priceRange.value.max !== defaultPriceMax
+)
 
 const locationBadgeLabel = computed(() => {
   const metaLabel = filters.locationMeta?.label
@@ -328,9 +343,18 @@ const headline = computed(() => {
     qualifiers.push('jetzt geöffnet')
   }
 
-  const maxPrice = Number(filters.price?.[1])
-  if (Number.isFinite(maxPrice) && maxPrice < defaultPriceMax) {
-    qualifiers.push(`bis ${euroFormatter.format(maxPrice)} €`)
+  if (isPriceFilterActive.value) {
+    const { min, max } = priceRange.value
+    const hasCustomMin = min > defaultPriceMin
+    const hasCustomMax = max < defaultPriceMax
+
+    if (hasCustomMin && hasCustomMax) {
+      qualifiers.push(`${euroFormatter.format(min)} € – ${euroFormatter.format(max)} €`)
+    } else if (hasCustomMin) {
+      qualifiers.push(`ab ${euroFormatter.format(min)} €`)
+    } else if (hasCustomMax) {
+      qualifiers.push(`bis ${euroFormatter.format(max)} €`)
+    }
   }
 
   if (qualifiers.length === 0) {
@@ -360,17 +384,11 @@ const activeBadges = computed(() => {
     })
   }
 
-  const priceMin = Number(filters.price?.[0])
-  const priceMax = Number(filters.price?.[1])
-  const priceActive =
-    (Number.isFinite(priceMin) ? priceMin : defaultPriceMin) !== defaultPriceMin ||
-    (Number.isFinite(priceMax) ? priceMax : defaultPriceMax) !== defaultPriceMax
-  if (priceActive) {
+  if (isPriceFilterActive.value) {
+    const { min, max } = priceRange.value
     badges.push({
       key: 'price',
-      label: `Preis ${euroFormatter.format(Number.isFinite(priceMin) ? priceMin : defaultPriceMin)}€ – ${
-        euroFormatter.format(Number.isFinite(priceMax) ? priceMax : defaultPriceMax)
-      }€`,
+      label: `Preis ${euroFormatter.format(min)}€ – ${euroFormatter.format(max)}€`,
       clear: () => clearFilter('price'),
     })
   }
