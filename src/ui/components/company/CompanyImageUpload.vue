@@ -33,8 +33,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { uploadCompanyLogo } from '@/core/services/storage'
+
+const MAX_FILE_SIZE_BYTES = 3 * 1024 * 1024
+const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png'])
 
 defineProps({
   initialImageUrl: String
@@ -43,35 +46,68 @@ const emit = defineEmits(['uploaded', 'upload-start', 'upload-end'])
 
 const previewUrl = ref('')
 const isUploading = ref(false)
+const objectUrl = ref('')
 
-function uploadImage(e) {
-  const file = e.target.files[0]
+function resetInput(eventTarget) {
+  if (eventTarget && 'value' in eventTarget) {
+    eventTarget.value = ''
+  }
+}
+
+function revokeObjectUrl() {
+  if (objectUrl.value && typeof URL?.revokeObjectURL === 'function') {
+    URL.revokeObjectURL(objectUrl.value)
+  }
+  objectUrl.value = ''
+}
+
+function createObjectUrl(file) {
+  if (typeof URL?.createObjectURL === 'function') {
+    return URL.createObjectURL(file)
+  }
+  return ''
+}
+
+async function uploadImage(event) {
+  const input = event.target
+  const file = input?.files?.[0]
+  resetInput(input)
+
   if (!file) return
 
-  if (file.size > 3 * 1024 * 1024) {
+  if (file.size > MAX_FILE_SIZE_BYTES) {
     window.alert('Bitte ein Bild unter 3 MB auswählen.')
     return
   }
 
-  if (!['image/jpeg', 'image/png'].includes(file.type)) {
+  const fileType = file.type?.toLowerCase?.() || ''
+  if (!ACCEPTED_TYPES.has(fileType)) {
     window.alert('Nur JPEG oder PNG Bilder sind erlaubt.')
     return
   }
-  previewUrl.value = window.URL.createObjectURL(file)
+
+  revokeObjectUrl()
+  const temporaryUrl = createObjectUrl(file)
+  objectUrl.value = temporaryUrl
+  previewUrl.value = temporaryUrl
+
   isUploading.value = true
   emit('upload-start')
-  uploadCompanyLogo(file)
-    .then(url => {
-      previewUrl.value = url
-      emit('uploaded', url)
-    })
-    .catch(err => {
-      console.error(err)
-      window.alert('Fehler beim Hochladen des Bildes.')
-    })
-    .finally(() => {
-      isUploading.value = false
-      emit('upload-end')
-    })
+
+  try {
+    const url = await uploadCompanyLogo(file)
+    previewUrl.value = url
+    emit('uploaded', url)
+  } catch (error) {
+    console.error('Fehler beim Hochladen des Logos', error)
+    window.alert('Fehler beim Hochladen des Bildes.')
+    previewUrl.value = ''
+  } finally {
+    revokeObjectUrl()
+    isUploading.value = false
+    emit('upload-end')
+  }
 }
+
+onBeforeUnmount(revokeObjectUrl)
 </script>
