@@ -1,4 +1,8 @@
-const rawBlogModules = import.meta.glob('@/content/blog/*.md', { eager: true, as: 'raw' })
+const rawBlogModules = import.meta.glob('@/content/blog/*.md', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+})
 
 function parseFrontMatter(raw) {
   const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/m.exec(raw)
@@ -213,10 +217,19 @@ function renderChecklist(content) {
   return `<ul class="md-checklist">${items}</ul>`
 }
 
+function normaliseCalloutVariant(type) {
+  if (typeof type !== 'string') {
+    return 'note'
+  }
+
+  const trimmed = type.trim()
+  return trimmed ? trimmed.toLowerCase() : 'note'
+}
+
 function renderCallout(type, title, content) {
   const innerHtml = content ? renderMarkdown(content) : ''
   const safeTitle = title ? transformInline(title) : ''
-  const modifier = type.toLowerCase()
+  const modifier = normaliseCalloutVariant(type)
   return `
     <section class="md-callout md-callout-${modifier}">
       ${safeTitle ? `<header class="md-callout-title">${safeTitle}</header>` : ''}
@@ -225,27 +238,22 @@ function renderCallout(type, title, content) {
   `
 }
 
-function renderSpecialBlock(type, title, content) {
-  const normalisedType = type.toLowerCase()
+const SPECIAL_BLOCK_RENDERERS = new Map([
+  ['stat-grid', renderStatGrid],
+  ['stats', renderStatGrid],
+  ['timeline', renderTimeline],
+  ['checklist', renderChecklist],
+])
 
-  switch (normalisedType) {
-    case 'stat-grid':
-    case 'stats':
-      return renderStatGrid(content)
-    case 'timeline':
-      return renderTimeline(content)
-    case 'checklist':
-      return renderChecklist(content)
-    case 'summary':
-    case 'info':
-    case 'tip':
-    case 'warning':
-    case 'success':
-    case 'note':
-    case 'danger':
-    default:
-      return renderCallout(normalisedType, title, content)
+function renderSpecialBlock(type, title, content) {
+  const normalisedType = typeof type === 'string' ? type.toLowerCase() : ''
+  const renderer = SPECIAL_BLOCK_RENDERERS.get(normalisedType)
+
+  if (renderer) {
+    return renderer(content)
   }
+
+  return renderCallout(normalisedType, title, content)
 }
 
 function buildTemplateWidget(data) {
