@@ -73,7 +73,7 @@
               <a
                 v-if="hasPaypalLink"
                 :href="paypalLink"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#003087] px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-[#012169] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003087]/60"
                 target="_blank"
                 rel="noopener"
                 @click.stop
