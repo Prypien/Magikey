@@ -153,6 +153,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
 import { getCompany } from '@/core/services/company'
 import DataRow from '@/ui/components/common/DataRow.vue'
@@ -164,6 +165,7 @@ import CompanyReviews from '@/ui/components/reviews/CompanyReviews.vue'
 import { useReviewStore } from '@/core/stores/reviews'
 import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 import { extractRating, extractReviewCount } from '@/core/utils/reviews'
+import { applySeoMeta } from '@/core/seo'
 
 const route = useRoute()
 const router = useRouter()
@@ -180,6 +182,260 @@ const googleRating = computed(() => extractRating(company.value))
 const googleReviewCount = computed(() => extractReviewCount(company.value))
 
 const { reviews: magikeyReviews, fetchCompanyReviews } = useReviewStore()
+
+const absoluteUrl = computed(() => {
+  if (typeof window === 'undefined' || !window.location) {
+    return undefined
+  }
+
+  const path = route.fullPath || '/'
+
+  try {
+    return new URL(path || '/', window.location.origin).toString()
+  } catch (error) {
+    console.error('Fehler beim Ableiten der Detail-URL', error)
+    const normalizedPath = path?.startsWith('/') ? path : `/${path || ''}`
+    return `${window.location.origin}${normalizedPath}`
+  }
+})
+
+const canonicalUrl = computed(() => {
+  const url = absoluteUrl.value
+  if (!url) return undefined
+
+  try {
+    const parsed = new URL(url)
+    parsed.hash = ''
+    parsed.search = ''
+    return parsed.toString()
+  } catch (error) {
+    return url.replace(/[?#].*$/, '')
+  }
+})
+
+const normaliseText = (value) => {
+  if (!value) return ''
+  return `${value}`.replace(/\s+/g, ' ').trim()
+}
+
+const compactObject = (source) =>
+  Object.fromEntries(
+    Object.entries(source).filter(([, value]) => {
+      if (Array.isArray(value)) {
+        return value.length > 0
+      }
+      return value !== undefined && value !== null && value !== ''
+    })
+  )
+
+const normaliseUrlValue = (value) => {
+  const text = normaliseText(value)
+  if (!text) return ''
+
+  try {
+    if (/^[a-z][a-z0-9+.-]*:/i.test(text)) {
+      return new URL(text).toString()
+    }
+
+    if (typeof window !== 'undefined' && window.location?.origin) {
+      return new URL(text, window.location.origin).toString()
+    }
+
+    return text
+  } catch (error) {
+    console.error('Fehler beim Normalisieren einer Unternehmens-URL', error)
+    return text
+  }
+}
+
+const DAY_TO_SCHEMA = {
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
+}
+
+const seoDetails = computed(() => {
+  const current = company.value
+  const baseTitle = 'Schlüsseldienst-Details | Magikey'
+  const baseDescription =
+    'Alle Informationen zu geprüften Schlüsseldiensten: Leistungen, Bewertungen und Kontaktmöglichkeiten auf einen Blick.'
+
+  if (!current) {
+    return {
+      title: baseTitle,
+      description: baseDescription,
+      keywords: 'Schlüsseldienst, Türöffnung, Bewertungen, Magikey',
+      ogImage: undefined,
+      url: absoluteUrl.value,
+      canonical: canonicalUrl.value,
+    }
+  }
+
+  const name = normaliseText(current.company_name) || 'Schlüsseldienst'
+  const city = normaliseText(current.city)
+  const postal = normaliseText(current.postal_code)
+  const descriptionSnippet = normaliseText(current.description)
+
+  const locationSuffix = city ? ` in ${city}` : postal ? ` in ${postal}` : ''
+  const title = `${name}${locationSuffix} | Magikey`
+
+  const description = descriptionSnippet
+    ? `${name}${city ? ` aus ${city}` : ''}: ${descriptionSnippet}`.slice(0, 220)
+    : `${name}${city ? ` aus ${city}` : ''} – Öffnungszeiten, Preise, Bewertungen und Kontakt.`
+
+  const keywordSet = [
+    name,
+    city ? `Schlüsseldienst ${city}` : null,
+    postal ? `Schlüsseldienst ${postal}` : null,
+    'Schlüsselnotdienst',
+    'Türöffnung',
+    'Magikey Bewertungen',
+  ]
+    .filter(Boolean)
+    .map((entry) => normaliseText(entry))
+    .filter((entry) => entry.length > 0)
+
+  return {
+    title,
+    description,
+    keywords: keywordSet.join(', '),
+    ogImage: normaliseText(current.logo_url),
+    url: absoluteUrl.value,
+    canonical: canonicalUrl.value,
+  }
+})
+
+watch(
+  seoDetails,
+  (seo) => {
+    applySeoMeta({
+      title: seo.title,
+      description: seo.description,
+      keywords: seo.keywords,
+      ogImage: seo.ogImage || undefined,
+      url: seo.url,
+      canonical: seo.canonical,
+    })
+  },
+  { immediate: true }
+)
+
+const schemaOpeningHours = computed(() => {
+  const current = company.value
+  if (!current?.opening_hours) {
+    return []
+  }
+
+  return DAYS.map((day) => {
+    const hours = current.opening_hours?.[day]
+    if (!hours?.open || !hours?.close) return null
+
+    const schemaDay = DAY_TO_SCHEMA[day]
+    if (!schemaDay) return null
+
+    return {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: schemaDay,
+      opens: hours.open,
+      closes: hours.close,
+    }
+  }).filter(Boolean)
+})
+
+const structuredData = computed(() => {
+  const current = company.value
+  if (!current) return null
+
+  const seo = seoDetails.value
+  const name = normaliseText(current.company_name) || 'Schlüsseldienst'
+  const city = normaliseText(current.city)
+  const postal = normaliseText(current.postal_code)
+  const telephone = normaliseText(current.phone)
+  const email = normaliseText(current.contact_email)
+  const basePrice = normaliseText(current.price)
+  const emergencyPrice = normaliseText(current.emergency_price)
+
+  const priceRange = basePrice
+    ? emergencyPrice
+      ? `€${basePrice} – €${emergencyPrice}`
+      : `ab €${basePrice}`
+    : undefined
+
+  const addressDetails = compactObject({
+    streetAddress: normaliseText(current.address) || undefined,
+    postalCode: postal || undefined,
+    addressLocality: city || undefined,
+    addressCountry: city || postal ? 'DE' : undefined,
+  })
+
+  const address = Object.keys(addressDetails).length
+    ? { '@type': 'PostalAddress', ...addressDetails }
+    : undefined
+
+  const lat = current?.coordinates?.lat ?? current?.latitude
+  const lng = current?.coordinates?.lng ?? current?.longitude
+  const geo = Number.isFinite(lat) && Number.isFinite(lng)
+    ? {
+        '@type': 'GeoCoordinates',
+        latitude: lat,
+        longitude: lng,
+      }
+    : undefined
+
+  const ratingValue = Number(googleRating.value)
+  const reviewCount = Number(googleReviewCount.value)
+  const aggregateRating = Number.isFinite(ratingValue) && ratingValue > 0
+    ? compactObject({
+        '@type': 'AggregateRating',
+        ratingValue: ratingValue.toFixed(1),
+        reviewCount: Number.isFinite(reviewCount) && reviewCount > 0 ? reviewCount : undefined,
+      })
+    : undefined
+
+  const sameAs = [
+    normaliseUrlValue(current.verification?.google_place_url),
+    normaliseUrlValue(current.verification?.google_reviews_url),
+    normaliseUrlValue(current.verification?.website_url),
+  ].filter(Boolean)
+
+  const data = compactObject({
+    '@context': 'https://schema.org',
+    '@type': 'Locksmith',
+    name,
+    url: seo.canonical || seo.url,
+    image: seo.ogImage || undefined,
+    telephone: telephone || undefined,
+    email: email || undefined,
+    priceRange,
+    address,
+    geo,
+    areaServed: city ? { '@type': 'City', name: city } : undefined,
+    aggregateRating,
+    sameAs: sameAs.length ? sameAs : undefined,
+    openingHoursSpecification: schemaOpeningHours.value,
+  })
+
+  return JSON.stringify(data, null, 2)
+})
+
+useHead(() => {
+  const json = structuredData.value
+  return {
+    script: json
+      ? [
+          {
+            key: 'company-detail-ldjson',
+            type: 'application/ld+json',
+            children: json,
+          },
+        ]
+      : [],
+  }
+})
 
 async function loadCompany(id) {
   if (!id) {

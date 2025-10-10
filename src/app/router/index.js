@@ -307,14 +307,66 @@ export function applySeoForRoute(to) {
     return text ? text : undefined
   }
 
-  const explicitUrl = toCleanString(seoDefinition.url)
-  const resolvedUrl = explicitUrl ?? fullUrl
-  const explicitCanonical = toCleanString(seoDefinition.canonical)
-  const canonical = explicitCanonical ?? resolvedUrl ?? fullUrl
+  const ensureAbsoluteUrl = (value) => {
+    const normalized = toCleanString(value)
+    if (!normalized) return undefined
+
+    try {
+      if (/^[a-z][a-z0-9+.-]*:/i.test(normalized)) {
+        return new URL(normalized).toString()
+      }
+
+      if (fullUrl) {
+        return new URL(normalized, fullUrl).toString()
+      }
+
+      if (typeof window !== 'undefined' && window.location?.origin) {
+        return new URL(normalized, window.location.origin).toString()
+      }
+
+      return normalized
+    } catch (error) {
+      console.error('Fehler beim Normalisieren einer SEO-URL', error)
+      return normalized
+    }
+  }
+
+  const sanitiseUrl = (value, { dropQuery = false } = {}) => {
+    if (!value) return undefined
+
+    try {
+      const url = new URL(value)
+      url.hash = ''
+      if (dropQuery) {
+        url.search = ''
+      }
+      return url.toString()
+    } catch (error) {
+      console.error('Fehler beim Bereinigen einer SEO-URL', error)
+      if (dropQuery) {
+        return value.replace(/[?#].*$/, '')
+      }
+      return value.replace(/#.*/, '')
+    }
+  }
+
+  const explicitUrl = ensureAbsoluteUrl(seoDefinition.url)
+  const inferredUrl = fullUrl ? ensureAbsoluteUrl(fullUrl) : undefined
+  const resolvedUrl = explicitUrl ?? inferredUrl
+  const shareUrl = sanitiseUrl(resolvedUrl, { dropQuery: !explicitUrl }) ?? inferredUrl
+
+  const explicitCanonical = ensureAbsoluteUrl(seoDefinition.canonical)
+  const canonicalSource = explicitCanonical ?? shareUrl ?? inferredUrl
+  const canonical = sanitiseUrl(canonicalSource, { dropQuery: !explicitCanonical })
+
+  let finalUrl = shareUrl ?? canonical
+  if (explicitCanonical && canonical) {
+    finalUrl = canonical
+  }
 
   applySeoMeta({
     ...seoDefinition,
-    url: resolvedUrl,
+    url: finalUrl,
     canonical,
   })
 }
