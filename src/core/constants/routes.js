@@ -64,6 +64,7 @@ export const ROUTE_LOCATIONS = freeze({
   IMPRESSUM: createLocation(ROUTE_NAMES.IMPRESSUM),
   DATENSCHUTZ: createLocation(ROUTE_NAMES.DATENSCHUTZ),
   BLOG: createLocation(ROUTE_NAMES.BLOG),
+  NOT_FOUND: createLocation(ROUTE_NAMES.NOT_FOUND),
 })
 
 export const SITEMAP_STATIC_ROUTES = freeze([

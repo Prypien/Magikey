@@ -309,6 +309,15 @@ describe('router configuration', () => {
     })
   })
 
+  it('normalises inferred URLs by dropping query and hash fragments', () => {
+    applySeoForRoute({ meta: {}, fullPath: '/companies/acme-locks?ref=ads#kontakt' })
+
+    expect(applySeoMetaMock).toHaveBeenCalledWith({
+      url: 'http://localhost/companies/acme-locks',
+      canonical: 'http://localhost/companies/acme-locks',
+    })
+  })
+
   it('prefers explicit url and canonical definitions over inferred values', () => {
     applySeoForRoute({
       meta: {
@@ -326,6 +335,22 @@ describe('router configuration', () => {
       title: 'Individuelle Seite',
       url: 'https://magikey.app/locksmiths/best-practices',
       canonical: 'https://magikey.app/locksmiths/best-practices',
+    })
+  })
+
+  it('keeps explicit canonical query parameters but removes hashes', () => {
+    applySeoForRoute({
+      meta: {
+        seo: {
+          canonical: 'https://magikey.app/landing?city=berlin#preise',
+        },
+      },
+      fullPath: '/landing',
+    })
+
+    expect(applySeoMetaMock).toHaveBeenCalledWith({
+      canonical: 'https://magikey.app/landing?city=berlin',
+      url: 'https://magikey.app/landing?city=berlin',
     })
   })
 
