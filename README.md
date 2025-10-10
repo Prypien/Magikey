@@ -78,9 +78,26 @@ Kopiere die Datei `.env.example` zu `.env` und fülle deine Firebase‑Credentia
 VITE_FIREBASE_API_KEY=<dein-key>
 VITE_FIREBASE_AUTH_DOMAIN=<deine-domain>
 ...
+VITE_FIREBASE_APPCHECK_SITE_KEY=<recaptcha-v3-site-key>
+VITE_FIREBASE_APPCHECK_DEBUG_TOKEN=<optional-debug-token-oder-true>
 VITE_GOOGLE_MAPS_API_KEY=<maps-key>
 VITE_PAYPAL_ME_URL=<paypal-me-link>
 ```
+
+### Firebase App Check aktivieren
+
+Um automatisierte Zugriffe auf die Firebase-APIs zu verhindern, nutzt Magikey
+[Firebase App Check](https://firebase.google.com/docs/app-check). Richte in der
+Firebase Console den **reCAPTCHA v3**-Provider ein und trage den dort
+bereitgestellten Site Key in der `.env` als `VITE_FIREBASE_APPCHECK_SITE_KEY`
+ein. Für lokale Entwicklung kannst du optional einen Debug-Token vergeben –
+setze dafür `VITE_FIREBASE_APPCHECK_DEBUG_TOKEN` entweder auf den generierten
+Token oder auf `true`, damit Firebase beim Start einen neuen Debug-Token in der
+Konsole ausgibt.
+
+Ist kein Site Key gesetzt, protokolliert die Anwendung einen Hinweis und führt
+App Check nicht aus. Die restliche Firebase-Initialisierung bleibt davon
+unberührt.
 
 Weitere Details zur Datenstruktur findest du in [docs/firestore.md](docs/firestore.md).
 Hinweise zum Einrichten und Troubleshooting des Mailversands findest du in
