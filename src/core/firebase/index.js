@@ -3,6 +3,7 @@
 // Dateispeicher zur Verfügung stellt.
 
 import { initializeApp } from 'firebase/app'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
@@ -20,13 +21,33 @@ const firebaseConfig = {
 
 const isFirebaseConfigured = Object.values(firebaseConfig).every(Boolean)
 
+const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY
+const appCheckDebugToken = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN
+
 let app = null
 let auth = null
 let db = null
 let storage = null
+let appCheck = null
+
+if (appCheckDebugToken) {
+  const normalizedDebugToken =
+    appCheckDebugToken.trim().toLowerCase() === 'true' ? true : appCheckDebugToken
+  globalThis.FIREBASE_APPCHECK_DEBUG_TOKEN = normalizedDebugToken
+}
 
 if (isFirebaseConfigured) {
   app = initializeApp(firebaseConfig)
+
+  if (appCheckSiteKey) {
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true,
+    })
+  } else {
+    console.warn('Firebase App Check Site Key fehlt. App Check wird nicht initialisiert.')
+  }
+
   auth = getAuth(app)
   db = getFirestore(app)
   storage = getStorage(app)
@@ -34,4 +55,4 @@ if (isFirebaseConfigured) {
   console.warn('Firebase-Konfiguration fehlt oder ist unvollständig. Firebase-Funktionen werden deaktiviert.')
 }
 
-export { app, auth, db, storage, isFirebaseConfigured }
+export { app, appCheck, auth, db, storage, isFirebaseConfigured }
