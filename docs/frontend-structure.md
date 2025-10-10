@@ -52,3 +52,12 @@ Die Trennung zwischen `features/` und `ui/` hält Seitenlogik und visuelle Baust
 3. **Logik einbinden:** Gemeinsame Services, Stores oder Hilfsfunktionen liegen unter `src/core` und können via `@/core/...` importiert werden.
 
 Durch diese Aufteilung lässt sich der Code wie in einer Bibliothek durchsuchen: Einstieg über `app/`, geteilte Logik unter `core/`, Feature-spezifische Views unter `features/` und wiederverwendbare UI unter `ui/`.
+
+## Inhalte außerhalb der Vue-App
+
+Für SEO-optimierte Einstiegsseiten liegen eigenständige HTML-Dokumente außerhalb des Vue-Quellcodes:
+
+- `landing-pages/`: Lokale Landing Pages wie `reutlingen/index.html`, die direkt verlinkt werden können und von den entsprechenden Vue-Views über den Alias `@landing-pages` eingebunden werden.
+- `blog/`: Statisch generierte Blog-Artikel in HTML/Markdown, die per `@blog-content` in der App verfügbar gemacht werden.
+
+So bleiben Marketing-Seiten klar von der SPA getrennt, während die Vue-Anwendung weiterhin über Aliasse auf die Inhalte zugreifen kann.

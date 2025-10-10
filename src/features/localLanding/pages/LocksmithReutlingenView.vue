@@ -1,4 +1,4 @@
-<template src="./reutlingen/index.html"></template>
+<template src="@landing-pages/reutlingen/index.html"></template>
 
 <script setup>
 import { useHead } from '@vueuse/head'
