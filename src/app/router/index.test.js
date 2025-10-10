@@ -128,7 +128,14 @@ describe('router configuration', () => {
   })
 
   it('provides all customer facing routes', () => {
-    const customerRoutes = ['home', 'details', 'support', 'help', 'blog']
+    const customerRoutes = [
+      'home',
+      'details',
+      'support',
+      'help',
+      'blog',
+      'locksmith-reutlingen',
+    ]
     const missing = customerRoutes.filter((name) => !findRoute(name))
     expect(missing).toEqual([])
   })
