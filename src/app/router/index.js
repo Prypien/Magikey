@@ -35,21 +35,6 @@ const routes = [
         },
       },
       {
-        path: 'schluesseldienst/reutlingen',
-        name: 'landing-locksmith-reutlingen',
-        component: () => import('@/features/localLanding/pages/LocksmithReutlingenView.vue'),
-        meta: {
-          seo: {
-            title: 'Schlüsseldienst Reutlingen – geprüfte Notdienste | Magikey',
-            description:
-              'Finde geprüfte Schlüsseldienste in Reutlingen. Magikey zeigt transparente Preise, echte Bewertungen und sofort verfügbare Notdienste.',
-            keywords:
-              'Schlüsseldienst Reutlingen, Schlüsselnotdienst Reutlingen, Türöffnung Reutlingen, Magikey Reutlingen',
-            canonical: 'https://magikey.de/schluesseldienst/reutlingen',
-          },
-        },
-      },
-      {
         path: 'login',
         name: 'login',
         component: () => import('@/features/company/pages/LoginView.vue'),

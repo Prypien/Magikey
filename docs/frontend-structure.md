@@ -57,7 +57,7 @@ Durch diese Aufteilung lässt sich der Code wie in einer Bibliothek durchsuchen:
 
 Für SEO-optimierte Einstiegsseiten liegen eigenständige HTML-Dokumente außerhalb des Vue-Quellcodes:
 
-- `landing-pages/`: Lokale Landing Pages wie `reutlingen/index.html`, die direkt verlinkt werden können und von den entsprechenden Vue-Views über den Alias `@landing-pages` eingebunden werden.
+- `public/schluesseldienst/<stadt>/index.html`: Lokale Landing Pages wie `schluesseldienst/reutlingen/index.html`, die komplett ohne Vue gerendert und direkt von Firebase Hosting ausgeliefert werden.
 - `blog/`: Statisch generierte Blog-Artikel in HTML/Markdown, die per `@blog-content` in der App verfügbar gemacht werden.
 
 So bleiben Marketing-Seiten klar von der SPA getrennt, während die Vue-Anwendung weiterhin über Aliasse auf die Inhalte zugreifen kann.
