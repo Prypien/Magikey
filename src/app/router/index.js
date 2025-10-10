@@ -230,6 +230,26 @@ const routes = [
         },
       },
       {
+        path: childPath(ROUTE_NAMES.LOCKSMITH_REUTLINGEN),
+        name: ROUTE_NAMES.LOCKSMITH_REUTLINGEN,
+        component: () => import('@/features/landing/pages/LocksmithReutlingenView.vue'),
+        meta: {
+          seo: {
+            title: 'Schlüsseldienst Reutlingen – geprüfte Notdienste & faire Preise | Magikey',
+            description:
+              'Vergleiche mit Magikey verifizierte Schlüsseldienste in Reutlingen. Transparente Preise, echte Bewertungen und schnelle Notdienste – direkt vorgefiltert für deine Stadt.',
+            keywords:
+              'Schlüsseldienst Reutlingen, Schlüsselnotdienst Reutlingen, Türöffnung Reutlingen, Magikey Reutlingen, Schlüsseldienst Preise Reutlingen',
+            ogType: 'article',
+            ogImage: '/logo.png',
+            articlePublishedTime: '2024-12-01T10:00:00+01:00',
+            articleModifiedTime: '2024-12-01T10:00:00+01:00',
+            twitterCreator: '@magikey_de',
+            canonical: 'https://www.magikey.de/schluesseldienst/reutlingen',
+          },
+        },
+      },
+      {
         path: childPath(ROUTE_NAMES.BLOG),
         name: ROUTE_NAMES.BLOG,
         component: () => import('@/features/blog/pages/BlogListView.vue'),

@@ -19,6 +19,7 @@ export const ROUTE_NAMES = freeze({
   DATENSCHUTZ: 'datenschutz',
   BLOG: 'blog',
   BLOG_POST: 'blog-post',
+  LOCKSMITH_REUTLINGEN: 'locksmith-reutlingen',
   NOT_FOUND: 'not-found',
 })
 
@@ -41,6 +42,7 @@ export const ROUTE_PATHS = freeze({
   [ROUTE_NAMES.DATENSCHUTZ]: '/datenschutz',
   [ROUTE_NAMES.BLOG]: '/blog',
   [ROUTE_NAMES.BLOG_POST]: '/blog/:slug',
+  [ROUTE_NAMES.LOCKSMITH_REUTLINGEN]: '/schluesseldienst/reutlingen',
   [ROUTE_NAMES.NOT_FOUND]: '/:pathMatch(.*)*',
 })
 
@@ -64,6 +66,7 @@ export const ROUTE_LOCATIONS = freeze({
   IMPRESSUM: createLocation(ROUTE_NAMES.IMPRESSUM),
   DATENSCHUTZ: createLocation(ROUTE_NAMES.DATENSCHUTZ),
   BLOG: createLocation(ROUTE_NAMES.BLOG),
+  LOCKSMITH_REUTLINGEN: createLocation(ROUTE_NAMES.LOCKSMITH_REUTLINGEN),
   NOT_FOUND: createLocation(ROUTE_NAMES.NOT_FOUND),
 })
 
@@ -75,6 +78,11 @@ export const SITEMAP_STATIC_ROUTES = freeze([
   { path: ROUTE_PATHS[ROUTE_NAMES.DATENSCHUTZ], changefreq: 'yearly', priority: 0.3 },
   { path: ROUTE_PATHS[ROUTE_NAMES.HELP], changefreq: 'monthly', priority: 0.4 },
   { path: ROUTE_PATHS[ROUTE_NAMES.SUPPORT], changefreq: 'monthly', priority: 0.4 },
+  {
+    path: ROUTE_PATHS[ROUTE_NAMES.LOCKSMITH_REUTLINGEN],
+    changefreq: 'monthly',
+    priority: 0.5,
+  },
 ])
 
 export const DEFAULT_SITEMAP_BASE_URL = 'https://www.magikey.de'
