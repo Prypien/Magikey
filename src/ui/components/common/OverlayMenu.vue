@@ -14,28 +14,28 @@
         >
           <ul class="space-y-3">
             <li>
-              <router-link to="/hilfe" class="menu-link">Hilfe-Center</router-link>
+              <router-link :to="ROUTES.HELP" class="menu-link">Hilfe-Center</router-link>
             </li>
             <li>
-              <router-link to="/support" class="menu-link">Magikey unterstützen</router-link>
+              <router-link :to="ROUTES.SUPPORT" class="menu-link">Magikey unterstützen</router-link>
             </li>
             <li v-if="isAdmin">
-              <router-link to="/admin" class="menu-link">Admin Dashboard</router-link>
+              <router-link :to="ROUTES.ADMIN_DASHBOARD" class="menu-link">Admin Dashboard</router-link>
             </li>
             <li v-if="companyData">
-              <router-link to="/dashboard" class="menu-link">Unternehmens-Dashboard</router-link>
+              <router-link :to="ROUTES.DASHBOARD" class="menu-link">Unternehmens-Dashboard</router-link>
             </li>
             <li>
-              <router-link to="/" class="menu-link">Schlosser finden</router-link>
+              <router-link :to="ROUTES.HOME" class="menu-link">Schlosser finden</router-link>
             </li>
             <li v-if="companyData">
-              <router-link to="/edit" class="menu-link">Profil bearbeiten</router-link>
+              <router-link :to="ROUTES.EDIT_PROFILE" class="menu-link">Profil bearbeiten</router-link>
             </li>
             <li v-if="!isAuthenticated">
-              <router-link to="/register" class="menu-link">Problemsolver:in werden</router-link>
+              <router-link :to="ROUTES.REGISTER" class="menu-link">Problemsolver:in werden</router-link>
             </li>
             <li v-if="!isAuthenticated">
-              <router-link to="/login" class="menu-link">Einloggen</router-link>
+              <router-link :to="ROUTES.LOGIN" class="menu-link">Einloggen</router-link>
             </li>
             <li v-if="isAuthenticated">
               <button @click="$emit('logout')" class="menu-link w-full text-left">Abmelden</button>
@@ -50,6 +50,9 @@
 <script setup>
 // Props und Events definieren
 import { watch, onBeforeUnmount, ref } from 'vue'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
+
+const ROUTES = ROUTE_LOCATIONS
 
 const props = defineProps({
   modelValue: Boolean,

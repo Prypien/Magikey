@@ -38,6 +38,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/core/firebase'
 import { applyActionCode, checkActionCode } from 'firebase/auth'
 import { updateDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 import Loader from '@/ui/components/common/Loader.vue'
 
 const route = useRoute()
@@ -103,7 +104,7 @@ onMounted(async () => {
 })
 
 function gotoLogin() {
-  router.push({ name: 'login' })
+  router.push(ROUTE_LOCATIONS.LOGIN)
 }
 </script>
 

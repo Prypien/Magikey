@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint --config eslint.config.js .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sitemap": "node ./scripts/generate-sitemap.mjs"
   },
   "dependencies": {
     "@formkit/core": "^1.6.9",

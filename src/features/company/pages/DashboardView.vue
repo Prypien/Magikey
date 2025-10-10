@@ -49,7 +49,7 @@
                 </p>
                 <div class="flex flex-col gap-2 text-xs text-amber-700 sm:flex-row sm:items-center sm:justify-center">
                   <router-link
-                    to="/on-hold"
+                    :to="ROUTES.VERIFICATION_HOLD"
                     class="inline-flex items-center justify-center gap-2 rounded-full border border-amber-400 bg-white px-4 py-2 font-semibold text-amber-700"
                   >
                     <i class="fa fa-eye"></i>
@@ -153,11 +153,11 @@
                 Halte dein Profil aktuell, um in der Suche prominent zu bleiben.
               </p>
               <div class="flex flex-wrap gap-3">
-                <router-link to="/edit" class="pill-checkbox bg-gold/30 text-slate-900">
+                <router-link :to="ROUTES.EDIT_PROFILE" class="pill-checkbox bg-gold/30 text-slate-900">
                   <i class="fa fa-pen"></i>
                   Profil bearbeiten
                 </router-link>
-                <router-link to="/" class="pill-checkbox">
+                <router-link :to="ROUTES.HOME" class="pill-checkbox">
                   <i class="fa fa-eye"></i>
                   Vorschau anzeigen
                 </router-link>
@@ -179,11 +179,13 @@ import DataRow from '@/ui/components/common/DataRow.vue'
 import Loader from '@/ui/components/common/Loader.vue'
 import { DAYS, DAY_LABELS } from '@/core/constants/days'
 import { onAuthStateChanged } from 'firebase/auth'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 
 const company = ref(null)
 const loading = ref(true)
 
 const router = useRouter()
+const ROUTES = ROUTE_LOCATIONS
 
 let unsubscribeAuth
 
@@ -201,7 +203,7 @@ async function loadCompany(uid) {
     if (snap.exists()) {
       company.value = { id: snap.id, ...snap.data() }
       if (!company.value.verified && company.value.verification?.status !== 'verified') {
-        router.replace({ name: 'verification-hold' })
+        router.replace(ROUTE_LOCATIONS.VERIFICATION_HOLD)
       }
     }
   } catch (e) {

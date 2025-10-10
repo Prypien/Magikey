@@ -196,6 +196,7 @@ import OpeningHoursForm from '@/ui/components/company/OpeningHoursForm.vue'
 import { sendVerificationEmail } from '@/core/services/auth'
 import { LOCK_TYPE_OPTIONS } from '@/core/constants/lockTypes'
 import { onAuthStateChanged } from 'firebase/auth'
+import { ROUTE_LOCATIONS, ROUTE_NAMES, ROUTE_PATHS } from '@/core/constants/routes'
 
 const router = useRouter()
 const logoUploading = ref(false)
@@ -365,8 +366,11 @@ const saveChanges = async () => {
   syncWhatsappState()
   saving.value = false
   router.push({
-    name: 'success',
-    query: { msg: 'Änderungen gespeichert', next: '/dashboard' }
+    ...ROUTE_LOCATIONS.SUCCESS,
+    query: {
+      msg: 'Änderungen gespeichert',
+      next: ROUTE_PATHS[ROUTE_NAMES.DASHBOARD],
+    },
   })
 }
 
@@ -377,7 +381,7 @@ const confirmDelete = async () => {
   await deleteDoc(doc(db, 'companies', user.uid))
   await user.delete()
   window.alert('Konto gelöscht')
-  router.push('/')
+  router.push(ROUTE_LOCATIONS.HOME)
 }
 
 const verifyProfile = async () => {

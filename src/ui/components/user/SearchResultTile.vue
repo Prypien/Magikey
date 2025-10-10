@@ -94,6 +94,7 @@ import { useRouter } from 'vue-router'
 import { LOCK_TYPE_LABELS, LOCK_TYPE_ICONS } from '@/core/constants/lockTypes'
 import { DAYS } from '@/core/constants/days'
 import { parseEuroAmount } from '@/core/utils/price'
+import { ROUTE_NAMES } from '@/core/constants/routes'
 
 const props = defineProps({
   company: {
@@ -173,7 +174,7 @@ const emergencyPrice = computed(() => {
 })
 
 function navigateToDetails() {
-  router.push({ name: 'details', params: { id: props.company.id } })
+  router.push({ name: ROUTE_NAMES.COMPANY_DETAILS, params: { id: props.company.id } })
 }
 </script>
 

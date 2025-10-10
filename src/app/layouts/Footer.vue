@@ -6,22 +6,25 @@
         © {{ currentYear }} Magikey – Transparente Schlüsseldienste in deiner Nähe
       </p>
       <nav class="flex items-center gap-3 text-xs sm:text-sm">
-        <router-link to="/impressum" class="footer-link">Impressum</router-link>
+        <router-link :to="ROUTES.IMPRESSUM" class="footer-link">Impressum</router-link>
         <span class="text-slate-300/60">·</span>
-        <router-link to="/datenschutz" class="footer-link">Datenschutz</router-link>
+        <router-link :to="ROUTES.DATENSCHUTZ" class="footer-link">Datenschutz</router-link>
         <span class="text-slate-300/60">·</span>
-        <router-link to="/blog" class="footer-link">Blog</router-link>
+        <router-link :to="ROUTES.BLOG" class="footer-link">Blog</router-link>
         <span class="text-slate-300/60">·</span>
-        <router-link to="/support" class="footer-link">Support</router-link>
+        <router-link :to="ROUTES.SUPPORT" class="footer-link">Support</router-link>
         <span class="text-slate-300/60">·</span>
-        <router-link to="/hilfe" class="footer-link">Hilfe</router-link>
+        <router-link :to="ROUTES.HELP" class="footer-link">Hilfe</router-link>
       </nav>
     </div>
   </footer>
 </template>
 
 <script setup>
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
+
 const currentYear = new Date().getFullYear()
+const ROUTES = ROUTE_LOCATIONS
 </script>
 
 <style scoped>

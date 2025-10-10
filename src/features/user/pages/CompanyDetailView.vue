@@ -162,6 +162,7 @@ import TrackingRequestPanel from '@/ui/components/tracking/TrackingRequestPanel.
 import ReviewRequestModal from '@/ui/components/reviews/ReviewRequestModal.vue'
 import CompanyReviews from '@/ui/components/reviews/CompanyReviews.vue'
 import { useReviewStore } from '@/core/stores/reviews'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 import { extractRating, extractReviewCount } from '@/core/utils/reviews'
 
 const route = useRoute()
@@ -194,7 +195,7 @@ async function loadCompany(id) {
     if (data) {
       company.value = data
     } else {
-      await router.replace({ name: 'not-found' })
+      await router.replace(ROUTE_LOCATIONS.NOT_FOUND)
     }
   } catch (err) {
     console.error('Fehler beim Laden:', err)

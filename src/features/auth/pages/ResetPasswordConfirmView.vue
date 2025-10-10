@@ -71,6 +71,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth, isFirebaseConfigured } from '@/core/firebase'
 import { verifyPasswordResetCode, confirmPasswordReset } from 'firebase/auth'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 import Button from '@/ui/components/common/Button.vue'
 import Loader from '@/ui/components/common/Loader.vue'
 
@@ -125,6 +126,6 @@ async function updatePassword() {
 }
 
 function gotoLogin() {
-  router.push('/login')
+  router.push(ROUTE_LOCATIONS.LOGIN)
 }
 </script>

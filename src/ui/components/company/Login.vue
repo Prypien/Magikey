@@ -82,6 +82,7 @@ import Button from '@/ui/components/common/Button.vue'
 import Loader from '@/ui/components/common/Loader.vue'
 import { USER_ROLES, getUserRole, setCachedUserRole } from '@/core/constants/admin'
 import { resolveCompanyPortalRoute } from '@/core/services/company'
+import { ROUTE_LOCATIONS, ROUTE_NAMES } from '@/core/constants/routes'
 
 defineProps({
   showCancel: {
@@ -109,17 +110,17 @@ const login = async () => {
     setCachedUserRole(credential.user?.uid, role)
 
     if (role === USER_ROLES.ADMIN) {
-      router.push({ name: 'admin-dashboard' })
+      router.push(ROUTE_LOCATIONS.ADMIN_DASHBOARD)
       return
     }
 
     if (role === USER_ROLES.COMPANY) {
       const routeName = await resolveCompanyPortalRoute(credential.user?.uid)
-      router.push({ name: routeName || 'dashboard' })
+      router.push({ name: routeName || ROUTE_NAMES.DASHBOARD })
       return
     }
 
-    router.push({ name: 'home' })
+    router.push(ROUTE_LOCATIONS.HOME)
   } catch (e) {
     error.value = e.message
   } finally {
@@ -128,7 +129,7 @@ const login = async () => {
 }
 
 const goToRegister = () => {
-  router.push('/register')
+  router.push(ROUTE_LOCATIONS.REGISTER)
   emit('cancel')
 }
 

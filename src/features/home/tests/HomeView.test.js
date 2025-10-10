@@ -24,8 +24,12 @@ describe('HomeView hero and entry points', () => {
   })
 
   it('navigates company CTA handlers to the correct routes', () => {
-    expect(homeViewSource).toMatch(/function\s+goToRegister\s*\([^)]*\)\s*{[\s\S]*?router\.push\(\{\s*name:\s*'register'\s*\}\)/)
-    expect(homeViewSource).toMatch(/function\s+goToLogin\s*\([^)]*\)\s*{[\s\S]*?router\.push\(\{\s*name:\s*'login'\s*\}\)/)
+    expect(homeViewSource).toMatch(
+      /function\s+goToRegister\s*\([^)]*\)\s*{[\s\S]*?router\.push\(\s*ROUTE_LOCATIONS\.REGISTER\s*\)/
+    )
+    expect(homeViewSource).toMatch(
+      /function\s+goToLogin\s*\([^)]*\)\s*{[\s\S]*?router\.push\(\s*ROUTE_LOCATIONS\.LOGIN\s*\)/
+    )
   })
 
   it('fetches companies during the mounted lifecycle to keep results up to date', () => {
