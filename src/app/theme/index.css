@@ -33,6 +33,22 @@
     @apply relative mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:px-10 lg:px-12 lg:py-16 xl:px-16;
   }
 
+  @media (max-width: 640px) {
+    .page-wrapper {
+      overflow-x: hidden;
+    }
+
+    .page-wrapper::before {
+      right: -6rem;
+      width: clamp(14rem, 70vw, 20rem);
+    }
+
+    .page-wrapper::after {
+      left: -6rem;
+      width: clamp(16rem, 78vw, 22rem);
+    }
+  }
+
   .page-wrapper::before,
   .page-wrapper::after {
     content: '';
