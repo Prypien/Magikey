@@ -12,12 +12,41 @@ import {
   sendEmailVerification,
 } from 'firebase/auth'
 
+function normalizeUrl(candidate) {
+  if (typeof candidate !== 'string') return null
+
+  const trimmed = candidate.trim()
+  if (!trimmed) return null
+
+  try {
+    const parsed = new URL(trimmed)
+    const pathname = parsed.pathname.replace(/\/$/, '')
+    return `${parsed.origin}${pathname}`
+  } catch (error) {
+    console.warn('Ungültige Basis-URL für Aktionslinks erkannt und verworfen:', error)
+    return null
+  }
+}
+
 function getAppUrl() {
-  const fallbackOrigin =
-    typeof window !== 'undefined' && window?.location?.origin
+  const runtimeOrigin =
+    typeof window !== 'undefined' && typeof window?.location?.origin === 'string'
       ? window.location.origin
-      : ''
-  return (import.meta.env.VITE_PUBLIC_URL ?? fallbackOrigin).replace(/\/$/, '')
+      : null
+
+  const configuredUrl = (import.meta.env.VITE_PUBLIC_URL ?? '').toString()
+
+  const candidates = [runtimeOrigin, configuredUrl]
+    .map(normalizeUrl)
+    .filter((value) => typeof value === 'string' && value.length > 0)
+
+  if (candidates.length === 0) {
+    throw new Error(
+      'App-URL konnte nicht ermittelt werden. Setze VITE_PUBLIC_URL oder rufe die Funktion im Browser-Kontext auf.'
+    )
+  }
+
+  return candidates[0]
 }
 
 // Meldet einen Benutzer mit E-Mail und Passwort an.
