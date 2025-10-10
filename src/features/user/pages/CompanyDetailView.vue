@@ -344,12 +344,24 @@ function contactCompany(action) {
 
 @media (max-width: 640px) {
   .company-detail-page {
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding-inline: clamp(1.25rem, 8vw, 1.75rem);
-    padding-top: clamp(2.5rem, 12vw, 3.5rem);
-    padding-bottom: clamp(3rem, 14vw, 4rem);
+    margin-left: auto;
+    margin-right: auto;
+    padding-inline: clamp(1.5rem, 7vw, 2rem);
+    padding-top: clamp(2.75rem, 12vw, 3.75rem);
+    padding-bottom: clamp(3.25rem, 14vw, 4.25rem);
   }
+}
+
+.company-detail-page :deep(.glass-card) {
+  margin-inline: auto;
+  width: min(100%, 52rem);
+}
+
+.company-detail-page :deep(.glass-card)::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92)),
+    radial-gradient(circle at top right, rgba(217, 169, 8, 0.08), transparent 45%),
+    radial-gradient(circle at bottom left, rgba(148, 163, 184, 0.08), transparent 60%);
+  opacity: 0.75;
 }
 
 .call-button {
