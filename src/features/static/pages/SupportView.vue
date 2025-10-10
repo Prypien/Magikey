@@ -54,7 +54,7 @@
               </p>
               <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-full bg-gold px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                class="inline-flex items-center justify-center rounded-full bg-[#003087] px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#012169] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003087]/60"
               >
                 Details anzeigen
               </button>
@@ -83,7 +83,7 @@
               </a>
               <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                class="inline-flex items-center justify-center rounded-full bg-[#003087] px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#012169] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003087]/60"
                 @click.stop="paypalFlipped = false"
               >
                 Zurück
@@ -110,7 +110,7 @@
               </p>
               <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-full bg-gold px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                class="inline-flex items-center justify-center rounded-full bg-[#003087] px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#012169] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003087]/60"
               >
                 Details anzeigen
               </button>
@@ -124,7 +124,7 @@
               </div>
               <button
                 type="button"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-gold/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#003087] px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#012169] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003087]/60"
                 @click.stop="copyIban"
               >
                 <i class="fa fa-copy"></i>
@@ -133,7 +133,7 @@
               <p v-if="copyStatus" class="text-xs text-slate-500">{{ copyStatus }}</p>
               <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                class="inline-flex items-center justify-center rounded-full bg-[#003087] px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#012169] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#003087]/60"
                 @click.stop="bankFlipped = false"
               >
                 Zurück
@@ -157,7 +157,7 @@ const hasPaypalLink = computed(() => Boolean(paypalLink))
 const paypalFlipped = ref(false)
 const bankFlipped = ref(false)
 
-const iban = '4752110000753995'
+const iban = 'DE80 5002 4024 1398 6916 01'
 const copyStatus = ref('')
 
 const copyIban = async () => {
