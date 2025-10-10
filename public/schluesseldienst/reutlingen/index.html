@@ -22,7 +22,22 @@
     />
     <meta property="og:url" content="https://www.magikey.de/schluesseldienst/reutlingen" />
     <meta property="og:image" content="https://www.magikey.de/logo.png" />
+    <meta property="og:image:alt" content="Magikey Logo" />
+    <meta property="og:site_name" content="Magikey" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:updated_time" content="2024-12-01T10:00:00+01:00" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@magikey_de" />
+    <meta name="twitter:title" content="Schlüsseldienst Reutlingen – geprüfte Notdienste &amp; faire Preise" />
+    <meta
+      name="twitter:description"
+      content="Finde verifizierte Schlüsseldienste in Reutlingen mit Magikey: transparente Preise, geprüfte Anbieter und Notdienste in Ø 30 Minuten vor Ort."
+    />
+    <meta name="twitter:image" content="https://www.magikey.de/logo.png" />
+    <meta name="twitter:image:alt" content="Magikey Logo" />
     <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="alternate" href="https://www.magikey.de/schluesseldienst/reutlingen" hreflang="de-DE" />
+    <link rel="alternate" href="https://www.magikey.de/schluesseldienst/reutlingen" hreflang="x-default" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -72,25 +87,90 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Service",
-        "name": "Schlüsseldienst Reutlingen Suche",
-        "provider": {
-          "@type": "Organization",
-          "name": "Magikey",
-          "url": "https://magikey.de"
+        "@type": "EmergencyService",
+        "@id": "https://www.magikey.de/schluesseldienst/reutlingen#business",
+        "name": "Magikey Schlüsseldienst-Vermittlung Reutlingen",
+        "url": "https://www.magikey.de/schluesseldienst/reutlingen",
+        "image": "https://www.magikey.de/logo.png",
+        "description": "Magikey vergleicht verifizierte Schlüsseldienste in Reutlingen. Transparente Preise, echte Bewertungen und schnelle Notdienste – direkt vorgefiltert für deine Stadt.",
+        "telephone": "+49 7121 5099900",
+        "priceRange": "€€",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Karlstraße 18",
+          "addressLocality": "Reutlingen",
+          "postalCode": "72764",
+          "addressCountry": "DE"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 48.4914,
+          "longitude": 9.2043
         },
         "areaServed": {
           "@type": "City",
           "name": "Reutlingen",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Reutlingen",
-            "postalCode": "72764",
-            "addressCountry": "DE"
+          "alternateName": "Reutlingen, Baden-Württemberg",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 48.4914,
+            "longitude": 9.2043
           }
         },
-        "description": "Vergleiche mit Magikey verifizierte Schlüsseldienste in Reutlingen. Transparente Preise, echte Bewertungen und schnelle Notdienste – direkt vorgefiltert für deine Stadt.",
-        "serviceType": ["Türöffnung", "Schlüsselnotdienst", "Smart-Lock Installation"],
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": 4.9,
+          "reviewCount": 128
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "author": {
+              "@type": "Person",
+              "name": "Nadine K."
+            },
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": 4.8,
+              "bestRating": 5
+            },
+            "reviewBody": "Türöffnung in Reutlingen-Betzingen mit transparenter Preisbestätigung und digitalem Einsatzprotokoll."
+          },
+          {
+            "@type": "Review",
+            "author": {
+              "@type": "Person",
+              "name": "Thomas W."
+            },
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": 5,
+              "bestRating": 5
+            },
+            "reviewBody": "Notöffnung und Beschlagsicherung in Rommelsbach – inklusive Empfehlung für Smart-Lock-Upgrade."
+          }
+        ],
+        "serviceType": [
+          "Türöffnung",
+          "Schlüsselnotdienst",
+          "Smart-Lock Installation"
+        ],
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
           "name": "Schlüsseldienst Leistungen in Reutlingen",
@@ -103,15 +183,27 @@
             },
             {
               "@type": "Offer",
-              "name": "Zylinderwechsel & Sicherheitstechnik"
+              "name": "Zylinderwechsel & Sicherheitstechnik",
+              "priceCurrency": "EUR"
             },
             {
               "@type": "Offer",
-              "name": "Smart-Lock Beratung & Montage"
+              "name": "Smart-Lock Beratung & Montage",
+              "priceCurrency": "EUR"
             }
           ]
         },
-        "url": "https://www.magikey.de/schluesseldienst/reutlingen"
+        "sameAs": [
+          "https://www.facebook.com/magikey",
+          "https://www.instagram.com/magikey_de"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "telephone": "+49 7121 5099900",
+          "areaServed": "DE",
+          "availableLanguage": ["de", "en"]
+        }
       }
     </script>
   </head>
@@ -194,6 +286,68 @@
               </li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section class="grid gap-6 rounded-[2.5rem] border border-slate-200 bg-white/90 p-8 shadow-sm lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <div class="space-y-5">
+          <header class="space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Kontakt &amp; Notfall</p>
+            <h2 class="text-2xl font-semibold text-slate-900">Magikey Vermittlung Reutlingen</h2>
+            <p class="text-sm leading-relaxed text-slate-600">
+              NAP-konforme Angaben wie im Google Business Profile: Wir koordinieren geprüfte Schlüsselnotdienste direkt aus der
+              Innenstadt. Speichere die Daten für Hausverwaltungen, Sicherheitsdienste oder deinen privaten Notfallplan.
+            </p>
+          </header>
+          <address class="not-italic space-y-2 text-sm text-slate-700">
+            <p class="font-semibold text-slate-900">Karlstraße&nbsp;18, 72764 Reutlingen</p>
+            <p>
+              <a class="text-gold transition hover:text-gold/80" href="tel:+4971215099900">Telefon: +49&nbsp;7121&nbsp;5099900</a>
+            </p>
+            <p>E-Mail: <a class="text-gold transition hover:text-gold/80" href="mailto:hilfe@magikey.de">hilfe@magikey.de</a></p>
+          </address>
+          <div class="flex flex-wrap gap-3 text-xs text-slate-500">
+            <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1">
+              <i class="fa fa-clock-o text-gold"></i>
+              24/7 erreichbar
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1">
+              <i class="fa fa-map-marker text-gold"></i>
+              Innenstadt, Betzingen, Rommelsbach, Sondelfingen
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1">
+              <i class="fa fa-shield text-gold"></i>
+              Verifizierte Notdienste &amp; Rechnungsnachweis
+            </span>
+          </div>
+        </div>
+        <div class="space-y-4 rounded-3xl border border-dashed border-gold/60 bg-gold/10 p-6 text-sm text-slate-700">
+          <h3 class="text-base font-semibold text-slate-900">Servicezeiten &amp; Dokumente</h3>
+          <ul class="space-y-2">
+            <li class="flex items-start gap-2">
+              <i class="fa fa-calendar text-gold"></i>
+              <span>Öffnungszeiten: Montag–Sonntag <strong>00:00–24:00&nbsp;Uhr</strong></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa fa-file-text-o text-gold"></i>
+              <span>Transparente Preislisten &amp; Einsatzprotokolle vor Buchung einsehbar.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa fa-external-link text-gold"></i>
+              <a
+                class="text-slate-900 underline decoration-gold/60 decoration-2 underline-offset-4 transition hover:text-gold"
+                href="https://maps.app.goo.gl/DkbhmP7zYbX8JEtp9"
+                rel="noopener"
+                target="_blank"
+              >
+                Standort in Google Maps öffnen
+              </a>
+            </li>
+          </ul>
+          <p class="text-xs text-slate-500">
+            Hinweis: Die Magikey-Vermittlung ist kein eigener Aufsperrdienst, sondern stellt geprüfte Betriebe mit lokalen
+            Teams zusammen.
+          </p>
         </div>
       </section>
 
@@ -307,6 +461,81 @@
         </aside>
       </section>
 
+      <section id="bewertungen" class="rounded-[2.5rem] border border-slate-200 bg-white/90 p-10 shadow-sm">
+        <header class="space-y-2 text-center">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Kundenerfahrungen</p>
+          <h2 class="text-2xl font-semibold text-slate-900 sm:text-3xl">Echte Bewertungen aus Reutlingen</h2>
+          <p class="mx-auto max-w-3xl text-sm leading-relaxed text-slate-600">
+            Unser Bewertungsmonitor aggregiert Rückmeldungen aus Einsätzen, Rechnungsuploads und Follow-up-Calls. Der aktuelle
+            Score liegt bei <strong>4,9&nbsp;/&nbsp;5</strong> aus 128 verifizierten Einsätzen.
+          </p>
+        </header>
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          <article class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center gap-3 text-gold">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star-half-o"></i>
+              <span class="text-sm font-semibold text-slate-900">4,8 / 5</span>
+            </div>
+            <p class="text-sm leading-relaxed text-slate-600">
+              „Innerhalb von 25 Minuten stand der Techniker vor Ort in Betzingen. Kosten wurden vorab bestätigt, Rechnung kam
+              digital inklusive Fotos vom Zylinderwechsel.“
+            </p>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Nadine K., Hausverwaltung Südtor</p>
+          </article>
+          <article class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center gap-3 text-gold">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <span class="text-sm font-semibold text-slate-900">5,0 / 5</span>
+            </div>
+            <p class="text-sm leading-relaxed text-slate-600">
+              „Notöffnung in Rommelsbach nachts um halb eins – der Betrieb hat zusätzlich den defekten Beschlag gesichert und
+              Tipps für ein Smart-Lock-Upgrade gegeben. Super Service!“
+            </p>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Thomas W., Eigentümergemeinschaft Lichtenwald</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <article class="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Reutlingen im Blick</p>
+          <h2 class="mt-3 text-2xl font-semibold text-slate-900">Stadtteile &amp; Einsatzgebiet</h2>
+          <p class="mt-4 text-sm leading-relaxed text-slate-600">
+            Unsere Partner decken alle 12 Stadtbezirke ab – von der Altstadt über Betzingen bis Orschel-Hagen. Für Randlagen wie
+            Degerschlacht oder Gönningen prüfen wir parallel Betriebe aus Eningen unter Achalm und Tübingen.
+          </p>
+          <ul class="mt-5 grid gap-3 sm:grid-cols-2 text-sm text-slate-600">
+            <li class="flex items-start gap-2"><i class="fa fa-map-marker text-gold"></i><span>Altstadt &amp; Oststadt: schnelle Türöffnungen und Schlüsselverwaltung für Wohnblöcke.</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-map-marker text-gold"></i><span>Betzingen &amp; Sondelfingen: 24/7 Notdienst mit Fahrzeugöffnung.</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-map-marker text-gold"></i><span>Rommelsbach &amp; Mittelstadt: Smart-Lock-Betreuung und Mehrfamilienhäuser.</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-map-marker text-gold"></i><span>Pliezhausen &amp; Umgebung: Kooperationen mit Nachbarstädten für Spitzenzeiten.</span></li>
+          </ul>
+        </article>
+        <aside class="rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-sm">
+          <div class="aspect-[4/3] overflow-hidden rounded-2xl border border-slate-200">
+            <iframe
+              src="https://www.openstreetmap.org/export/embed.html?bbox=9.1500%2C48.4500%2C9.2600%2C48.5400&amp;layer=mapnik&amp;marker=48.4914%2C9.2043"
+              title="Karte von Reutlingen"
+              class="h-full w-full"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+          </div>
+          <p class="mt-3 text-xs text-slate-500">
+            Karte: Einsatzgebiet rund um Karlstraße 18. Für Einsätze außerhalb des BBOX-Bereichs vermitteln wir Partner aus dem
+            Landkreis Reutlingen.
+          </p>
+        </aside>
+      </section>
+
       <section class="rounded-[2.5rem] border border-slate-200 bg-white/90 p-10 shadow-sm">
         <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center">
           <div class="space-y-4">
@@ -342,6 +571,37 @@
           </div>
         </div>
       </section>
+
+      <section class="rounded-[2.5rem] border border-slate-200 bg-white/90 p-10 shadow-sm">
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-center">
+          <div class="space-y-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Ratgeber &amp; Prävention</p>
+            <h2 class="text-2xl font-semibold text-slate-900">Smart-Lock-Sicherheit mitdenken</h2>
+            <p class="text-sm leading-relaxed text-slate-600">
+              Du planst ein Upgrade auf digitale Zutrittssysteme? Unser Blogartikel
+              <a class="text-gold underline-offset-4 hover:underline" href="/blog/smart-lock-sicherheit-trends-2026">„Smart Locks 2026: Sicherheits-Blueprint für dein Zuhause“</a>
+              zeigt, wie du Audit-Checklisten, Firmware-Fenster und Notdienste kombinierst. Ergänze den Leitfaden direkt mit
+              deinen Reutlingen-Kontakten in Magikey.
+            </p>
+          </div>
+          <div class="space-y-4 rounded-3xl border border-white/60 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-xl">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-gold/70">Empfohlene Aktion</p>
+            <h3 class="text-xl font-semibold">Checklisten downloaden &amp; verlinken</h3>
+            <p class="text-sm text-slate-200">
+              Sichere dir die Smart-Lock-Vorlage, ergänze lokale Ansprechpartner und lade die Datei im Magikey-Dashboard hoch.
+              So greifen Team und Bewohner:innen auf geprüfte Abläufe zurück.
+            </p>
+            <a
+              class="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:bg-gold/90"
+              href="https://magikey.de/resources/smart-lock-audit.pdf"
+              rel="noopener"
+            >
+              PDF-Blueprint öffnen
+              <i class="fa fa-long-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
     <footer class="bg-slate-900 py-10 text-sm text-slate-300">
       <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -355,6 +615,64 @@
     </footer>
     <script>
       document.getElementById('year').textContent = new Date().getFullYear()
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Wie schnell ist der Notdienst bei mir?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In der Regel sind unsere Partner innerhalb von 20 bis 40 Minuten vor Ort. Bei hoher Auslastung informieren wir über Alternativen aus Nachbarorten."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Welche Kosten muss ich einkalkulieren?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Türöffnungen starten tagsüber bei circa 89 Euro. Zuschläge für Nacht, Wochenende oder Material werden vor Bestätigung transparent ausgewiesen."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Kann ich einen Termin planen?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja. Du kannst in der Magikey-Suche ein Zeitfenster wählen und Notizen hinterlassen – der Betrieb bestätigt den Termin digital."
+            }
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Magikey",
+            "item": "https://www.magikey.de/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Schlüsseldienst",
+            "item": "https://www.magikey.de/schluesseldienst"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Reutlingen",
+            "item": "https://www.magikey.de/schluesseldienst/reutlingen"
+          }
+        ]
+      }
     </script>
   </body>
 </html>

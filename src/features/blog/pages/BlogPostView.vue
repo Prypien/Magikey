@@ -34,6 +34,8 @@
           :src="post.coverImage"
           :alt="post.coverImageAlt || post.title"
           class="aspect-[16/9] w-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
       </figure>
 
@@ -151,6 +153,8 @@ const suggestedPosts = computed(() =>
   allPosts.value.filter((entry) => entry.slug !== post.value?.slug).slice(0, 2)
 )
 
+const canonicalUrl = computed(() => post.value?.canonical || '')
+
 watchEffect(() => {
   if (!post.value) {
     applySeoMeta({
@@ -169,8 +173,10 @@ watchEffect(() => {
     keywords: seoKeywords.value,
     ogType: 'article',
     articlePublishedTime: post.value.isoDate,
-    articleModifiedTime: post.value.isoDate,
+    articleModifiedTime: post.value.updatedIso || post.value.isoDate,
     articleAuthor: post.value.author,
+    url: canonicalUrl.value || undefined,
+    canonical: canonicalUrl.value || undefined,
   })
 })
 </script>
