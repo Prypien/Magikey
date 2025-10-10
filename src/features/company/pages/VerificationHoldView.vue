@@ -155,6 +155,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import Loader from '@/ui/components/common/Loader.vue'
 import VerificationItem from '@/ui/components/company/VerificationItem.vue'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 
 const router = useRouter()
 const company = ref(null)
@@ -195,7 +196,7 @@ onMounted(() => {
             const data = { id: snapshot.id, ...snapshot.data() }
             company.value = data
             if (data.verified || data.verification?.status === 'verified') {
-              router.replace({ name: 'dashboard' })
+              router.replace(ROUTE_LOCATIONS.DASHBOARD)
             }
           } else {
             company.value = null

@@ -13,10 +13,16 @@
           <p class="section-subtitle">
             Der gewünschte Inhalt existiert nicht mehr oder wurde verschoben. Kehre zur Startseite zurück und beginne eine neue Suche.
           </p>
-          <router-link to="/" class="btn">Zur Startseite</router-link>
+          <router-link :to="ROUTES.HOME" class="btn">Zur Startseite</router-link>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
+
+const ROUTES = ROUTE_LOCATIONS
+</script>
 

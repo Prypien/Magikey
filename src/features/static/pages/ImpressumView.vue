@@ -4,10 +4,10 @@
     <div class="mx-auto max-w-4xl space-y-8">
       <nav class="flex flex-wrap gap-3">
         <router-link
-          to="/impressum"
+          :to="ROUTES.IMPRESSUM"
           :class="[
             'pill-checkbox text-sm',
-            route.name === 'impressum'
+            route.name === ROUTE_NAMES.IMPRESSUM
               ? 'border-gold bg-gold/25 text-slate-900'
               : 'text-slate-600'
           ]"
@@ -15,10 +15,10 @@
           Impressum
         </router-link>
         <router-link
-          to="/datenschutz"
+          :to="ROUTES.DATENSCHUTZ"
           :class="[
             'pill-checkbox text-sm',
-            route.name === 'datenschutz'
+            route.name === ROUTE_NAMES.DATENSCHUTZ
               ? 'border-gold bg-gold/25 text-slate-900'
               : 'text-slate-600'
           ]"
@@ -70,6 +70,8 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
+import { ROUTE_LOCATIONS, ROUTE_NAMES } from '@/core/constants/routes'
 
 const route = useRoute()
+const ROUTES = ROUTE_LOCATIONS
 </script>

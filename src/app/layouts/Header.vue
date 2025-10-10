@@ -10,7 +10,7 @@
     }"
   >
     <router-link
-      to="/"
+      :to="ROUTES.HOME"
       class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded-full border border-transparent bg-white/40 transition-all hover:-translate-y-[1px] hover:border-gold/40 hover:shadow-sm whitespace-nowrap shrink-0"
       :class="compactHeader ? 'gap-1 px-1.5 py-1 max-w-[9rem]' : ''"
     >
@@ -45,7 +45,7 @@
       <!-- Link zum Adminbereich -->
       <router-link
         v-if="isAdmin"
-        to="/admin"
+        :to="ROUTES.ADMIN_DASHBOARD"
         class="hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 hover:text-emerald-800 md:inline-flex"
       >
         <i class="fa fa-shield-alt"></i>
@@ -55,7 +55,7 @@
       <!-- Link zum Dashboard wenn Firma eingeloggt ist -->
       <router-link
         v-if="companyData"
-        to="/dashboard"
+        :to="ROUTES.DASHBOARD"
         class="flex items-center gap-1 sm:gap-2 hover:underline whitespace-nowrap"
         :class="compactHeader ? 'text-xs' : ''"
       >
@@ -71,12 +71,12 @@
       </router-link>
 
       <template v-if="!isAuthenticated">
-        <router-link to="/register" class="btn-outline hidden md:inline-flex items-center">
+        <router-link :to="ROUTES.REGISTER" class="btn-outline hidden md:inline-flex items-center">
           <i class="fa fa-key mr-2 animate-bounce"></i>
           Werde Problemsolver:in
         </router-link>
         <router-link
-          to="/register"
+          :to="ROUTES.REGISTER"
           class="inline-flex items-center gap-1 rounded-full border border-gold/60 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold transition hover:border-gold hover:bg-gold/20 md:hidden"
           v-if="isMobile"
         >
@@ -122,13 +122,16 @@ import OverlayMenu from '@/ui/components/common/OverlayMenu.vue'
 import FilterBar from '@/ui/components/user/FilterBar.vue'
 import MobileFilterBar from '@/ui/components/user/MobileFilterBar.vue'
 import { USER_ROLES, clearCachedUserRole, getUserRole, setCachedUserRole } from '@/core/constants/admin'
+import { ROUTE_LOCATIONS, ROUTE_NAMES } from '@/core/constants/routes'
 
 const emit = defineEmits(['update-height'])
 
 const router = useRouter()
 const route = useRoute()
 
-const showFilterBar = computed(() => route.name === 'home')
+const ROUTES = ROUTE_LOCATIONS
+
+const showFilterBar = computed(() => route.name === ROUTE_NAMES.HOME)
 const isMobile = ref(false)
 const compactHeader = computed(() => isMobile.value && showFilterBar.value)
 // steuert die Sichtbarkeit des Menüs
@@ -285,7 +288,7 @@ async function logout() {
   await signOut(auth)
   isAdmin.value = false
   companyData.value = null
-  router.push('/')
+  router.push(ROUTE_LOCATIONS.HOME)
 }
 </script>
 

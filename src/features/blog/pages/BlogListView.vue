@@ -94,7 +94,7 @@
             </span>
           </div>
           <RouterLink
-            :to="{ name: 'blog-post', params: { slug: post.slug } }"
+            :to="{ name: ROUTE_NAMES.BLOG_POST, params: { slug: post.slug } }"
             class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gold transition hover:text-gold/80"
           >
             Weiterlesen
@@ -113,6 +113,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { getBlogPosts } from '../data/blogPosts'
+import { ROUTE_NAMES } from '@/core/constants/routes'
 
 const posts = computed(() => getBlogPosts())
 </script>

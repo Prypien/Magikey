@@ -13,6 +13,9 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { USER_ROLES, getUserRole } from '@/core/constants/admin'
 import { resolveCompanyPortalRoute } from '@/core/services/company'
 import { applySeoMeta } from '@/core/seo'
+import { ROUTE_NAMES, ROUTE_PATHS } from '@/core/constants/routes'
+
+const childPath = (name) => (ROUTE_PATHS[name] || '').replace(/^\/+/, '')
 
 // Definierte Routen
 const routes = [
@@ -22,7 +25,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'home',
+        name: ROUTE_NAMES.HOME,
         component: HomeView,
         meta: {
           seo: {
@@ -35,8 +38,8 @@ const routes = [
         },
       },
       {
-        path: 'login',
-        name: 'login',
+        path: childPath(ROUTE_NAMES.LOGIN),
+        name: ROUTE_NAMES.LOGIN,
         component: () => import('@/features/company/pages/LoginView.vue'),
         meta: {
           seo: {
@@ -48,8 +51,8 @@ const routes = [
         },
       },
       {
-        path: 'register',
-        name: 'register',
+        path: childPath(ROUTE_NAMES.REGISTER),
+        name: ROUTE_NAMES.REGISTER,
         component: () => import('@/features/company/pages/RegisterView.vue'),
         meta: {
           seo: {
@@ -60,8 +63,8 @@ const routes = [
         },
       },
       {
-        path: 'reset-password',
-        name: 'reset-password',
+        path: childPath(ROUTE_NAMES.RESET_PASSWORD),
+        name: ROUTE_NAMES.RESET_PASSWORD,
         component: () => import('@/features/auth/pages/ResetPasswordView.vue'),
         meta: {
           seo: {
@@ -73,8 +76,8 @@ const routes = [
         },
       },
       {
-        path: 'reset-password/confirm',
-        name: 'reset-password-confirm',
+        path: childPath(ROUTE_NAMES.RESET_PASSWORD_CONFIRM),
+        name: ROUTE_NAMES.RESET_PASSWORD_CONFIRM,
         component: () => import('@/features/auth/pages/ResetPasswordConfirmView.vue'),
         meta: {
           seo: {
@@ -85,8 +88,8 @@ const routes = [
         },
       },
       {
-        path: 'dashboard',
-        name: 'dashboard',
+        path: childPath(ROUTE_NAMES.DASHBOARD),
+        name: ROUTE_NAMES.DASHBOARD,
         component: () => import('@/features/company/pages/DashboardView.vue'),
         meta: {
           requiresAuth: true,
@@ -99,8 +102,8 @@ const routes = [
         },
       },
       {
-        path: 'edit',
-        name: 'edit',
+        path: childPath(ROUTE_NAMES.EDIT_PROFILE),
+        name: ROUTE_NAMES.EDIT_PROFILE,
         component: () => import('@/features/company/pages/EditView.vue'),
         meta: {
           requiresAuth: true,
@@ -113,8 +116,8 @@ const routes = [
         },
       },
       {
-        path: 'details/:id',
-        name: 'details',
+        path: childPath(ROUTE_NAMES.COMPANY_DETAILS),
+        name: ROUTE_NAMES.COMPANY_DETAILS,
         component: () => import('@/features/user/pages/CompanyDetailView.vue'),
         props: true,
         meta: {
@@ -126,8 +129,8 @@ const routes = [
         },
       },
       {
-        path: 'impressum',
-        name: 'impressum',
+        path: childPath(ROUTE_NAMES.IMPRESSUM),
+        name: ROUTE_NAMES.IMPRESSUM,
         component: () => import('@/features/static/pages/ImpressumView.vue'),
         meta: {
           seo: {
@@ -138,8 +141,8 @@ const routes = [
         },
       },
       {
-        path: 'datenschutz',
-        name: 'datenschutz',
+        path: childPath(ROUTE_NAMES.DATENSCHUTZ),
+        name: ROUTE_NAMES.DATENSCHUTZ,
         component: () => import('@/features/static/pages/DatenschutzView.vue'),
         meta: {
           seo: {
@@ -151,8 +154,8 @@ const routes = [
         },
       },
       {
-        path: 'hilfe',
-        name: 'help',
+        path: childPath(ROUTE_NAMES.HELP),
+        name: ROUTE_NAMES.HELP,
         component: () => import('@/features/static/pages/HelpCenterView.vue'),
         meta: {
           seo: {
@@ -163,8 +166,8 @@ const routes = [
         },
       },
       {
-        path: 'support',
-        name: 'support',
+        path: childPath(ROUTE_NAMES.SUPPORT),
+        name: ROUTE_NAMES.SUPPORT,
         component: () => import('@/features/static/pages/SupportView.vue'),
         meta: {
           seo: {
@@ -174,8 +177,8 @@ const routes = [
         },
       },
       {
-        path: 'success',
-        name: 'success',
+        path: childPath(ROUTE_NAMES.SUCCESS),
+        name: ROUTE_NAMES.SUCCESS,
         component: () => import('@/features/static/pages/SuccessView.vue'),
         meta: {
           seo: {
@@ -186,8 +189,8 @@ const routes = [
         },
       },
       {
-        path: 'verify',
-        name: 'verify-email',
+        path: childPath(ROUTE_NAMES.VERIFY_EMAIL),
+        name: ROUTE_NAMES.VERIFY_EMAIL,
         component: () => import('@/features/auth/pages/VerifyEmailView.vue'),
         meta: {
           seo: {
@@ -197,10 +200,10 @@ const routes = [
           },
         },
       },
-      { path: 'verify-email', redirect: '/verify' },
+      { path: 'verify-email', redirect: ROUTE_PATHS[ROUTE_NAMES.VERIFY_EMAIL] },
       {
-        path: 'on-hold',
-        name: 'verification-hold',
+        path: childPath(ROUTE_NAMES.VERIFICATION_HOLD),
+        name: ROUTE_NAMES.VERIFICATION_HOLD,
         component: () => import('@/features/company/pages/VerificationHoldView.vue'),
         meta: {
           requiresAuth: true,
@@ -213,8 +216,8 @@ const routes = [
         },
       },
       {
-        path: 'admin',
-        name: 'admin-dashboard',
+        path: childPath(ROUTE_NAMES.ADMIN_DASHBOARD),
+        name: ROUTE_NAMES.ADMIN_DASHBOARD,
         component: () => import('@/features/admin/pages/AdminDashboardView.vue'),
         meta: {
           requiresAuth: true,
@@ -227,8 +230,8 @@ const routes = [
         },
       },
       {
-        path: 'blog',
-        name: 'blog',
+        path: childPath(ROUTE_NAMES.BLOG),
+        name: ROUTE_NAMES.BLOG,
         component: () => import('@/features/blog/pages/BlogListView.vue'),
         meta: {
           seo: {
@@ -240,8 +243,8 @@ const routes = [
         },
       },
       {
-        path: 'blog/:slug',
-        name: 'blog-post',
+        path: childPath(ROUTE_NAMES.BLOG_POST),
+        name: ROUTE_NAMES.BLOG_POST,
         component: () => import('@/features/blog/pages/BlogPostView.vue'),
         props: true,
         meta: {
@@ -256,7 +259,7 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    name: 'not-found',
+    name: ROUTE_NAMES.NOT_FOUND,
     component: () => import('@/features/static/pages/NotFoundView.vue'),
     meta: {
       seo: {
@@ -353,8 +356,8 @@ function waitForAuthInit() {
   })
 }
 
-const COMPANY_PORTAL_ROUTES = new Set(['dashboard', 'verification-hold'])
-const COMPANY_RESTRICTED_ROUTES = new Set([...COMPANY_PORTAL_ROUTES, 'edit'])
+const COMPANY_PORTAL_ROUTES = new Set([ROUTE_NAMES.DASHBOARD, ROUTE_NAMES.VERIFICATION_HOLD])
+const COMPANY_RESTRICTED_ROUTES = new Set([...COMPANY_PORTAL_ROUTES, ROUTE_NAMES.EDIT_PROFILE])
 
 function isCompanyPortalRoute(routeName) {
   return COMPANY_PORTAL_ROUTES.has(routeName)
@@ -366,15 +369,15 @@ function isCompanyRestrictedRoute(routeName) {
 
 async function determineCompanyPortalTarget(user) {
   if (!user?.uid) {
-    return 'dashboard'
+    return ROUTE_NAMES.DASHBOARD
   }
 
   try {
     const target = await resolveCompanyPortalRoute(user.uid)
-    return target || 'dashboard'
+    return target || ROUTE_NAMES.DASHBOARD
   } catch (error) {
     console.error('Fehler beim Bestimmen des Firmenportals:', error)
-    return 'dashboard'
+    return ROUTE_NAMES.DASHBOARD
   }
 }
 
@@ -390,7 +393,7 @@ export async function navigationGuard(to, from, next) {
   const routeMeta = to.meta ?? {}
   const requiresAuth = Boolean(routeMeta.requiresAuth)
   const requiresAdmin = Boolean(routeMeta.requiresAdmin)
-  const isLoginRoute = routeName === 'login'
+  const isLoginRoute = routeName === ROUTE_NAMES.LOGIN
   const restrictedCompanyRoute = isCompanyRestrictedRoute(routeName)
   const portalRoute = isCompanyPortalRoute(routeName)
   const user = isFirebaseConfigured ? auth.currentUser : null
@@ -400,7 +403,7 @@ export async function navigationGuard(to, from, next) {
   }
 
   if ((requiresAuth || requiresAdmin) && !user) {
-    redirectTo('login')
+    redirectTo(ROUTE_NAMES.LOGIN)
     return
   }
 
@@ -424,7 +427,7 @@ export async function navigationGuard(to, from, next) {
   let companyPortalTarget = null
   const resolveCompanyPortalTargetOnce = async () => {
     if (!userIsCompany || !user) {
-      return 'dashboard'
+      return ROUTE_NAMES.DASHBOARD
     }
 
     if (!companyPortalTarget) {
@@ -438,24 +441,24 @@ export async function navigationGuard(to, from, next) {
     if (userIsCompany) {
       redirectTo(await resolveCompanyPortalTargetOnce())
     } else {
-      redirectTo('home')
+      redirectTo(ROUTE_NAMES.HOME)
     }
     return
   }
 
   if (restrictedCompanyRoute) {
     if (userIsAdmin) {
-      redirectTo('admin-dashboard')
+      redirectTo(ROUTE_NAMES.ADMIN_DASHBOARD)
       return
     }
 
     if (!userIsCompany) {
-      redirectTo('home')
+      redirectTo(ROUTE_NAMES.HOME)
       return
     }
 
     const target = await resolveCompanyPortalTargetOnce()
-    if (target !== 'dashboard' && target !== routeName) {
+    if (target !== ROUTE_NAMES.DASHBOARD && target !== routeName) {
       redirectTo(target)
       return
     }
@@ -463,7 +466,7 @@ export async function navigationGuard(to, from, next) {
 
   if (user && isLoginRoute) {
     if (userIsAdmin) {
-      redirectTo('admin-dashboard')
+      redirectTo(ROUTE_NAMES.ADMIN_DASHBOARD)
       return
     }
 
@@ -472,7 +475,7 @@ export async function navigationGuard(to, from, next) {
       return
     }
 
-    redirectTo('home')
+    redirectTo(ROUTE_NAMES.HOME)
     return
   }
 

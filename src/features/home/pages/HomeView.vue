@@ -219,6 +219,7 @@ import { detectCurrentLocation } from '@/core/services/location'
 import { hasLockType } from '@/core/utils/lockTypes'
 import { parseEuroAmount } from '@/core/utils/price'
 import { extractRating } from '@/core/utils/reviews'
+import { ROUTE_LOCATIONS, ROUTE_NAMES } from '@/core/constants/routes'
 
 const NotifyForm = defineAsyncComponent(() => import('@/ui/components/user/NotifyForm.vue'))
 
@@ -454,7 +455,7 @@ function closeIntro() {
 
 function goToSupport() {
   closeIntro()
-  router.push({ name: 'support' })
+  router.push(ROUTE_LOCATIONS.SUPPORT)
 }
 
 function requestEmergencyHelp() {
@@ -462,7 +463,7 @@ function requestEmergencyHelp() {
   if (!candidate) return
 
   if (candidate.id) {
-    router.push({ name: 'details', params: { id: candidate.id } })
+    router.push({ name: ROUTE_NAMES.COMPANY_DETAILS, params: { id: candidate.id } })
   }
 }
 
@@ -479,11 +480,11 @@ function focusSearchSection() {
 }
 
 function goToRegister() {
-  router.push({ name: 'register' })
+  router.push(ROUTE_LOCATIONS.REGISTER)
 }
 
 function goToLogin() {
-  router.push({ name: 'login' })
+  router.push(ROUTE_LOCATIONS.LOGIN)
 }
 
 function setupExitIntent() {

@@ -226,6 +226,7 @@ import Button from '@/ui/components/common/Button.vue'
 import PasswordField from '@/ui/components/common/PasswordField.vue'
 import OpeningHoursForm from '@/ui/components/company/OpeningHoursForm.vue'
 import { LOCK_TYPE_OPTIONS } from '@/core/constants/lockTypes'
+import { ROUTE_LOCATIONS, ROUTE_NAMES, ROUTE_PATHS } from '@/core/constants/routes'
 import { searchLocations } from '@/core/services/location'
 import { sendVerificationEmail } from '@/core/services/auth'
 
@@ -392,8 +393,11 @@ const register = async (form) => {
     setCachedUserRole(user.uid, USER_ROLES.COMPANY, { fetchedAt: Date.now() })
     await sendVerificationEmail(user)
     router.push({
-      name: 'success',
-      query: { msg: 'Registrierung erfolgreich! Wir prüfen jetzt dein Profil.', next: '/on-hold' }
+      ...ROUTE_LOCATIONS.SUCCESS,
+      query: {
+        msg: 'Registrierung erfolgreich! Wir prüfen jetzt dein Profil.',
+        next: ROUTE_PATHS[ROUTE_NAMES.VERIFICATION_HOLD],
+      }
     })
   } catch (e) {
     alert('Fehler bei der Registrierung: ' + e.message)

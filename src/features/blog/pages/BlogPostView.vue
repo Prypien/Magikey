@@ -50,7 +50,7 @@
             </p>
           </div>
           <RouterLink
-            to="/"
+            :to="ROUTES.HOME"
             class="inline-flex items-center gap-2 rounded-full bg-gold px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gold/90"
           >
             Zur Schlüsseldienst-Suche
@@ -66,7 +66,7 @@
         Vielleicht interessiert dich einer unserer aktuellen Ratgeber – stöbere einfach weiter im Blog.
       </p>
       <RouterLink
-        :to="{ name: 'blog' }"
+        :to="ROUTES.BLOG"
         class="mt-6 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-3 text-sm font-semibold text-white shadow transition hover:bg-gold/90"
       >
         Zur Übersicht
@@ -78,7 +78,7 @@
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-semibold text-slate-900">Weitere Artikel</h2>
         <RouterLink
-          :to="{ name: 'blog' }"
+          :to="ROUTES.BLOG"
           class="text-sm font-semibold text-gold transition hover:text-gold/80"
         >
           Alle Beiträge ansehen
@@ -126,8 +126,10 @@ import { computed, watchEffect } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { findBlogPost, getBlogPosts } from '../data/blogPosts'
 import { applySeoMeta, DEFAULT_SEO } from '@/core/seo'
+import { ROUTE_LOCATIONS } from '@/core/constants/routes'
 
 const route = useRoute()
+const ROUTES = ROUTE_LOCATIONS
 
 const allPosts = computed(() => getBlogPosts())
 const post = computed(() => findBlogPost(`${route.params.slug ?? ''}`))
