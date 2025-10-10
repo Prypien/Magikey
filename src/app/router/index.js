@@ -297,8 +297,17 @@ export function applySeoForRoute(to) {
   const seoSource = typeof to?.meta?.seo === 'function' ? to.meta.seo(to) : to?.meta?.seo
   const seoDefinition = (seoSource && typeof seoSource === 'object') ? { ...seoSource } : {}
   const fullUrl = buildFullUrl(to)
-  const resolvedUrl = seoDefinition.url ?? fullUrl
-  const canonical = seoDefinition.canonical ?? resolvedUrl ?? fullUrl
+
+  const toCleanString = (value) => {
+    if (value == null) return undefined
+    const text = `${value}`.trim()
+    return text ? text : undefined
+  }
+
+  const explicitUrl = toCleanString(seoDefinition.url)
+  const resolvedUrl = explicitUrl ?? fullUrl
+  const explicitCanonical = toCleanString(seoDefinition.canonical)
+  const canonical = explicitCanonical ?? resolvedUrl ?? fullUrl
 
   applySeoMeta({
     ...seoDefinition,

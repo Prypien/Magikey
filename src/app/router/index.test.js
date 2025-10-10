@@ -328,4 +328,24 @@ describe('router configuration', () => {
       canonical: 'https://magikey.app/locksmiths/best-practices',
     })
   })
+
+  it('falls back to inferred links when explicit values are blank', () => {
+    applySeoForRoute({
+      meta: {
+        seo: {
+          title: 'Leer definierte Seite',
+          url: '   ',
+          canonical: '\n',
+        },
+      },
+      fullPath: '/ratgeber/sicherheitstipps',
+    })
+
+    expect(applySeoMetaMock).toHaveBeenCalledTimes(1)
+    expect(applySeoMetaMock).toHaveBeenCalledWith({
+      title: 'Leer definierte Seite',
+      url: 'http://localhost/ratgeber/sicherheitstipps',
+      canonical: 'http://localhost/ratgeber/sicherheitstipps',
+    })
+  })
 })
