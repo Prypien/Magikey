@@ -78,7 +78,13 @@ function toDate(value) {
 }
 
 function escapeHtml(text) {
-  return text
+  if (text == null) {
+    return ''
+  }
+
+  const value = typeof text === 'string' ? text : String(text)
+
+  return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -387,6 +393,30 @@ function renderMarkdown(markdown) {
   let codeBuffer = []
   let specialBlock = null
 
+  const isHtmlBlockLine = (input) => {
+    if (!input) {
+      return false
+    }
+
+    if (!input.startsWith('<')) {
+      return false
+    }
+
+    if (/^<!/.test(input)) {
+      return true
+    }
+
+    const htmlTagPattern = /^<\/?[a-zA-Z][\w:-]*(?:\s+[^>]*)?>$/
+    const selfClosingPattern = /^<([a-zA-Z][\w:-]*)(?:\s+[^>]*)?\/>$/
+    const pairedTagPattern = /^<([a-zA-Z][\w:-]*)(?:\s+[^>]*)?>[\s\S]*<\/\1>$/
+
+    return (
+      htmlTagPattern.test(input) ||
+      selfClosingPattern.test(input) ||
+      pairedTagPattern.test(input)
+    )
+  }
+
   const closeList = () => {
     if (inList) {
       html.push(listType === 'ol' ? '</ol>' : '</ul>')
@@ -463,6 +493,12 @@ function renderMarkdown(markdown) {
     if (/^---+$/.test(trimmed)) {
       closeList()
       html.push('<hr />')
+      continue
+    }
+
+    if (isHtmlBlockLine(trimmed)) {
+      closeList()
+      html.push(line)
       continue
     }
 
@@ -608,4 +644,9 @@ export function getBlogPosts() {
 
 export function findBlogPost(slug) {
   return blogPosts.find((post) => post.slug === slug)
+}
+
+export const __test__ = {
+  escapeHtml,
+  renderMarkdown,
 }
