@@ -11,9 +11,12 @@
             </button>
           </div>
           <div class="space-y-2 max-h-60 overflow-auto">
-            <label v-for="opt in options" :key="opt.value" class="flex items-center gap-2 text-sm">
+            <label v-for="opt in options" :key="opt.value" class="flex items-center gap-3 text-sm">
               <input type="checkbox" :value="opt.value" v-model="selected" class="accent-gold" />
-              <span>{{ opt.label }}</span>
+              <span class="flex items-center gap-2">
+                <span aria-hidden="true">{{ opt.icon }}</span>
+                <span>{{ opt.label }}</span>
+              </span>
             </label>
           </div>
           <div class="text-right mt-4">
