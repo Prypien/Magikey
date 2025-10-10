@@ -170,7 +170,10 @@
                   :class="{ 'border-gold bg-gold/20 text-slate-900': lockTypes.includes(opt.value) }"
                   @click="toggleLockType(opt.value)"
                 >
-                  <span>{{ opt.label }}</span>
+                  <span class="flex items-center gap-2">
+                    <span aria-hidden="true">{{ opt.icon }}</span>
+                    <span>{{ opt.label }}</span>
+                  </span>
                 </button>
               </div>
             </div>

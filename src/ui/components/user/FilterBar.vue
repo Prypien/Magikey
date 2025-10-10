@@ -337,8 +337,8 @@
                   class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200/60 bg-white/60 px-3 py-2 text-sm transition hover:border-gold/40 hover:bg-gold/5"
                 >
                   <div class="flex items-center gap-3">
-                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10 text-gold">
-                      <i class="fa fa-lock"></i>
+                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10 text-lg text-gold">
+                      <span aria-hidden="true">{{ option.icon }}</span>
                     </span>
                     <span class="font-medium text-slate-700">{{ option.label }}</span>
                   </div>
