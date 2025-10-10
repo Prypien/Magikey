@@ -53,7 +53,7 @@ Die Anwendung listet echte Unternehmensprofile mit Preisen und Verfügbarkeiten 
 
 ## Projektstruktur
 
-Der Code ist in `src` organisiert. Wichtige Unterordner:
+Der Code ist in `src` organisiert. Wichtige Unterordner und ergänzende Inhalte:
 
 - `layouts` – gemeinsame Layout-Komponenten wie Header und Footer
 - `components/common` – kleine UI-Bausteine (Button, DataRow)
@@ -67,6 +67,7 @@ Der Code ist in `src` organisiert. Wichtige Unterordner:
 - `services` – Logik für Auth und Storage
 - `firebase` – Initialisierung (`index.js`) und Hilfsfunktionen für Cloud Functions
 - `theme` – globale Tailwind-Stile
+- `content/blog` – statische Blog-Artikel mit Frontmatter, die via `@blog-content` eingebunden werden
 
 Der Alias `@` verweist auf den `src`-Ordner und erleichtert Importpfade.
 
