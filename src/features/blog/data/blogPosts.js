@@ -605,11 +605,13 @@ function createBlogPost(path, raw) {
   const slug = path.split('/').pop().replace(/\.(md|html)$/i, '')
   const isHtmlFile = extension === 'html'
   const date = toDate(data.date)
+  const updatedDate = toDate(data.updated || data.modified)
   const formattedDate = date
     ? new Intl.DateTimeFormat('de-DE', { dateStyle: 'long' }).format(date)
     : ''
   const author = data.author || 'Jen Preißer'
   const isoDate = date ? date.toISOString() : ''
+  const isoUpdated = updatedDate ? updatedDate.toISOString() : isoDate
   const rawHtml = isHtmlFile ? content : renderMarkdown(content)
   const plainText = stripHtml(rawHtml)
   const excerpt = data.excerpt
@@ -639,6 +641,9 @@ function createBlogPost(path, raw) {
     author,
     coverImage: resolveAssetUrl(data.coverImage || ''),
     coverImageAlt: data.coverImageAlt || '',
+    canonical: data.canonical ? `${data.canonical}`.trim() : '',
+    updatedDate,
+    updatedIso: isoUpdated,
   }
 }
 
