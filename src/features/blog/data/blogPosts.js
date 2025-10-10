@@ -1,4 +1,4 @@
-const rawBlogModules = import.meta.glob('@/content/blog/*.{md,html}', {
+const rawBlogModules = import.meta.glob('@blog-content/*.{md,html}', {
   eager: true,
   query: '?raw',
   import: 'default',
