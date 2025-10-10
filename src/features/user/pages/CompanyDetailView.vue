@@ -1,6 +1,6 @@
 <!-- Diese Datei zeigt alle Details zu einer ausgewählten Firma. -->
 <template>
-  <section class="page-wrapper company-detail-page">
+  <section class="page-wrapper">
     <div class="mx-auto max-w-6xl space-y-8">
       <button @click="$router.back()" class="pill-checkbox text-sm">
         <i class="fa fa-arrow-left"></i>
@@ -337,33 +337,6 @@ function contactCompany(action) {
 </script>
 
 <style scoped>
-.company-detail-page {
-  padding-inline: clamp(1.5rem, 6vw, 3rem);
-  padding-block: clamp(3rem, 8vw, 4.5rem);
-}
-
-@media (max-width: 640px) {
-  .company-detail-page {
-    margin-left: auto;
-    margin-right: auto;
-    padding-inline: clamp(1.5rem, 7vw, 2rem);
-    padding-top: clamp(2.75rem, 12vw, 3.75rem);
-    padding-bottom: clamp(3.25rem, 14vw, 4.25rem);
-  }
-}
-
-.company-detail-page :deep(.glass-card) {
-  margin-inline: auto;
-  width: min(100%, 52rem);
-}
-
-.company-detail-page :deep(.glass-card)::before {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92)),
-    radial-gradient(circle at top right, rgba(217, 169, 8, 0.08), transparent 45%),
-    radial-gradient(circle at bottom left, rgba(148, 163, 184, 0.08), transparent 60%);
-  opacity: 0.75;
-}
-
 .call-button {
   @apply bg-sky-600 text-white hover:bg-sky-700 focus:ring-sky-500;
 }
