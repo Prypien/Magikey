@@ -1,0 +1,317 @@
+<template>
+  <div class="space-y-20">
+    <section
+      class="relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-16 text-white shadow-2xl sm:px-12"
+    >
+      <div class="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-gold/20 blur-3xl"></div>
+      <div class="absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-gold/10 blur-3xl"></div>
+      <div class="relative grid gap-12 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-center">
+        <div class="space-y-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/80">Reutlingen · Schlüsselnotdienst</p>
+          <h1 class="text-3xl font-semibold leading-tight sm:text-4xl">
+            Schlüsseldienst in Reutlingen – geprüfte Profis in wenigen Klicks
+          </h1>
+          <p class="max-w-2xl text-base text-slate-200 sm:text-lg">
+            Magikey vergleicht verifizierte Schlüsseldienste aus Reutlingen: transparente Preise, echte Bewertungen und seriöse
+            Notdienste für Tag &amp; Nacht. Mit einem Klick gelangst du zur Suche – bereits vorgefiltert auf Reutlingen und 24/7
+            einsatzbereit.
+          </p>
+          <div class="flex flex-wrap items-center gap-4 text-sm text-slate-200">
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
+              <i class="fa fa-shield-alt"></i>
+              Verifizierte Anbieter &amp; Dokumente
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
+              <i class="fa fa-star"></i>
+              Bewertungen aus echten Einsätzen
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
+              <i class="fa fa-clock-o"></i>
+              Notdienst in <span class="font-semibold text-white">Ø 30 Min</span> vor Ort
+            </span>
+          </div>
+          <div class="flex flex-wrap gap-4 pt-4">
+            <button
+              type="button"
+              class="inline-flex items-center gap-3 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:bg-gold/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold/80"
+              @click="goToReutlingenResults"
+            >
+              Schlüsseldienste in Reutlingen finden
+              <i class="fa fa-long-arrow-right"></i>
+            </button>
+            <a
+              class="inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:border-gold/80 hover:text-gold"
+              href="#angebote"
+            >
+              Angebote vergleichen
+              <i class="fa fa-angle-down"></i>
+            </a>
+          </div>
+        </div>
+        <div class="space-y-4 rounded-3xl border border-white/10 bg-white/10 p-8 shadow-lg backdrop-blur">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/70">Warum Reutlingen Magikey nutzt</p>
+          <ul class="space-y-3 text-sm leading-relaxed text-slate-100">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold/90 text-xs font-semibold text-slate-900">1</span>
+              <span>Direkter Draht zum besten Notdienst in deiner Nähe – ohne versteckte Zuschläge.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold/90 text-xs font-semibold text-slate-900">2</span>
+              <span>Transparente Preise für Türöffnungen, Zylinderwechsel und Sicherheitscheck.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold/90 text-xs font-semibold text-slate-900">3</span>
+              <span>Überwachte Qualitätsstandards: Wir prüfen Lizenzen, Verfügbarkeit und Bewertungen.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="angebote" class="space-y-12">
+      <header class="space-y-3 text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gold/70">Direkte Hilfe</p>
+        <h2 class="text-2xl font-semibold text-slate-900 sm:text-3xl">Leistungen der Schlüsseldienste in Reutlingen</h2>
+        <p class="mx-auto max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
+          Alle aufgeführten Partner werden regelmäßig geprüft. Filtere in der Magikey-Suche nach Stadtteilen, Tageszeit oder
+          Spezialleistungen wie Sicherheitstechnik, Fahrzeugöffnung oder Smart-Lock-Installation.
+        </p>
+      </header>
+      <div class="grid gap-6 lg:grid-cols-3">
+        <article class="rounded-3xl border border-slate-200 bg-white/90 p-7 shadow-sm transition hover:border-gold/50 hover:shadow-lg">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Türöffnung</p>
+          <h3 class="mt-3 text-lg font-semibold text-slate-900">Schnell &amp; zerstörungsfrei</h3>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600">
+            Durchschnittlich <strong>89&nbsp;€</strong> tagsüber, inklusive Anfahrt im Stadtgebiet. Notdienstaufschläge werden vor
+            Auftrag transparent bestätigt.
+          </p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600">
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Anfahrt aus Reutlingen und Umgebung</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Dokumentierte Öffnungsmethoden</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>24/7 Hotlines &amp; WhatsApp-Service</span></li>
+          </ul>
+        </article>
+        <article class="rounded-3xl border border-slate-200 bg-white/90 p-7 shadow-sm transition hover:border-gold/50 hover:shadow-lg">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Sicherheit</p>
+          <h3 class="mt-3 text-lg font-semibold text-slate-900">Zylinder &amp; Einbruchschutz</h3>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600">
+            Von Profilzylindern bis Mehrfachverriegelung: Fachpartner beraten zu VdS-zertifizierten Produkten und koordinieren die
+            Montage – auch für Eigentümergemeinschaften.
+          </p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600">
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Mobile Ausstellung &amp; Vergleich vor Ort</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Aufmaß &amp; Einbau aus einer Hand</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Dokumentation für Versicherer inklusive</span></li>
+          </ul>
+        </article>
+        <article class="rounded-3xl border border-slate-200 bg-white/90 p-7 shadow-sm transition hover:border-gold/50 hover:shadow-lg">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Digitalisierung</p>
+          <h3 class="mt-3 text-lg font-semibold text-slate-900">Smart Locks &amp; Zutrittskontrolle</h3>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600">
+            Spezialist:innen binden smarte Schließsysteme ein, erstellen Rechtekonzepte und kümmern sich um Wartung &amp;
+            Firmware-Updates.
+          </p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600">
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Planung für Mehrfamilienhäuser</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Integration in bestehende Systeme</span></li>
+            <li class="flex items-start gap-2"><i class="fa fa-check text-gold"></i><span>Digitale Dokumentation &amp; Support</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+      <article class="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Qualitätsversprechen</p>
+        <h2 class="mt-3 text-2xl font-semibold text-slate-900">Wie Magikey Anbieter in Reutlingen auswählt</h2>
+        <ul class="mt-5 space-y-4 text-sm leading-relaxed text-slate-600">
+          <li class="flex items-start gap-3">
+            <span class="mt-1 h-2.5 w-2.5 rounded-full bg-gold"></span>
+            <span><strong>Verifikation:</strong> Gewerbeanmeldung, Versicherungen und Identität werden einmalig geprüft und laufend überwacht.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 h-2.5 w-2.5 rounded-full bg-gold"></span>
+            <span><strong>Service-Level:</strong> Reaktionszeit, Transparenz und Kundenfeedback fließen in das Ranking der Trefferliste ein.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 h-2.5 w-2.5 rounded-full bg-gold"></span>
+            <span><strong>Nachweise:</strong> Eingestellte Preise, Rechnungsbeispiele und Einsatzberichte sind jederzeit abrufbar.</span>
+          </li>
+        </ul>
+        <div class="mt-8 rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 p-6 text-sm text-slate-600">
+          <p>
+            Tipp: Speichere deine Favoriten direkt in Magikey. Bei einem Notfall kannst du sie mit einem Klick kontaktieren oder an
+            Nachbar:innen weiterleiten.
+          </p>
+        </div>
+      </article>
+      <aside class="flex flex-col gap-6 rounded-3xl border border-white/70 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-xl">
+        <header>
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">FAQ &amp; Beratung</p>
+          <h2 class="mt-2 text-xl font-semibold">Fragen zum Schlüsseldienst in Reutlingen</h2>
+        </header>
+        <dl class="space-y-5 text-sm text-slate-200">
+          <div>
+            <dt class="font-semibold text-white">Wie schnell ist der Notdienst bei mir?</dt>
+            <dd class="mt-1 leading-relaxed">
+              In der Regel innerhalb von 20–40 Minuten. Bei hoher Auslastung informieren wir dich über Alternativen aus Nachbarorten.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-white">Welche Kosten muss ich einkalkulieren?</dt>
+            <dd class="mt-1 leading-relaxed">
+              Türöffnungen starten tagsüber bei ca. 89&nbsp;€. Zuschläge für Nacht, Wochenende oder Material werden vor Bestätigung transparent ausgewiesen.
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-white">Kann ich einen Termin planen?</dt>
+            <dd class="mt-1 leading-relaxed">
+              Ja. Wähle in der Magikey-Suche ein Zeitfenster und hinterlasse Notizen – der Betrieb bestätigt den Termin digital.
+            </dd>
+          </div>
+        </dl>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center gap-3 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:bg-gold/90"
+          @click="goToReutlingenResults"
+        >
+          Jetzt verifizierte Anbieter anzeigen
+          <i class="fa fa-long-arrow-right"></i>
+        </button>
+      </aside>
+    </section>
+
+    <section class="rounded-[2.5rem] border border-slate-200 bg-white/90 p-10 shadow-sm">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center">
+        <div class="space-y-4">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-gold/70">Nächste Schritte</p>
+          <h2 class="text-2xl font-semibold text-slate-900">So funktioniert die Reutlingen-Suche</h2>
+          <ol class="space-y-4 text-sm leading-relaxed text-slate-600">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gold/90 text-sm font-semibold text-slate-900">1</span>
+              <span>Auf „Schlüsseldienste in Reutlingen finden“ klicken – wir setzen Ort &amp; Filter automatisch.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gold/90 text-sm font-semibold text-slate-900">2</span>
+              <span>Vergleiche Trefferliste, Notdienst-Status und Preise. Bei Bedarf auf 24/7 oder Schwerpunkte filtern.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gold/90 text-sm font-semibold text-slate-900">3</span>
+              <span>Direkt anrufen, WhatsApp schreiben oder den Rückruf in Magikey buchen.</span>
+            </li>
+          </ol>
+        </div>
+        <div class="space-y-4 rounded-3xl border border-dashed border-gold/60 bg-gold/10 p-8 text-sm text-slate-700">
+          <h3 class="text-lg font-semibold text-slate-900">Bonus für Reutlingen</h3>
+          <p>
+            Registriere kostenlos dein Unternehmen in Magikey und erscheine in regionalen Rankings, Landing Pages und Notdienst-Alerts – inklusive Statistik über Anfragen aus Reutlingen.
+          </p>
+          <RouterLink
+            :to="{ name: 'register' }"
+            class="inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-slate-900 shadow transition hover:bg-gold/90"
+          >
+            Unternehmen anmelden
+            <i class="fa fa-long-arrow-right"></i>
+          </RouterLink>
+        </div>
+      </div>
+    </section>
+
+    <component :is="'script'" type="application/ld+json">{{ structuredData }}</component>
+  </div>
+</template>
+
+<script setup>
+import { computed, watchEffect } from 'vue'
+import { useRouter, RouterLink } from 'vue-router'
+import { filters, DEFAULT_PRICE_RANGE } from '@/core/stores/filters'
+import { applySeoMeta } from '@/core/seo'
+
+const router = useRouter()
+
+const pageTitle = 'Schlüsseldienst Reutlingen – geprüfte Notdienste & faire Preise'
+const pageDescription =
+  'Vergleiche mit Magikey verifizierte Schlüsseldienste in Reutlingen. Transparente Preise, echte Bewertungen und schnelle Notdienste – direkt vorgefiltert für deine Stadt.'
+
+const structuredData = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: 'Schlüsseldienst Reutlingen Suche',
+      provider: {
+        '@type': 'Organization',
+        name: 'Magikey',
+        url: 'https://magikey.de',
+      },
+      areaServed: {
+        '@type': 'City',
+        name: 'Reutlingen',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Reutlingen',
+          postalCode: '72764',
+          addressCountry: 'DE',
+        },
+      },
+      description: pageDescription,
+      serviceType: ['Türöffnung', 'Schlüsselnotdienst', 'Smart-Lock Installation'],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Schlüsseldienst Leistungen in Reutlingen',
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            name: 'Türöffnung & Notdienst',
+            price: '89.00',
+            priceCurrency: 'EUR',
+          },
+          {
+            '@type': 'Offer',
+            name: 'Zylinderwechsel & Sicherheitstechnik',
+          },
+          {
+            '@type': 'Offer',
+            name: 'Smart-Lock Beratung & Montage',
+          },
+        ],
+      },
+      url: typeof window !== 'undefined' ? window.location.href : 'https://magikey.de/schluesseldienst/reutlingen',
+    },
+    null,
+    2,
+  ),
+)
+
+function prepareReutlingenFilters() {
+  filters.location = 'Reutlingen'
+  filters.locationMeta = {
+    label: 'Reutlingen',
+    postalCode: '72764',
+    city: 'Reutlingen',
+    lat: 48.49144,
+    lng: 9.20427,
+    source: 'landing-page',
+  }
+  filters.openNow = false
+  filters.lockTypes = []
+  filters.price = [...DEFAULT_PRICE_RANGE]
+}
+
+function goToReutlingenResults() {
+  prepareReutlingenFilters()
+  router.push({ name: 'home' })
+}
+
+watchEffect(() => {
+  applySeoMeta({
+    title: pageTitle,
+    description: pageDescription,
+    keywords:
+      'Schlüsseldienst Reutlingen, Schlüsselnotdienst Reutlingen, Türöffnung Reutlingen, Magikey Reutlingen, Schlüsseldienst Preise Reutlingen',
+    ogTitle: pageTitle,
+    ogDescription: pageDescription,
+    ogType: 'article',
+  })
+})
+</script>

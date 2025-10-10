@@ -1,4 +1,4 @@
-const rawBlogModules = import.meta.glob('@/content/blog/*.md', {
+const rawBlogModules = import.meta.glob('@/content/blog/*.{md,html}', {
   eager: true,
   query: '?raw',
   import: 'default',
@@ -590,21 +590,40 @@ function normaliseKeywords(rawKeywords) {
     .filter(Boolean)
 }
 
+function getFileExtension(path) {
+  const match = /\.([^.]+)$/.exec(path)
+  if (!match) {
+    return ''
+  }
+
+  return match[1].toLowerCase()
+}
+
 function createBlogPost(path, raw) {
   const { data, content } = parseFrontMatter(raw)
-  const slug = path.split('/').pop().replace(/\.md$/i, '')
+  const extension = getFileExtension(path)
+  const slug = path.split('/').pop().replace(/\.(md|html)$/i, '')
+  const isHtmlFile = extension === 'html'
   const date = toDate(data.date)
   const formattedDate = date
     ? new Intl.DateTimeFormat('de-DE', { dateStyle: 'long' }).format(date)
     : ''
   const author = data.author || 'Jen Preißer'
   const isoDate = date ? date.toISOString() : ''
-  const excerpt = data.excerpt || content.split(/\n\n/)[0].replace(/[#*`>-]/g, '').trim()
+  const rawHtml = isHtmlFile ? content : renderMarkdown(content)
+  const plainText = stripHtml(rawHtml)
+  const excerpt = data.excerpt
+    ? data.excerpt
+    : plainText
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 55)
+        .join(' ')
+        .trim()
   const keywords = normaliseKeywords(data.keywords)
-  const rawHtml = renderMarkdown(content)
   const layout = data.layout ? `${data.layout}`.trim().toLowerCase() : ''
   const html = layout === 'blog-template' ? buildTemplateLayout(rawHtml, data) : rawHtml
-  const readingTime = calculateReadingTime(content)
+  const readingTime = calculateReadingTime(plainText)
 
   return {
     slug,
@@ -613,7 +632,7 @@ function createBlogPost(path, raw) {
     date,
     formattedDate,
     isoDate,
-    content,
+    content: isHtmlFile ? plainText : content,
     html,
     keywords,
     readingTime,
