@@ -160,6 +160,53 @@ describe('location service', () => {
     })
   })
 
+  it('forwards abort signals to reverse geocoding while keeping geolocation options intact', async () => {
+    const recordedOptions = { current: undefined }
+    const getCurrentPosition = vi.fn((success, _error, geolocationOptions) => {
+      recordedOptions.current = geolocationOptions
+      success({ coords: { latitude: 48.1, longitude: 11.5 } })
+    })
+    vi.stubGlobal('navigator', { geolocation: { getCurrentPosition } })
+
+    getPostalFromCoordsMock.mockResolvedValue({ postalCode: '80331' })
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: vi.fn().mockResolvedValue({
+        address: { postcode: '80331', city: 'München' },
+      }),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const module = await importLocationModule()
+    const controller = new AbortController()
+
+    const result = await module.detectCurrentLocation({
+      signal: controller.signal,
+      enableHighAccuracy: true,
+      maximumAge: 0,
+    })
+
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+    expect(recordedOptions.current).toEqual({ enableHighAccuracy: true, maximumAge: 0 })
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=48.1&lon=11.5&addressdetails=1&zoom=18&email=kontakt%40magikey.app',
+      {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      },
+    )
+    expect(result).toEqual({
+      postalCode: '80331',
+      city: 'München',
+      label: '80331 München',
+      lat: 48.1,
+      lng: 11.5,
+      source: 'reverse',
+    })
+  })
+
   it('falls back to postal information when reverse geocoding fails', async () => {
     const getCurrentPosition = vi.fn((success) =>
       success({ coords: { latitude: 52.5, longitude: 13.4 } }),

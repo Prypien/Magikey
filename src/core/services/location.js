@@ -114,7 +114,29 @@ async function getGeolocationPosition(options) {
 }
 
 export async function detectCurrentLocation(options) {
-  const position = await getGeolocationPosition(options)
+  const normalizedOptions = options ?? {}
+
+  let signal
+  let geolocationOptions
+
+  if (typeof normalizedOptions === 'object' && normalizedOptions !== null) {
+    const { geolocation: explicitGeolocationOptions, signal: providedSignal, ...legacyGeolocationOptions } =
+      normalizedOptions
+
+    signal = providedSignal
+
+    const hasLegacyOptions = Object.keys(legacyGeolocationOptions).length > 0
+    geolocationOptions =
+      explicitGeolocationOptions !== undefined
+        ? explicitGeolocationOptions
+        : hasLegacyOptions
+          ? legacyGeolocationOptions
+          : undefined
+  } else {
+    geolocationOptions = normalizedOptions
+  }
+
+  const position = await getGeolocationPosition(geolocationOptions)
   const { latitude, longitude } = position.coords || {}
 
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
@@ -131,7 +153,7 @@ export async function detectCurrentLocation(options) {
 
   let reverse
   try {
-    reverse = await reverseGeocode(latitude, longitude)
+    reverse = await reverseGeocode(latitude, longitude, { signal })
   } catch (error) {
     if (!postalCode) throw error
     reverse = {

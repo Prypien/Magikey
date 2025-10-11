@@ -7,6 +7,10 @@ const DEFAULT_SEO = {
     'Schlüsseldienst, Schlüsselnotdienst, Türöffnung, Preise vergleichen, seriöser Schlüsseldienst, Magikey',
   robots: 'index,follow',
   ogImage: '/logo.png',
+  siteName: 'Magikey',
+  locale: 'de_DE',
+  twitterSite: '@magikey_de',
+  author: 'Magikey Redaktion',
 }
 
 function resolveValue(value) {
@@ -135,6 +139,11 @@ export function applySeoMeta(input = {}) {
   const articleModifiedTime = sanitizeText(resolveValue(meta.articleModifiedTime)) || undefined
   const articleAuthor = sanitizeText(resolveValue(meta.articleAuthor)) || undefined
   const twitterCreator = sanitizeText(resolveValue(meta.twitterCreator)) || undefined
+  const siteName = sanitizeText(resolveValue(meta.siteName)) || DEFAULT_SEO.siteName
+  const locale = sanitizeText(resolveValue(meta.locale)) || DEFAULT_SEO.locale
+  const twitterSite = sanitizeText(resolveValue(meta.twitterSite)) || DEFAULT_SEO.twitterSite
+  const author =
+    sanitizeText(resolveValue(meta.author)) || articleAuthor || DEFAULT_SEO.author
 
   if (document.title !== finalTitle) {
     document.title = finalTitle
@@ -147,6 +156,8 @@ export function applySeoMeta(input = {}) {
   ensureMetaTag('property', 'og:description', ogDescription)
   ensureMetaTag('property', 'og:image', ogImage)
   ensureMetaTag('property', 'og:type', ogType)
+  ensureMetaTag('property', 'og:site_name', siteName)
+  ensureMetaTag('property', 'og:locale', locale)
   ensureMetaTag('property', 'article:published_time', articlePublishedTime)
   ensureMetaTag('property', 'article:modified_time', articleModifiedTime)
   ensureMetaTag('property', 'article:author', articleAuthor)
@@ -161,6 +172,8 @@ export function applySeoMeta(input = {}) {
   ensureMetaTag('name', 'twitter:description', ogDescription)
   ensureMetaTag('name', 'twitter:image', ogImage)
   ensureMetaTag('name', 'twitter:creator', twitterCreator)
+  ensureMetaTag('name', 'twitter:site', twitterSite)
+  ensureMetaTag('name', 'author', author)
 
   const canonicalUrl = sanitizeText(
     meta.canonical || (typeof window !== 'undefined' ? window.location.href : undefined)
