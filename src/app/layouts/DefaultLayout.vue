@@ -26,7 +26,7 @@
       class="header-offset flex-shrink-0"
       :style="{ height: headerOffsetHeight }"
     ></div>
-    <main class="relative flex-1 px-4 pb-24 pt-6 sm:px-6 lg:px-10">
+    <main class="relative flex-1 px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pb-24">
       <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 flex justify-center">
         <div
           class="h-64 w-[clamp(24rem,70vw,64rem)] rounded-full bg-gradient-to-b from-gold/35 via-gold/10 to-transparent blur-3xl"
