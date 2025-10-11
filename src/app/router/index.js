@@ -424,7 +424,12 @@ function waitForAuthInit() {
       cleanup()
     }
 
-    unsubscribe = onAuthStateChanged(auth, cleanup, handleError)
+    try {
+      unsubscribe = onAuthStateChanged(auth, cleanup, handleError)
+    } catch (error) {
+      console.error('Fehler beim Registrieren des Auth-Listeners', error)
+      cleanup()
+    }
   })
 }
 
