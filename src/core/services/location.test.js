@@ -207,6 +207,37 @@ describe('location service', () => {
     })
   })
 
+  it('propagates abort errors from reverse geocoding instead of returning fallback data', async () => {
+    const getCurrentPosition = vi.fn((success) => {
+      success({ coords: { latitude: 50.11, longitude: 8.68 } })
+    })
+    vi.stubGlobal('navigator', { geolocation: { getCurrentPosition } })
+
+    getPostalFromCoordsMock.mockResolvedValue({ postalCode: '60311' })
+
+    const abortError = Object.assign(new Error('Request aborted'), { name: 'AbortError' })
+    const fetchMock = vi.fn().mockRejectedValue(abortError)
+    vi.stubGlobal('fetch', fetchMock)
+
+    const module = await importLocationModule()
+    const controller = new AbortController()
+    controller.abort()
+
+    await expect(
+      module.detectCurrentLocation({ signal: controller.signal })
+    ).rejects.toBe(abortError)
+
+    expect(getPostalFromCoordsMock).toHaveBeenCalledWith(50.11, 8.68)
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=50.11&lon=8.68&addressdetails=1&zoom=18&email=kontakt%40magikey.app',
+      {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      },
+    )
+  })
+
   it('falls back to postal information when reverse geocoding fails', async () => {
     const getCurrentPosition = vi.fn((success) =>
       success({ coords: { latitude: 52.5, longitude: 13.4 } }),
