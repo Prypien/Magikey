@@ -27,6 +27,13 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == companyId;
     }
 
+    function isVerificationStatusLocked() {
+      return resource != null &&
+        resource.data.verification is map &&
+        request.resource.data.verification is map &&
+        request.resource.data.verification.status == resource.data.verification.status;
+    }
+
     function isNonAdminRole(role) {
       return role == 'company' || role == 'user';
     }
@@ -37,14 +44,18 @@ service cloud.firestore {
 
     match /companies/{companyId} {
       // Owners can manage their own company profile
-      allow create: if isCompanyOwner(companyId);
+      allow create: if
+        isCompanyOwner(companyId) &&
+        request.resource.data.verified == false &&
+        request.resource.data.verification is map &&
+        request.resource.data.verification.status == 'pending';
       allow read: if (resource != null && resource.data.verified == true) || isCompanyOwner(companyId) || isAdminUser();
       allow update: if
-        (isCompanyOwner(companyId) &&
         (
-          request.resource.data.verified == resource.data.verified ||
-          (resource.data.verified == false && request.resource.data.verified == true)
-        )) ||
+          isCompanyOwner(companyId) &&
+          request.resource.data.verified == resource.data.verified &&
+          isVerificationStatusLocked()
+        ) ||
         isAdminUser();
       allow delete: if isCompanyOwner(companyId) || isAdminUser();
     }
@@ -57,9 +68,12 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow create: if isAuthenticatedUser(userId)
-        && request.resource.data.keys().hasOnly(['email', 'role', 'created_at', 'updated_at'])
+        && request.resource.data.keys().hasOnly(['email', 'email_lowercase', 'role', 'created_at', 'updated_at'])
+        && request.resource.data.keys().hasAll(['email', 'email_lowercase', 'role', 'created_at', 'updated_at'])
         && request.resource.data.email is string
         && request.resource.data.email.size() > 0
+        && request.resource.data.email_lowercase is string
+        && request.resource.data.email_lowercase.size() > 0
         && isNonAdminRole(request.resource.data.role)
         && request.resource.data.created_at is timestamp
         && request.resource.data.updated_at is timestamp;
@@ -68,9 +82,11 @@ service cloud.firestore {
 
       allow update: if (
           isAuthenticatedUser(userId)
-          && request.resource.data.keys().hasOnly(['email', 'role', 'created_at', 'updated_at'])
+          && request.resource.data.keys().hasOnly(['email', 'email_lowercase', 'role', 'created_at', 'updated_at'])
           && request.resource.data.email is string
           && request.resource.data.email.size() > 0
+          && request.resource.data.email_lowercase is string
+          && request.resource.data.email_lowercase.size() > 0
           && request.resource.data.role == resource.data.role
           && request.resource.data.created_at == resource.data.created_at
           && request.resource.data.updated_at is timestamp
@@ -123,6 +139,20 @@ service cloud.firestore {
 
     match /tracking_requests/{requestId} {
       allow create: if request.resource.data.keys().hasOnly([
+            'companyId',
+            'companyName',
+            'companyLocation',
+            'userLocation',
+            'distanceKm',
+            'durationMinutes',
+            'requestedAt',
+            'eta',
+            'status',
+            'clientSecret',
+            'createdAt',
+            'updatedAt'
+          ]) &&
+          request.resource.data.keys().hasAll([
             'companyId',
             'companyName',
             'companyLocation',
