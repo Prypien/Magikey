@@ -68,6 +68,15 @@
               help="Diese Nummer wird für Anrufe und – sofern nicht anders angegeben – für WhatsApp genutzt."
             />
             <FormKit
+              type="email"
+              name="contact_email"
+              label="Kontakt E-Mail"
+              validation="email"
+              v-model="company.contact_email"
+              :classes="inputClasses"
+              help="Diese Adresse zeigen wir Kund:innen auf deinem Profil an."
+            />
+            <FormKit
               type="checkbox"
               name="has_separate_whatsapp"
               label="Ich nutze eine andere Nummer für WhatsApp"
@@ -210,6 +219,7 @@ const defaultCompany = () => ({
   company_name: '',
   phone: '',
   whatsapp: '',
+  contact_email: '',
   address: '',
   city: '',
   postal_code: '',
@@ -360,6 +370,7 @@ const saveChanges = async () => {
     whatsapp: hasSeparateWhatsapp.value
       ? company.value.whatsapp
       : company.value.phone || '',
+    contact_email: company.value.contact_email || '',
   }
   await updateDoc(doc(db, 'companies', user.uid), payload)
   company.value = { ...company.value, ...payload }

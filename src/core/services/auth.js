@@ -91,10 +91,21 @@ export async function register(email, password) {
 // Wird kein Benutzer übergeben, verwenden wir den aktuell angemeldeten.
 export async function sendVerificationEmail(user = auth.currentUser) {
   ensureAuthAvailable()
-  if (!user) throw new Error('No user')
+  const targetUser = user || auth.currentUser
+  if (!targetUser) throw new Error('No user')
+
+  // Stellt sicher, dass wir den aktuellsten Nutzerstatus verwenden (z. B. nach E-Mail-Änderungen).
+  try {
+    if (typeof targetUser.reload === 'function') {
+      await targetUser.reload()
+    }
+  } catch (error) {
+    console.warn('Benutzer konnte vor dem Versand der Verifizierungsmail nicht neu geladen werden:', error)
+  }
+
   const actionCodeSettings = {
     url: `${getAppUrl()}/verify`,
     handleCodeInApp: true,
   }
-  return sendEmailVerification(user, actionCodeSettings)
+  return sendEmailVerification(targetUser, actionCodeSettings)
 }

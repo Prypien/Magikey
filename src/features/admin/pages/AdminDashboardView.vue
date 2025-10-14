@@ -479,6 +479,7 @@ const lockTypeOptions = LOCK_TYPE_OPTIONS
 const activeTab = ref('verification')
 const resending = ref(false)
 const resendSuccess = ref(false)
+const hydrating = ref(false)
 
 function createEmptyForm() {
   return {
@@ -548,31 +549,36 @@ function resetForm() {
 function hydrateForm() {
   const current = currentCompany.value
   if (!current) return
+  hydrating.value = true
   const verification = current.verification || {}
-  form.company_name = current.company_name || ''
-  form.email = current.email || ''
-  form.phone = current.phone || ''
-  form.whatsapp = current.whatsapp || ''
-  form.address = current.address || ''
-  form.postal_code = current.postal_code || ''
-  form.city = current.city || ''
-  form.price = current.price ?? ''
-  form.emergency_price = current.emergency_price ?? ''
-  form.is_247 = Boolean(current.is_247)
-  form.description = current.description || ''
-  form.lock_types = Array.isArray(current.lock_types) ? [...current.lock_types] : []
-  form.opening_hours = current.opening_hours ? { ...current.opening_hours } : {}
-  form.email_verified = Boolean(current.email_verified)
-  form.email_verified_at = normalizeTimestamp(current.email_verified_at)
-  form.google_place_url = verification.google_place_url || ''
-  form.google_reviews_url = verification.google_reviews_url || ''
-  form.website_url = verification.website_url || ''
-  form.price_statement = verification.price_statement || ''
-  form.association_member = Boolean(verification.association_member)
-  form.register_number = verification.register_number || ''
-  form.assigned_admin = verification.assigned_admin || ''
-  form.admin_notes = verification.admin_notes || ''
-  form.contact_email = current.contact_email || ''
+  try {
+    form.company_name = current.company_name || ''
+    form.email = current.email || ''
+    form.phone = current.phone || ''
+    form.whatsapp = current.whatsapp || ''
+    form.address = current.address || ''
+    form.postal_code = current.postal_code || ''
+    form.city = current.city || ''
+    form.price = current.price ?? ''
+    form.emergency_price = current.emergency_price ?? ''
+    form.is_247 = Boolean(current.is_247)
+    form.description = current.description || ''
+    form.lock_types = Array.isArray(current.lock_types) ? [...current.lock_types] : []
+    form.opening_hours = current.opening_hours ? { ...current.opening_hours } : {}
+    form.email_verified = Boolean(current.email_verified)
+    form.email_verified_at = normalizeTimestamp(current.email_verified_at)
+    form.google_place_url = verification.google_place_url || ''
+    form.google_reviews_url = verification.google_reviews_url || ''
+    form.website_url = verification.website_url || ''
+    form.price_statement = verification.price_statement || ''
+    form.association_member = Boolean(verification.association_member)
+    form.register_number = verification.register_number || ''
+    form.assigned_admin = verification.assigned_admin || ''
+    form.admin_notes = verification.admin_notes || ''
+    form.contact_email = current.contact_email || ''
+  } finally {
+    hydrating.value = false
+  }
 }
 
 function selectCompany(id) {
@@ -634,12 +640,34 @@ watch(
   { immediate: true }
 )
 
+watch(
+  () => form.email,
+  (value, previous) => {
+    if (hydrating.value) return
+    const nextNormalized = typeof value === 'string' ? value.trim().toLowerCase() : ''
+    const prevNormalized = typeof previous === 'string' ? previous.trim().toLowerCase() : ''
+    if (nextNormalized === prevNormalized) return
+    form.email_verified = false
+    form.email_verified_at = null
+  }
+)
+
 const primaryContactEmail = computed(() => {
-  if (form.email) return form.email
-  if (form.contact_email) return form.contact_email
+  const trimmedFormEmail = typeof form.email === 'string' ? form.email.trim() : ''
+  if (trimmedFormEmail) return trimmedFormEmail
+
+  const trimmedContactEmail =
+    typeof form.contact_email === 'string' ? form.contact_email.trim() : ''
+  if (trimmedContactEmail) return trimmedContactEmail
+
   const current = currentCompany.value
-  if (current?.email) return current.email
-  if (current?.contact_email) return current.contact_email
+  const currentEmail = typeof current?.email === 'string' ? current.email.trim() : ''
+  if (currentEmail) return currentEmail
+
+  const currentContactEmail =
+    typeof current?.contact_email === 'string' ? current.contact_email.trim() : ''
+  if (currentContactEmail) return currentContactEmail
+
   return ''
 })
 
@@ -804,6 +832,12 @@ async function saveVerification(status, options = {}) {
     const emailVerifiedAtValue = form.email_verified
       ? normalizeTimestamp(form.email_verified_at) || new Date()
       : null
+    const sanitizedEmail = typeof form.email === 'string' ? form.email.trim() : ''
+    const sanitizedContactEmail =
+      typeof form.contact_email === 'string' ? form.contact_email.trim() : ''
+    form.email = sanitizedEmail
+    form.contact_email = sanitizedContactEmail
+
     await updateDoc(docRef, {
       verification: {
         ...(currentCompany.value.verification || {}),
@@ -819,7 +853,8 @@ async function saveVerification(status, options = {}) {
         last_update: serverTimestamp(),
       },
       company_name: form.company_name || '',
-      email: form.email || '',
+      email: sanitizedEmail,
+      email_lowercase: sanitizedEmail ? sanitizedEmail.toLowerCase() : '',
       phone: form.phone || '',
       whatsapp: form.whatsapp || '',
       address: form.address || '',
@@ -833,7 +868,7 @@ async function saveVerification(status, options = {}) {
       opening_hours: openingHours,
       email_verified: Boolean(form.email_verified),
       email_verified_at: emailVerifiedAtValue,
-      contact_email: form.contact_email || '',
+      contact_email: sanitizedContactEmail,
       verified: targetStatus === 'verified',
     })
     await loadCompanies()
