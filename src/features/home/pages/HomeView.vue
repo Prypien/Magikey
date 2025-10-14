@@ -195,23 +195,13 @@
 
     
   </div>
-  <transition name="modal">
-    <div
-      v-if="showIntro"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      @click.self="closeIntro"
-    >
-      <IntroPopup @close="closeIntro" @help="goToSupport" />
-    </div>
-  </transition>
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, defineAsyncComponent, ref, computed } from 'vue'
+import { onMounted, defineAsyncComponent, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import SearchResults from '@/ui/components/user/SearchResults.vue'
 import Loader from '@/ui/components/common/Loader.vue'
-import IntroPopup from '@/ui/components/user/IntroPopup.vue'
 import { filters, clearFilter, DEFAULT_PRICE_RANGE } from '@/core/stores/filters'
 import { useCompanyStore } from '@/core/stores/company'
 import { LOCK_TYPE_LABELS } from '@/core/constants/lockTypes'
@@ -225,10 +215,6 @@ const NotifyForm = defineAsyncComponent(() => import('@/ui/components/user/Notif
 
 const router = useRouter()
 const { loading, fetchCompanies, filteredCompanies } = useCompanyStore()
-const showIntro = ref(false)
-let exitIntentBound = false
-let exitIntentTriggered = false
-const INTRO_KEY = 'introShown'
 const euroFormatter = new Intl.NumberFormat('de-DE')
 const lastUpdatedAt = ref(null)
 const resultsSection = ref(null)
@@ -441,22 +427,10 @@ async function useLocation() {
 
 // Daten initial laden
 onMounted(async () => {
-  setupExitIntent()
   useLocation()
   await fetchCompanies()
   lastUpdatedAt.value = new Date()
 })
-
-function closeIntro() {
-  showIntro.value = false
-  teardownExitIntent()
-  rememberExitIntent()
-}
-
-function goToSupport() {
-  closeIntro()
-  router.push(ROUTE_LOCATIONS.SUPPORT)
-}
 
 function requestEmergencyHelp() {
   const candidate = emergencyCompany.value
@@ -485,42 +459,5 @@ function goToRegister() {
 
 function goToLogin() {
   router.push(ROUTE_LOCATIONS.LOGIN)
-}
-
-function setupExitIntent() {
-  if (typeof window === 'undefined' || exitIntentBound || hasSeenExitIntent()) {
-    return
-  }
-
-  document.addEventListener('mouseleave', handleExitIntent)
-  exitIntentBound = true
-}
-
-function teardownExitIntent() {
-  if (!exitIntentBound) return
-  document.removeEventListener('mouseleave', handleExitIntent)
-  exitIntentBound = false
-}
-
-function handleExitIntent(event) {
-  if (exitIntentTriggered || hasSeenExitIntent()) return
-  if (event.clientY > 0) return
-
-  exitIntentTriggered = true
-  teardownExitIntent()
-  showIntro.value = true
-}
-
-onBeforeUnmount(() => {
-  teardownExitIntent()
-})
-
-function hasSeenExitIntent() {
-  return typeof window !== 'undefined' && Boolean(window.sessionStorage.getItem(INTRO_KEY))
-}
-
-function rememberExitIntent() {
-  if (typeof window === 'undefined') return
-  window.sessionStorage.setItem(INTRO_KEY, '1')
 }
 </script>
