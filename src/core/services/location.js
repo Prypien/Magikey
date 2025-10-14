@@ -103,26 +103,6 @@ export async function reverseGeocode(lat, lng, { signal } = {}) {
   }
 }
 
-function isAbortError(error, signal) {
-  if (signal?.aborted) {
-    return true
-  }
-
-  if (!error) {
-    return false
-  }
-
-  if (error.name === 'AbortError' || error.code === 'ABORT_ERR') {
-    return true
-  }
-
-  if (typeof error.code === 'number' && typeof DOMException !== 'undefined') {
-    return error.code === DOMException.ABORT_ERR
-  }
-
-  return false
-}
-
 async function getGeolocationPosition(options) {
   if (typeof navigator === 'undefined' || !navigator.geolocation) {
     throw new Error('Geolocation wird nicht unterstützt')
@@ -175,7 +155,7 @@ export async function detectCurrentLocation(options) {
   try {
     reverse = await reverseGeocode(latitude, longitude, { signal })
   } catch (error) {
-    if (isAbortError(error, signal)) {
+    if (signal?.aborted || error?.name === 'AbortError') {
       throw error
     }
 
