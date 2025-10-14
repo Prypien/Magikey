@@ -12,6 +12,7 @@ companies (Collection)
   <uid> (Document)
     company_name: string
     email: string
+    email_lowercase: string
     phone: string
     address: string
     postal_code: string
@@ -24,6 +25,16 @@ companies (Collection)
       ...
     verified: boolean
     verification: map
+      status: string ('pending' | 'in_review' | 'verified' | 'rejected')
+      google_place_url: string
+      google_reviews_url: string
+      website_url: string
+      price_statement: string
+      association_member: boolean
+      register_number: string
+      assigned_admin: string
+      admin_notes: string
+      last_update: timestamp
     created_at: timestamp
     updated_at: timestamp
 ```
@@ -61,9 +72,62 @@ Hinterlegt Rollenzuweisungen (admin | company | user) für authentifizierte Acco
 users (Collection)
   <uid> (Document)
     email: string
+    email_lowercase: string
     role: string
     created_at: timestamp
     updated_at: timestamp
 ```
 
 Die Authentifizierung erfolgt über Firebase Auth und die Firestore-Regeln prüfen das `role`-Feld, um Admin-Zugriff freizuschalten.
+
+## registration_email_requests
+
+Speichert interne Requests, eine erneute Registrierungsmail an Unternehmen zu senden. Wird ausschließlich vom Admin-Dashboard geschrieben.
+
+```text
+registration_email_requests (Collection)
+  <auto-id> (Document)
+    company_id: string
+    company_name: string
+    email: string
+    requested_at: timestamp
+    triggered_by: string
+    status: string
+```
+
+## review_requests
+
+Erfasst Kund:innen, die aktiv um eine Bewertung gebeten werden möchten. Einträge können nur durch verifizierte Formulare erstellt werden und enthalten keine personenbezogenen Daten außer der Kontakt-E-Mail.
+
+```text
+review_requests (Collection)
+  <auto-id> (Document)
+    company_id: string
+    company_name: string
+    contact_type: string
+    customer_email: string
+    created_at: timestamp
+    status: string
+```
+
+## tracking_requests
+
+Hält Tracking-Anfragen fest, die Kund:innen anfordern, wenn ein Unternehmen unterwegs ist. Der Datensatz dient als Grundlage für Echtzeitstatus-Updates via Client-Secret.
+
+```text
+tracking_requests (Collection)
+  <auto-id> (Document)
+    companyId: string
+    companyName: string
+    companyLocation: map { lat: number, lng: number }
+    userLocation: map { lat: number, lng: number }
+    distanceKm: number
+    durationMinutes: number
+    requestedAt: timestamp
+    eta: timestamp
+    status: string ('en_route' | 'arrived' | 'cancelled')
+    clientSecret: string
+    createdAt: timestamp
+    updatedAt: timestamp
+    endedAt: timestamp | null
+```
