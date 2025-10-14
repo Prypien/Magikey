@@ -272,6 +272,12 @@ function normalizeText(value) {
   return typeof value === 'string' ? value.trim() : value
 }
 
+function normalizeEmail(value) {
+  const normalized = normalizeText(value)
+  if (typeof normalized !== 'string') return ''
+  return normalized.toLowerCase()
+}
+
 function normalizeRadius(value) {
   const radius = Number(value)
   if (!Number.isFinite(radius) || radius < 0) return 0
@@ -350,6 +356,7 @@ const register = async (form) => {
       await setDoc(companyRef, {
         company_name: normalizeText(form.company_name),
         email: normalizeText(form.email),
+        email_lowercase: normalizeEmail(form.email),
         phone: normalizeText(form.phone),
         whatsapp: whatsappNumber || '',
         address: normalizeText(form.address || ''),
@@ -383,6 +390,7 @@ const register = async (form) => {
     const timestamp = serverTimestamp()
     const rolePayload = {
       email: normalizeText(form.email),
+      email_lowercase: normalizeEmail(form.email),
       role: USER_ROLES.COMPANY,
       updated_at: timestamp,
     }
