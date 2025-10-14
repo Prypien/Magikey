@@ -298,12 +298,52 @@ const router = createRouter({
   routes,
 })
 
+function resolveWindowOrigin() {
+  if (typeof window === 'undefined') {
+    return undefined
+  }
+
+  const { location } = window
+  if (!location) {
+    return undefined
+  }
+
+  const origin = typeof location.origin === 'string' ? location.origin.trim() : ''
+  if (origin) {
+    return origin
+  }
+
+  const protocol = typeof location.protocol === 'string' ? location.protocol.trim() : ''
+  const host = typeof location.host === 'string' ? location.host.trim() : ''
+
+  if (protocol && host) {
+    return `${protocol}//${host}`
+  }
+
+  const hostname = typeof location.hostname === 'string' ? location.hostname.trim() : ''
+  if (protocol && hostname) {
+    const port = typeof location.port === 'string' && location.port ? `:${location.port.trim()}` : ''
+    return `${protocol}//${hostname}${port}`
+  }
+
+  const href = typeof location.href === 'string' ? location.href.trim() : ''
+  if (href) {
+    try {
+      return new URL(href).origin
+    } catch (error) {
+      console.error('Fehler beim Ableiten des Ursprungs aus window.location.href', error)
+    }
+  }
+
+  return undefined
+}
+
 function buildFullUrl(to) {
   if (typeof window === 'undefined' || !window.location) {
     return undefined
   }
 
-  const baseOrigin = window.location.origin || ''
+  const baseOrigin = resolveWindowOrigin() || ''
   const targetPath = to?.fullPath ?? '/'
 
   try {
