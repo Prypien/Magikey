@@ -16,24 +16,17 @@ export function formatDuration(minutes, { short = false } = {}) {
 
   const roundedTotal = Math.round(total)
   if (roundedTotal < 60) {
-    const unit = roundedTotal === 1 ? 'Min.' : 'Min.'
-    return `${roundedTotal} ${unit}`
+    return `${roundedTotal} Min.`
   }
 
-  let hours = Math.floor(roundedTotal / 60)
-  let mins = roundedTotal % 60
+  const hours = Math.floor(roundedTotal / 60)
+  const mins = roundedTotal % 60
 
-  if (mins === 60) {
-    hours += 1
-    mins = 0
-  }
-
-  const hourLabel = hours === 1 ? 'Std.' : 'Std.'
   if (mins === 0) {
-    return `${hours} ${hourLabel}`
+    return `${hours} Std.`
   }
 
-  return `${hours} ${hourLabel} ${mins} Min.`
+  return `${hours} Std. ${mins} Min.`
 }
 
 /**
