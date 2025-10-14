@@ -8,6 +8,17 @@ const { sendReviewEmail } = require('./reviewMailer')
 
 admin.initializeApp()
 
+async function deleteDocumentsByCompanyId(db, collectionName, companyId, field = 'company_id') {
+  const snapshot = await db.collection(collectionName).where(field, '==', companyId).get()
+  if (snapshot.empty) {
+    return 0
+  }
+
+  const deletions = snapshot.docs.map((docSnap) => docSnap.ref.delete())
+  await Promise.all(deletions)
+  return deletions.length
+}
+
 exports.postalCodeFromCoords = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
     if (req.method !== 'POST') {
@@ -51,6 +62,70 @@ exports.postalCodeFromCoords = functions.https.onRequest((req, res) => {
 })
 
 exports._sendReviewEmail = sendReviewEmail
+
+exports.deleteCompanyAccount = functions.https.onCall(async (_data, context) => {
+  const uid = context?.auth?.uid
+  if (!uid) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'Eine Anmeldung ist erforderlich, um das Firmenkonto zu löschen.',
+    )
+  }
+
+  const db = admin.firestore()
+  let deletedDocuments = 0
+
+  try {
+    await db.collection('companies').doc(uid).delete()
+    deletedDocuments += 1
+  } catch (error) {
+    functions.logger.error('Failed to delete company document', { uid, error: error.message })
+    throw new functions.https.HttpsError(
+      'internal',
+      'Das Firmenprofil konnte nicht gelöscht werden. Bitte versuche es später erneut.',
+    )
+  }
+
+  const collectionsToClean = [
+    { name: 'review_requests', field: 'company_id' },
+    { name: 'reviews', field: 'company_id' },
+    { name: 'registration_email_requests', field: 'company_id' },
+  ]
+
+  for (const { name, field } of collectionsToClean) {
+    try {
+      deletedDocuments += await deleteDocumentsByCompanyId(db, name, uid, field)
+    } catch (error) {
+      functions.logger.error('Failed to delete related documents', {
+        uid,
+        collection: name,
+        error: error.message,
+      })
+      throw new functions.https.HttpsError(
+        'internal',
+        'Verknüpfte Daten konnten nicht vollständig gelöscht werden. Bitte versuche es später erneut.',
+      )
+    }
+  }
+
+  try {
+    await admin.auth().deleteUser(uid)
+  } catch (error) {
+    if (error?.code === 'auth/user-not-found') {
+      functions.logger.warn('Auth user missing during deletion', { uid })
+    } else {
+      functions.logger.error('Failed to delete auth user', { uid, error: error.message })
+      throw new functions.https.HttpsError(
+        'internal',
+        'Das Benutzerkonto konnte nicht gelöscht werden. Bitte versuche es später erneut.',
+      )
+    }
+  }
+
+  functions.logger.info('Company account deleted', { uid, deletedDocuments })
+
+  return { success: true, deletedDocuments }
+})
 
 exports.onReviewRequestCreated = functions.firestore
   .document('review_requests/{requestId}')
