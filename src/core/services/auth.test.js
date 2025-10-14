@@ -23,6 +23,7 @@ describe('auth service', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.stubEnv('VITE_PUBLIC_URL', 'https://app.magikey.test')
+    vi.stubEnv('BASE_URL', '/')
 
     originalWindow = globalThis.window
     globalThis.window = { location: { origin: '' } }
@@ -110,6 +111,19 @@ describe('auth service', () => {
 
     expect(sendEmailVerification).toHaveBeenCalledWith(user, {
       url: 'https://runtime.magikey.test/verify',
+      handleCodeInApp: true,
+    })
+  })
+
+  it('sendVerificationEmail berücksichtigt Vite-Basis-Pfad aus BASE_URL', async () => {
+    const user = { uid: '3' }
+    window.location.origin = 'https://runtime.magikey.test'
+    vi.stubEnv('BASE_URL', '/portal/')
+
+    await sendVerificationEmail(user)
+
+    expect(sendEmailVerification).toHaveBeenCalledWith(user, {
+      url: 'https://runtime.magikey.test/portal/verify',
       handleCodeInApp: true,
     })
   })

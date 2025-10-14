@@ -28,15 +28,28 @@ function normalizeUrl(candidate) {
   }
 }
 
-function getAppUrl() {
-  const runtimeOrigin =
-    typeof window !== 'undefined' && typeof window?.location?.origin === 'string'
-      ? window.location.origin
-      : null
+function buildRuntimeUrlCandidate() {
+  if (typeof window === 'undefined' || typeof window?.location?.origin !== 'string') {
+    return null
+  }
 
+  const origin = window.location.origin
+  if (!origin) return null
+  const baseUrl = (import.meta.env.BASE_URL ?? '/').toString()
+
+  try {
+    return new URL(baseUrl, origin).toString()
+  } catch (error) {
+    console.warn('Konnte Basis-URL aus Runtime-Informationen nicht bestimmen:', error)
+    return origin
+  }
+}
+
+function getAppUrl() {
+  const runtimeCandidate = buildRuntimeUrlCandidate()
   const configuredUrl = (import.meta.env.VITE_PUBLIC_URL ?? '').toString()
 
-  const candidates = [runtimeOrigin, configuredUrl]
+  const candidates = [runtimeCandidate, configuredUrl]
     .map(normalizeUrl)
     .filter((value) => typeof value === 'string' && value.length > 0)
 
