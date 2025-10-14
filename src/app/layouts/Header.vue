@@ -7,6 +7,7 @@
     :class="{
       'header-search-active': searchActive,
       'header-compact': compactHeader,
+      'header-landscape': isLandscapeDense,
     }"
   >
     <router-link
@@ -133,6 +134,7 @@ const ROUTES = ROUTE_LOCATIONS
 
 const showFilterBar = computed(() => route.name === ROUTE_NAMES.HOME)
 const isMobile = ref(false)
+const isLandscapeDense = ref(false)
 const compactHeader = computed(() => isMobile.value && showFilterBar.value)
 // steuert die Sichtbarkeit des Menüs
 const showOverlay = ref(false)
@@ -183,7 +185,13 @@ function handleScroll() {
 }
 
 function updateMobile() {
-  isMobile.value = window.innerWidth < 640
+  if (typeof window === 'undefined') return
+  const width = window.innerWidth
+  const height = window.innerHeight
+  const landscape = width > height
+  const compactLandscape = landscape && height <= 480 && width < 1024
+  isLandscapeDense.value = compactLandscape
+  isMobile.value = width < 640 || compactLandscape
 }
 
 // Listener registrieren und Initialdaten laden
@@ -344,6 +352,16 @@ async function logout() {
   .header-shell.header-compact {
     padding: 1.1rem 2rem;
   }
+}
+
+.header-shell.header-landscape {
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.header-shell.header-landscape.header-search-active {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
 }
 
 .rotate-90 {
