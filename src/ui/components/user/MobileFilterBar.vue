@@ -1,10 +1,15 @@
 <!-- Diese Datei steuert die kompakte Filteransicht für Smartphones. -->
 <template>
-  <div ref="root" class="sticky top-2 z-30 flex justify-center px-2 sm:hidden">
+  <div
+    ref="root"
+    class="sticky top-2 z-30 flex justify-center px-2 sm:hidden"
+    :class="{ 'top-1.5': isLandscapeCompact }"
+  >
     <div class="relative">
       <button
         @click="expanded = !expanded"
-        class="rounded-full bg-gold p-3 text-white shadow-lg focus:outline-none"
+        class="rounded-full bg-gold text-white shadow-lg focus:outline-none transition-transform"
+        :class="isLandscapeCompact ? 'p-2.5' : 'p-3'"
         aria-label="Suchen"
       >
         <Search class="h-5 w-5" />
@@ -19,7 +24,10 @@
       >
         <div
           v-if="expanded"
-          class="absolute left-1/2 z-40 mt-2 w-[90vw] max-w-sm -translate-x-1/2 space-y-4 rounded-xl border bg-white p-4 shadow-lg"
+          class="absolute left-1/2 z-40 -translate-x-1/2 rounded-xl border bg-white text-sm shadow-lg"
+          :class="isLandscapeCompact
+            ? 'mt-1 w-[88vw] max-w-xs space-y-3 p-3 text-xs'
+            : 'mt-2 w-[90vw] max-w-sm space-y-4 p-4'"
         >
           <div class="flex items-center gap-2">
             <MapPin class="h-5 w-5 text-gold" />
@@ -120,6 +128,7 @@ const expanded = ref(false)
 const showPrice = ref(false)
 const showLockTypes = ref(false)
 const root = ref(null)
+const isLandscapeCompact = ref(false)
 
 const priceActive = computed(() => filters.price[0] !== 0 || filters.price[1] !== 1000)
 
@@ -143,10 +152,17 @@ function handleClickOutside(e) {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  updateLandscapeCompact()
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', updateLandscapeCompact)
+  }
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', updateLandscapeCompact)
+  }
 })
 
 function openPrice() {
@@ -182,6 +198,13 @@ watch(expanded, (open) => {
     resetLocationSuggestions()
   }
 })
+
+function updateLandscapeCompact() {
+  if (typeof window === 'undefined') return
+  const width = window.innerWidth
+  const height = window.innerHeight
+  isLandscapeCompact.value = width > height && height <= 480 && width < 1024
+}
 </script>
 
 <style scoped>
