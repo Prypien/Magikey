@@ -60,6 +60,15 @@
               :classes="inputClasses"
             />
             <FormKit
+              type="email"
+              name="account_email"
+              label="Login E-Mail"
+              validation="required|email"
+              v-model="accountEmail"
+              :classes="inputClasses"
+              help="Diese Adresse nutzt du für den Login und wichtige Mitteilungen."
+            />
+            <FormKit
               type="tel"
               name="phone"
               label="Telefonnummer"
@@ -186,7 +195,16 @@
             >
               Änderungen speichern
             </Button>
-            <button type="button" @click="confirmDelete" class="btn-danger sm:w-auto">Konto löschen</button>
+            <button
+              type="button"
+              @click="confirmDelete"
+              class="btn-danger sm:w-auto"
+              :disabled="deleting"
+              :aria-busy="deleting"
+            >
+              <span v-if="deleting">Wird gelöscht…</span>
+              <span v-else>Konto löschen</span>
+            </button>
           </div>
         </FormKit>
       </div>
@@ -198,14 +216,15 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, db, isFirebaseConfigured } from '@/core/firebase'
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import CompanyImageUpload from '@/ui/components/company/CompanyImageUpload.vue'
 import Button from '@/ui/components/common/Button.vue'
 import OpeningHoursForm from '@/ui/components/company/OpeningHoursForm.vue'
 import { sendVerificationEmail } from '@/core/services/auth'
 import { LOCK_TYPE_OPTIONS } from '@/core/constants/lockTypes'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, updateEmail as updateUserEmail } from 'firebase/auth'
 import { ROUTE_LOCATIONS, ROUTE_NAMES, ROUTE_PATHS } from '@/core/constants/routes'
+import { deleteCompanyAccount as deleteCompanyAccountService } from '@/core/services/companyAccount'
 
 const router = useRouter()
 const logoUploading = ref(false)
@@ -214,6 +233,8 @@ const verificationSending = ref(false)
 const verificationSent = ref(false)
 
 const currentUser = ref(null)
+const accountEmail = ref('')
+const deleting = ref(false)
 
 const defaultCompany = () => ({
   company_name: '',
@@ -260,6 +281,7 @@ let unsubscribeAuth
 onMounted(() => {
   if (!isFirebaseConfigured) {
     currentUser.value = null
+    accountEmail.value = ''
     return
   }
   try {
@@ -268,21 +290,25 @@ onMounted(() => {
       (user) => {
         currentUser.value = user
         if (user) {
+          accountEmail.value = user.email || ''
           loadCompany(user.uid)
         } else {
           company.value = defaultCompany()
           syncWhatsappState()
+          accountEmail.value = ''
         }
       },
       (error) => {
         console.error('Auth-Listener konnte nicht gestartet werden:', error)
         currentUser.value = null
         company.value = defaultCompany()
+        accountEmail.value = ''
       }
     )
   } catch (error) {
     console.error('Registrierung des Auth-Listeners fehlgeschlagen:', error)
     currentUser.value = null
+    accountEmail.value = ''
   }
 })
 
@@ -365,34 +391,99 @@ const saveChanges = async () => {
     return
   }
   saving.value = true
-  const payload = {
-    ...company.value,
-    whatsapp: hasSeparateWhatsapp.value
-      ? company.value.whatsapp
-      : company.value.phone || '',
-    contact_email: company.value.contact_email || '',
+  try {
+    const trimmedAccountEmail = accountEmail.value.trim()
+    if (!trimmedAccountEmail) {
+      throw new Error('Bitte gib eine gültige Login-E-Mail an.')
+    }
+
+    if (trimmedAccountEmail !== user.email) {
+      try {
+        await updateUserEmail(user, trimmedAccountEmail)
+        if (typeof user.reload === 'function') {
+          await user.reload()
+        }
+        accountEmail.value = user.email || trimmedAccountEmail
+        verificationSent.value = false
+      } catch (error) {
+        console.error('Fehler beim Aktualisieren der Login-E-Mail:', error)
+        let message = 'Login-E-Mail konnte nicht aktualisiert werden.'
+        if (error?.code === 'auth/email-already-in-use') {
+          message = 'Diese Login-E-Mail wird bereits von einem anderen Konto genutzt.'
+        } else if (error?.code === 'auth/requires-recent-login') {
+          message = 'Bitte melde dich ab und wieder an, bevor du deine Login-E-Mail änderst.'
+        } else if (typeof error?.message === 'string') {
+          message = error.message
+        }
+        throw new Error(message)
+      }
+    }
+
+    accountEmail.value = trimmedAccountEmail
+
+    const payload = {
+      ...company.value,
+      whatsapp: hasSeparateWhatsapp.value
+        ? company.value.whatsapp
+        : company.value.phone || '',
+      contact_email: (company.value.contact_email || '').trim(),
+    }
+    await updateDoc(doc(db, 'companies', user.uid), payload)
+    company.value = { ...company.value, ...payload }
+    syncWhatsappState()
+    router.push({
+      ...ROUTE_LOCATIONS.SUCCESS,
+      query: {
+        msg: 'Änderungen gespeichert',
+        next: ROUTE_PATHS[ROUTE_NAMES.DASHBOARD],
+      },
+    })
+  } catch (error) {
+    console.error('Fehler beim Speichern der Firmendaten:', error)
+    const message =
+      typeof error?.message === 'string'
+        ? error.message
+        : 'Änderungen konnten nicht gespeichert werden. Bitte versuche es erneut.'
+    window.alert(message)
+  } finally {
+    saving.value = false
   }
-  await updateDoc(doc(db, 'companies', user.uid), payload)
-  company.value = { ...company.value, ...payload }
-  syncWhatsappState()
-  saving.value = false
-  router.push({
-    ...ROUTE_LOCATIONS.SUCCESS,
-    query: {
-      msg: 'Änderungen gespeichert',
-      next: ROUTE_PATHS[ROUTE_NAMES.DASHBOARD],
-    },
-  })
 }
 
 const confirmDelete = async () => {
+  if (deleting.value) return
   const confirmed = window.confirm('Bist du sicher, dass du dein Konto löschen willst?')
   const user = currentUser.value
-  if (!confirmed || !isFirebaseConfigured || !user) return
-  await deleteDoc(doc(db, 'companies', user.uid))
-  await user.delete()
-  window.alert('Konto gelöscht')
-  router.push(ROUTE_LOCATIONS.HOME)
+  if (!confirmed || !user) return
+
+  deleting.value = true
+  try {
+    await deleteCompanyAccountService()
+    try {
+      await auth.signOut()
+    } catch (signOutError) {
+      console.warn('Konnte Benutzer nach Kontolöschung nicht abmelden:', signOutError)
+    }
+    window.alert('Konto gelöscht')
+    router.push(ROUTE_LOCATIONS.HOME)
+  } catch (error) {
+    console.error('Fehler beim Löschen des Firmenkontos:', error)
+    const code = error?.code
+    let message =
+      'Konto konnte nicht gelöscht werden. Bitte versuche es erneut oder kontaktiere den Support.'
+    if (code === 'functions/unauthenticated' || code === 'unauthenticated') {
+      message = 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an und versuche es noch einmal.'
+    } else if (code === 'functions/permission-denied' || code === 'permission-denied') {
+      message = 'Dir fehlen die Berechtigungen zum Löschen dieses Kontos.'
+    } else if (code === 'functions/internal' || code === 'internal') {
+      message = 'Beim Löschen ist ein Fehler aufgetreten. Bitte versuche es später erneut.'
+    } else if (typeof error?.message === 'string') {
+      message = error.message
+    }
+    window.alert(message)
+  } finally {
+    deleting.value = false
+  }
 }
 
 const verifyProfile = async () => {

@@ -7,6 +7,7 @@ import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+import { getFunctions } from 'firebase/functions'
 
 // Die Zugangsdaten werden aus der Konfigurationsdatei (.env) gelesen.
 // So bleiben sie geheim und können je nach Umgebung unterschiedlich sein.
@@ -29,6 +30,7 @@ let auth = null
 let db = null
 let storage = null
 let appCheck = null
+let functions = null
 
 if (appCheckDebugToken) {
   const normalizedDebugToken =
@@ -51,8 +53,9 @@ if (isFirebaseConfigured) {
   auth = getAuth(app)
   db = getFirestore(app)
   storage = getStorage(app)
+  functions = getFunctions(app)
 } else {
   console.warn('Firebase-Konfiguration fehlt oder ist unvollständig. Firebase-Funktionen werden deaktiviert.')
 }
 
-export { app, appCheck, auth, db, storage, isFirebaseConfigured }
+export { app, appCheck, auth, db, storage, functions, isFirebaseConfigured }
