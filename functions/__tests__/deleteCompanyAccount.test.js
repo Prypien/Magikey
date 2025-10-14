@@ -30,6 +30,7 @@ describe('deleteCompanyAccount function', () => {
     const companyDelete = vi.fn().mockResolvedValue()
     const reviewRequestDelete = vi.fn().mockResolvedValue()
     const reviewDelete = vi.fn().mockResolvedValue()
+    const userDocDelete = vi.fn().mockResolvedValue()
     const authDelete = vi.fn().mockResolvedValue()
 
     adminMock.__setFirestoreImpl(() => ({
@@ -37,6 +38,12 @@ describe('deleteCompanyAccount function', () => {
         if (name === 'companies') {
           return {
             doc: () => ({ delete: companyDelete }),
+          }
+        }
+
+        if (name === 'users') {
+          return {
+            doc: () => ({ delete: userDocDelete }),
           }
         }
 
@@ -67,8 +74,9 @@ describe('deleteCompanyAccount function', () => {
 
     const result = await functionsIndex.deleteCompanyAccount({}, { auth: { uid: 'comp-1' } })
 
-    expect(result).toMatchObject({ success: true, deletedDocuments: 3 })
+    expect(result).toMatchObject({ success: true, deletedDocuments: 4 })
     expect(companyDelete).toHaveBeenCalledTimes(1)
+    expect(userDocDelete).toHaveBeenCalledTimes(1)
     expect(reviewRequestDelete).toHaveBeenCalledTimes(1)
     expect(reviewDelete).toHaveBeenCalledTimes(1)
     expect(authDelete).toHaveBeenCalledWith('comp-1')

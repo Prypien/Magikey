@@ -19,6 +19,72 @@ async function deleteDocumentsByCompanyId(db, collectionName, companyId, field =
   return deletions.length
 }
 
+const COLLECTIONS_TO_CLEAN = [
+  { name: 'review_requests', field: 'company_id' },
+  { name: 'reviews', field: 'company_id' },
+  { name: 'registration_email_requests', field: 'company_id' },
+]
+
+async function deleteCompanyData({ db, uid, deleteAuthUser = true }) {
+  let deletedDocuments = 0
+
+  try {
+    await db.collection('companies').doc(uid).delete()
+    deletedDocuments += 1
+  } catch (error) {
+    functions.logger.error('Failed to delete company document', { uid, error: error.message })
+    throw new functions.https.HttpsError(
+      'internal',
+      'Das Firmenprofil konnte nicht gelöscht werden. Bitte versuche es später erneut.',
+    )
+  }
+
+  try {
+    await db.collection('users').doc(uid).delete()
+    deletedDocuments += 1
+  } catch (error) {
+    functions.logger.error('Failed to delete user profile document', { uid, error: error.message })
+    throw new functions.https.HttpsError(
+      'internal',
+      'Die zugehörigen Nutzerdaten konnten nicht gelöscht werden. Bitte versuche es später erneut.',
+    )
+  }
+
+  for (const { name, field } of COLLECTIONS_TO_CLEAN) {
+    try {
+      deletedDocuments += await deleteDocumentsByCompanyId(db, name, uid, field)
+    } catch (error) {
+      functions.logger.error('Failed to delete related documents', {
+        uid,
+        collection: name,
+        error: error.message,
+      })
+      throw new functions.https.HttpsError(
+        'internal',
+        'Verknüpfte Daten konnten nicht vollständig gelöscht werden. Bitte versuche es später erneut.',
+      )
+    }
+  }
+
+  if (deleteAuthUser) {
+    try {
+      await admin.auth().deleteUser(uid)
+    } catch (error) {
+      if (error?.code === 'auth/user-not-found') {
+        functions.logger.warn('Auth user missing during deletion', { uid })
+      } else {
+        functions.logger.error('Failed to delete auth user', { uid, error: error.message })
+        throw new functions.https.HttpsError(
+          'internal',
+          'Das Benutzerkonto konnte nicht gelöscht werden. Bitte versuche es später erneut.',
+        )
+      }
+    }
+  }
+
+  return deletedDocuments
+}
+
 exports.postalCodeFromCoords = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
     if (req.method !== 'POST') {
@@ -73,58 +139,72 @@ exports.deleteCompanyAccount = functions.https.onCall(async (_data, context) => 
   }
 
   const db = admin.firestore()
-  let deletedDocuments = 0
-
-  try {
-    await db.collection('companies').doc(uid).delete()
-    deletedDocuments += 1
-  } catch (error) {
-    functions.logger.error('Failed to delete company document', { uid, error: error.message })
-    throw new functions.https.HttpsError(
-      'internal',
-      'Das Firmenprofil konnte nicht gelöscht werden. Bitte versuche es später erneut.',
-    )
-  }
-
-  const collectionsToClean = [
-    { name: 'review_requests', field: 'company_id' },
-    { name: 'reviews', field: 'company_id' },
-    { name: 'registration_email_requests', field: 'company_id' },
-  ]
-
-  for (const { name, field } of collectionsToClean) {
-    try {
-      deletedDocuments += await deleteDocumentsByCompanyId(db, name, uid, field)
-    } catch (error) {
-      functions.logger.error('Failed to delete related documents', {
-        uid,
-        collection: name,
-        error: error.message,
-      })
-      throw new functions.https.HttpsError(
-        'internal',
-        'Verknüpfte Daten konnten nicht vollständig gelöscht werden. Bitte versuche es später erneut.',
-      )
-    }
-  }
-
-  try {
-    await admin.auth().deleteUser(uid)
-  } catch (error) {
-    if (error?.code === 'auth/user-not-found') {
-      functions.logger.warn('Auth user missing during deletion', { uid })
-    } else {
-      functions.logger.error('Failed to delete auth user', { uid, error: error.message })
-      throw new functions.https.HttpsError(
-        'internal',
-        'Das Benutzerkonto konnte nicht gelöscht werden. Bitte versuche es später erneut.',
-      )
-    }
-  }
+  const deletedDocuments = await deleteCompanyData({ db, uid, deleteAuthUser: true })
 
   functions.logger.info('Company account deleted', { uid, deletedDocuments })
 
   return { success: true, deletedDocuments }
+})
+
+exports.adminDeleteUserByEmail = functions.https.onCall(async (data, context) => {
+  const requesterUid = context?.auth?.uid
+  if (!requesterUid) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'Eine Anmeldung ist erforderlich, um Nutzerdaten zu löschen.',
+    )
+  }
+
+  const db = admin.firestore()
+
+  let requesterRole = 'user'
+  try {
+    const snap = await db.collection('users').doc(requesterUid).get()
+    if (snap.exists()) {
+      requesterRole = String(snap.data()?.role || '').trim().toLowerCase()
+    }
+  } catch (error) {
+    functions.logger.error('Failed to load requester role', { requesterUid, error: error.message })
+  }
+
+  if (requesterRole !== 'admin') {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'Nur Administratoren dürfen Nutzer vollständig löschen.',
+    )
+  }
+
+  const rawEmail = typeof data?.email === 'string' ? data.email.trim() : ''
+  if (!rawEmail) {
+    throw new functions.https.HttpsError('invalid-argument', 'Eine gültige E-Mail-Adresse ist erforderlich.')
+  }
+
+  const normalizedEmail = rawEmail.toLowerCase()
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailPattern.test(normalizedEmail)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Bitte gib eine gültige E-Mail-Adresse an.')
+  }
+
+  let userRecord
+  try {
+    userRecord = await admin.auth().getUserByEmail(normalizedEmail)
+  } catch (error) {
+    if (error?.code === 'auth/user-not-found') {
+      throw new functions.https.HttpsError('not-found', 'Kein Nutzer mit dieser E-Mail-Adresse gefunden.')
+    }
+    functions.logger.error('Failed to load user by email', { email: normalizedEmail, error: error.message })
+    throw new functions.https.HttpsError(
+      'internal',
+      'Nutzer konnte nicht geladen werden. Bitte versuche es später erneut.',
+    )
+  }
+
+  const targetUid = userRecord.uid
+  const deletedDocuments = await deleteCompanyData({ db, uid: targetUid, deleteAuthUser: true })
+
+  functions.logger.info('Admin deleted user by email', { requesterUid, targetUid, deletedDocuments })
+
+  return { success: true, deletedDocuments, uid: targetUid }
 })
 
 exports.onReviewRequestCreated = functions.firestore
