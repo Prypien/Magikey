@@ -103,26 +103,6 @@ export async function reverseGeocode(lat, lng, { signal } = {}) {
   }
 }
 
-function isAbortError(error, signal) {
-  if (signal?.aborted) {
-    return true
-  }
-
-  if (!error) {
-    return false
-  }
-
-  if (error.name === 'AbortError' || error.code === 'ABORT_ERR') {
-    return true
-  }
-
-  if (typeof error.code === 'number' && typeof DOMException !== 'undefined') {
-    return error.code === DOMException.ABORT_ERR
-  }
-
-  return false
-}
-
 async function getGeolocationPosition(options) {
   if (typeof navigator === 'undefined' || !navigator.geolocation) {
     throw new Error('Geolocation wird nicht unterstützt')
@@ -134,27 +114,19 @@ async function getGeolocationPosition(options) {
 }
 
 export async function detectCurrentLocation(options) {
-  const normalizedOptions = options ?? {}
+  const isObjectOptions = typeof options === 'object' && options !== null
+  const normalizedOptions = isObjectOptions ? options : {}
 
-  let signal
-  let geolocationOptions
+  const { geolocation: explicitGeolocationOptions, signal, ...legacyGeolocationOptions } = normalizedOptions
 
-  if (typeof normalizedOptions === 'object' && normalizedOptions !== null) {
-    const { geolocation: explicitGeolocationOptions, signal: providedSignal, ...legacyGeolocationOptions } =
-      normalizedOptions
-
-    signal = providedSignal
-
-    const hasLegacyOptions = Object.keys(legacyGeolocationOptions).length > 0
-    geolocationOptions =
-      explicitGeolocationOptions !== undefined
-        ? explicitGeolocationOptions
-        : hasLegacyOptions
-          ? legacyGeolocationOptions
-          : undefined
-  } else {
-    geolocationOptions = normalizedOptions
-  }
+  const hasLegacyOptions = Object.keys(legacyGeolocationOptions).length > 0
+  const geolocationOptions = isObjectOptions
+    ? explicitGeolocationOptions !== undefined
+      ? explicitGeolocationOptions
+      : hasLegacyOptions
+        ? legacyGeolocationOptions
+        : undefined
+    : options
 
   const position = await getGeolocationPosition(geolocationOptions)
   const { latitude, longitude } = position.coords || {}
@@ -175,7 +147,11 @@ export async function detectCurrentLocation(options) {
   try {
     reverse = await reverseGeocode(latitude, longitude, { signal })
   } catch (error) {
-    if (isAbortError(error, signal)) {
+    const aborted =
+      signal?.aborted === true ||
+      error?.name === 'AbortError' ||
+      error?.code === 'ABORT_ERR'
+    if (aborted) {
       throw error
     }
 
