@@ -116,6 +116,11 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    match /registration_email_requests/{requestId} {
+      allow create: if isAdminUser();
+      allow read, update, delete: if false;
+    }
+
     match /tracking_requests/{requestId} {
       allow create: if request.resource.data.keys().hasOnly([
             'companyId',
