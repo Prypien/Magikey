@@ -380,4 +380,19 @@ describe('router configuration', () => {
       canonical: 'http://localhost/ratgeber/sicherheitstipps',
     })
   })
+
+  it('rekonstruiert den Ursprung, wenn window.location.origin fehlt', () => {
+    const originalOrigin = mockWindow.location.origin
+    delete mockWindow.location.origin
+
+    applySeoForRoute({ meta: {}, fullPath: '/fehlender-ursprung' })
+
+    expect(applySeoMetaMock).toHaveBeenCalledTimes(1)
+    expect(applySeoMetaMock).toHaveBeenCalledWith({
+      url: 'http://localhost/fehlender-ursprung',
+      canonical: 'http://localhost/fehlender-ursprung',
+    })
+
+    mockWindow.location.origin = originalOrigin
+  })
 })
