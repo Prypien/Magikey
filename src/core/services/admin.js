@@ -1,5 +1,6 @@
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { db, isFirebaseConfigured } from '@/core/firebase'
+import { httpsCallable } from 'firebase/functions'
+import { db, functions, isFirebaseConfigured } from '@/core/firebase'
 
 export async function requestRegistrationEmail({ companyId, companyName, email, triggeredBy = 'admin-dashboard' }) {
   if (!companyId) throw new Error('companyId ist erforderlich')
@@ -20,4 +21,38 @@ export async function requestRegistrationEmail({ companyId, companyName, email, 
   })
 
   return { id: docRef.id, simulated: false }
+}
+
+let deleteUserCallable
+
+function ensureDeleteCallable() {
+  if (!deleteUserCallable) {
+    if (!isFirebaseConfigured || !functions) {
+      throw new Error('Firebase ist nicht konfiguriert. Löschaktionen sind nicht verfügbar.')
+    }
+    deleteUserCallable = httpsCallable(functions, 'adminDeleteUserByEmail')
+  }
+  return deleteUserCallable
+}
+
+export async function deleteUserDataByEmail(email) {
+  const normalizedEmail = typeof email === 'string' ? email.trim() : ''
+  if (!normalizedEmail) {
+    throw new Error('E-Mail-Adresse fehlt')
+  }
+
+  if (!isFirebaseConfigured || !functions) {
+    console.warn('Firebase nicht konfiguriert. Löschanfrage wird nicht ausgeführt.')
+    return { simulated: true }
+  }
+
+  const callable = ensureDeleteCallable()
+  const result = await callable({ email: normalizedEmail })
+  return result?.data ?? null
+}
+
+export const __test__ = {
+  __resetDeleteCallable() {
+    deleteUserCallable = null
+  },
 }

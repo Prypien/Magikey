@@ -230,6 +230,22 @@ const routes = [
         },
       },
       {
+        path: childPath(ROUTE_NAMES.ADMIN_COMPANY_DETAIL),
+        name: ROUTE_NAMES.ADMIN_COMPANY_DETAIL,
+        component: () => import('@/features/admin/pages/AdminCompanyDetailView.vue'),
+        props: true,
+        meta: {
+          requiresAuth: true,
+          requiresAdmin: true,
+          seo: {
+            title: 'Unternehmen verwalten | Magikey',
+            description:
+              'Pflege Unternehmensprofile, Dokumentationen und Verifizierungsstände direkt im Adminbereich.',
+            robots: 'noindex,nofollow',
+          },
+        },
+      },
+      {
         path: childPath(ROUTE_NAMES.LOCKSMITH_REUTLINGEN),
         name: ROUTE_NAMES.LOCKSMITH_REUTLINGEN,
         component: () => import('@/features/landing/pages/LocksmithReutlingenView.vue'),

@@ -13,6 +13,11 @@ let firestoreImpl = () => ({
 
 let authImpl = () => ({
   async deleteUser() {},
+  async getUserByEmail() {
+    const error = new Error('auth/user-not-found')
+    error.code = 'auth/user-not-found'
+    throw error
+  },
 })
 
 function setFirestoreImpl(impl) {

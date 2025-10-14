@@ -147,7 +147,7 @@ describe('router configuration', () => {
   })
 
   it('protects company portal routes with auth metadata', () => {
-    const protectedRoutes = ['dashboard', 'edit', 'verification-hold', 'admin-dashboard']
+    const protectedRoutes = ['dashboard', 'edit', 'verification-hold', 'admin-dashboard', 'admin-company-detail']
     for (const name of protectedRoutes) {
       const route = findRoute(name)
       expect(route, `${name} should exist`).toBeTruthy()
@@ -155,13 +155,16 @@ describe('router configuration', () => {
     }
   })
 
-  it('requires admin flag for admin dashboard only', () => {
-    const adminRoute = findRoute('admin-dashboard')
-    expect(adminRoute?.meta?.requiresAdmin).toBe(true)
+  it('requires admin flag for admin routes only', () => {
+    const adminRoutes = ['admin-dashboard', 'admin-company-detail']
+    for (const name of adminRoutes) {
+      const route = findRoute(name)
+      expect(route?.meta?.requiresAdmin).toBe(true)
+    }
 
     const otherRoutes = router
       .getRoutes()
-      .filter((route) => route.meta?.requiresAdmin && route.name !== 'admin-dashboard')
+      .filter((route) => route.meta?.requiresAdmin && !adminRoutes.includes(route.name))
     expect(otherRoutes).toHaveLength(0)
   })
 
