@@ -65,10 +65,24 @@ onMounted(async () => {
       await auth.currentUser.reload()
     }
     if (email) {
-      const q = query(collection(db, 'companies'), where('email', '==', email))
-      const snap = await getDocs(q)
+      const companiesRef = collection(db, 'companies')
+      const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
 
-      const updatePromises = snap.docs.map((docSnap) => {
+      const primarySnap = await getDocs(query(companiesRef, where('email', '==', email)))
+      let matchingDocs = primarySnap.docs
+
+      if (!matchingDocs.length && normalizedEmail) {
+        const fallbackSnap = await getDocs(
+          query(companiesRef, where('email_lowercase', '==', normalizedEmail))
+        )
+        matchingDocs = fallbackSnap.docs
+      }
+
+      if (!matchingDocs.length) {
+        console.warn('Kein Firmenprofil zur Verifizierungs-E-Mail gefunden', { email })
+      }
+
+      const updatePromises = matchingDocs.map((docSnap) => {
         const data = typeof docSnap.data === 'function' ? docSnap.data() : {}
         const currentStatus = data?.verification?.status
 
@@ -81,6 +95,10 @@ onMounted(async () => {
 
         if (!currentStatus || currentStatus === 'pending') {
           updatePayload['verification.status'] = 'in_review'
+        }
+
+        if (normalizedEmail && data?.email_lowercase !== normalizedEmail) {
+          updatePayload.email_lowercase = normalizedEmail
         }
 
         return updateDoc(docSnap.ref, updatePayload)
