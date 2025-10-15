@@ -51,7 +51,7 @@ const collectStaticRoutes = () => {
 const collectBlogPosts = async () => {
   const metadataPath = path.join(projectRoot, 'content', 'blog', 'metadata.json')
   const metadata = await loadJson(metadataPath)
-  const blogDir = path.join(projectRoot, 'content', 'blog')
+  const blogDir = path.join(projectRoot, 'content', 'blog', 'posts')
 
   try {
     const files = await fs.readdir(blogDir)

@@ -2,6 +2,18 @@
 import { getPostalFromCoords } from '@/core/firebase/functions'
 
 const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org'
+const NOMINATIM_CONTACT_EMAIL = 'kontakt@magikey.app'
+const NOMINATIM_USER_AGENT =
+  'Magikey Location Service/1.0 (+https://www.magikey.de/kontakt)'
+
+const createNominatimHeaders = (extra = {}) =>
+  Object.freeze({
+    Accept: 'application/json',
+    'User-Agent': NOMINATIM_USER_AGENT,
+    ...extra,
+  })
+
+const NOMINATIM_HEADERS = createNominatimHeaders()
 
 function normaliseCity(address = {}) {
   return (
@@ -33,12 +45,12 @@ export async function searchLocations(query, { limit = 6, signal } = {}) {
     limit: limit.toString(),
     countrycodes: 'de,at,ch',
     q: cleanQuery,
-    email: 'kontakt@magikey.app'
+    email: NOMINATIM_CONTACT_EMAIL,
   })
 
   const res = await fetch(`${NOMINATIM_BASE_URL}/search?${params.toString()}`, {
     method: 'GET',
-    headers: { Accept: 'application/json' },
+    headers: NOMINATIM_HEADERS,
     signal
   })
 
@@ -75,12 +87,12 @@ export async function reverseGeocode(lat, lng, { signal } = {}) {
     lon: String(lng),
     addressdetails: '1',
     zoom: '18',
-    email: 'kontakt@magikey.app'
+    email: NOMINATIM_CONTACT_EMAIL,
   })
 
   const res = await fetch(`${NOMINATIM_BASE_URL}/reverse?${params.toString()}`, {
     method: 'GET',
-    headers: { Accept: 'application/json' },
+    headers: NOMINATIM_HEADERS,
     signal
   })
 

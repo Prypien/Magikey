@@ -42,7 +42,7 @@ export default defineConfig(async () => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '@blog-content': path.resolve(__dirname, './content/blog'),
+        '@blog-content': path.resolve(__dirname, './content/blog/posts'),
         'lucide-vue-next': path.resolve(
           __dirname,
           './src/ui/components/icons'
