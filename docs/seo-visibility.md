@@ -1,6 +1,6 @@
 # SEO-Strategien für Landingpages und Blogartikel
 
-Die bestehenden Landingpages (`public/schluesseldienst/<stadt>/index.html`) und Blogartikel (`content/blog/`) sind bereits als eigenständige HTML-Dokumente aufgebaut. Für bessere Sichtbarkeit in Suchmaschinen sollten neben der reinen HTML-Struktur folgende Optimierungen umgesetzt werden.
+Die bestehenden Landingpages (`public/schluesseldienst/<stadt>/index.html`) und Blogartikel (`content/blog/posts/`) sind bereits als eigenständige HTML-Dokumente aufgebaut. Für bessere Sichtbarkeit in Suchmaschinen sollten neben der reinen HTML-Struktur folgende Optimierungen umgesetzt werden.
 
 ## 1. Technische Basis optimieren
 - **Meta-Tags vollständig pflegen:** Pro Seite individuelle `<title>`, `meta name="description"` und `meta name="robots"` (falls nötig) hinterlegen.
@@ -33,7 +33,7 @@ Die bestehenden Landingpages (`public/schluesseldienst/<stadt>/index.html`) und 
 - **Broken Links prüfen:** Regelmäßig mit automatisierten Tools (z. B. `npm run lint` + Link-Checker) validieren.
 
 ## 6. Workflow-Integration
-- **Content-Quellen trennen:** HTML in `public/` nur für statische Landingpages, Markdown in `content/blog/` für Blogartikel.
+- **Content-Quellen trennen:** HTML in `public/` nur für statische Landingpages, Markdown in `content/blog/posts/` für Blogartikel.
 - **Review-Prozess:** Vor Deploy in Pull Requests auf Meta-Daten, Schema-Auszeichnungen und Interlinks achten.
 - **Checkliste pflegen:** Diese Empfehlungen als „SEO-Review-Template“ im Team verankern.
 

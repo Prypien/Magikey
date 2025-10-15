@@ -58,6 +58,6 @@ Durch diese Aufteilung lässt sich der Code wie in einer Bibliothek durchsuchen:
 Für SEO-optimierte Einstiegsseiten werden zwei Strategien genutzt:
 
 - `src/features/landing/pages`: Speziell gestaltete Vue-Views für lokale Landing Pages (z.&nbsp;B. `LocksmithReutlingenView.vue`), die inklusive strukturierter Daten innerhalb der App gerendert werden.
-- `content/blog/`: Statisch generierte Blog-Artikel in HTML/Markdown, die per `@blog-content` in der App verfügbar gemacht werden.
+- `content/blog/posts/`: Statisch generierte Blog-Artikel in HTML/Markdown, die per `@blog-content` in der App verfügbar gemacht werden.
 
 So bleiben Marketing-Seiten klar strukturiert, während die Vue-Anwendung weiterhin über Aliasse auf die Inhalte zugreifen kann.

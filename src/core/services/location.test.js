@@ -8,6 +8,11 @@ vi.mock('@/core/firebase/functions', () => ({
 
 const importLocationModule = async () => import('./location')
 
+const EXPECTED_HEADERS = {
+  Accept: 'application/json',
+  'User-Agent': 'Magikey Location Service/1.0 (+https://www.magikey.de/kontakt)',
+}
+
 describe('location service', () => {
   afterEach(() => {
     vi.restoreAllMocks()
@@ -45,7 +50,7 @@ describe('location service', () => {
       'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=3&countrycodes=de%2Cat%2Cch&q=Berlin&email=kontakt%40magikey.app',
       {
         method: 'GET',
-        headers: { Accept: 'application/json' },
+        headers: EXPECTED_HEADERS,
         signal: undefined,
       },
     )
@@ -96,7 +101,7 @@ describe('location service', () => {
       'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=48.137154&lon=11.576124&addressdetails=1&zoom=18&email=kontakt%40magikey.app',
       {
         method: 'GET',
-        headers: { Accept: 'application/json' },
+        headers: EXPECTED_HEADERS,
         signal: undefined,
       },
     )
@@ -146,7 +151,7 @@ describe('location service', () => {
       'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=52.5&lon=13.4&addressdetails=1&zoom=18&email=kontakt%40magikey.app',
       {
         method: 'GET',
-        headers: { Accept: 'application/json' },
+        headers: EXPECTED_HEADERS,
         signal: undefined,
       },
     )
@@ -193,7 +198,7 @@ describe('location service', () => {
       'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=48.1&lon=11.5&addressdetails=1&zoom=18&email=kontakt%40magikey.app',
       {
         method: 'GET',
-        headers: { Accept: 'application/json' },
+        headers: EXPECTED_HEADERS,
         signal: controller.signal,
       },
     )
@@ -232,7 +237,7 @@ describe('location service', () => {
       'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=50.11&lon=8.68&addressdetails=1&zoom=18&email=kontakt%40magikey.app',
       {
         method: 'GET',
-        headers: { Accept: 'application/json' },
+        headers: EXPECTED_HEADERS,
         signal: controller.signal,
       },
     )
